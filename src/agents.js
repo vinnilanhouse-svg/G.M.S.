@@ -238,7 +238,7 @@ export const agentRecords = [
     "date": "2026-10-21",
     "department": "Arquivo de Pessoal",
     "author": "Secretaria de Registro · G.M.S.",
-    "access": "Censurado",
+    "access": "Restrito",
     "status": "Cadastro registrado",
     "id": "agente-belias",
     "code": "AGT-005",

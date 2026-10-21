@@ -114,3 +114,20 @@ input::placeholder { color: var(--muted); opacity: 1; }
   object-fit: contain;
   padding: 5px;
 }
+
+/* Situação de desaparecimento em destaque na identificação do agente. */
+.dossier-info:has(.dossier-situation-highlight) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dossier-info > .dossier-situation-highlight {
+  grid-column: 1 / -1;
+  padding: 18px 22px;
+  border: 1px solid #8d8056;
+  border-left: 4px solid #d4c38c;
+  background: #302e22;
+}
+.dossier-info > .dossier-situation-highlight > span:first-child { color: #d4c38c; font-size: 13px; }
+.dossier-info .dossier-situation-highlight .status { color: #f0e6c5; font-size: 28px; font-weight: 600; line-height: 1.5; }
+@media (max-width: 600px) {
+  .dossier-info:has(.dossier-situation-highlight) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dossier-info > .dossier-situation-highlight { padding: 16px; }
+  .dossier-info .dossier-situation-highlight .status { font-size: 25px; }
+}

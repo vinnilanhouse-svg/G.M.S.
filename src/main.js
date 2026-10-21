@@ -1,3 +1,4 @@
+import { showEntryScreen } from './entry-screen.js';
 import gmsLogo from './assets/gms-logo.png';
 import '@fontsource/dm-sans/latin-400.css';
 import '@fontsource/dm-sans/latin-500.css';
@@ -236,5 +237,6 @@ function render() {
  if(pendingNotice){showToast(pendingNotice);pendingNotice='';}
 }
 addEventListener('hashchange',render);
-addEventListener('keydown',e=>{if(e.key==='Escape'){mobileOpen=false;document.querySelector('.sidebar')?.classList.remove('is-open');document.querySelectorAll('.overlay').forEach(x=>x.remove());}if(e.key==='/'&&!document.querySelector('#species-image-viewer')?.open&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.querySelector('#global-search, #local-query')?.focus();}});
+addEventListener('keydown',e=>{if(e.key==='Escape'){mobileOpen=false;document.querySelector('.sidebar')?.classList.remove('is-open');document.querySelectorAll('.overlay').forEach(x=>x.remove());}if(e.key==='/'&&!document.querySelector('.entry-screen[open]')&&!document.querySelector('#species-image-viewer')?.open&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.querySelector('#global-search, #local-query')?.focus();}});
 render();
+showEntryScreen(gmsLogo);

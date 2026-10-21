@@ -116,3 +116,9 @@ A instalação usa o `package-lock.json`. Não é necessário configurar variáv
 As 20 espécies usam as ilustrações das respectivas seções do documento fornecido. Os arquivos ficam em `public/species/`, com versões WebP para os verbetes e miniaturas para a base de conhecimento. As imagens são servidas pelo próprio site, sem depender de links temporários do Google Docs.
 
 O mapeamento fica em `src/species-images.js` e cada verbete referencia sua imagem no campo `image` de `src/data.js`. Para substituir uma imagem, mantenha os caminhos ou atualize `src` e `thumbnail`, o texto alternativo e as dimensões no mapeamento. Os verbetes exibem a prancha completa e permitem ampliá-la; as miniaturas do catálogo carregam conforme a navegação. O conteúdo e o enquadramento das ilustrações foram preservados na otimização para a web.
+
+## Vinheta de entrada
+
+Ao abrir ou recarregar o site, a vinheta exibe **Validando credenciais** em uma barra segmentada e, ao concluir, **Acesso permitido! Bem vindo agente!**. A validação leva 1,8 segundo; a mensagem permanece por 0,7 segundo e o fechamento leva 0,15 segundo (2,65 segundos no total). A vinheta não se repete na navegação entre abas e não altera as permissões narrativas existentes. É possível dispensá-la com Escape; a preferência por movimento reduzido mostra uma versão breve, sem animação da barra.
+
+O comportamento e os tempos ficam em `src/entry-screen.js`; o visual usa as classes `.entry-screen` em `src/style.css`.

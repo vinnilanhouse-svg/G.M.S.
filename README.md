@@ -136,4 +136,4 @@ Os ajustes gerais de contraste e tamanho de texto ficam em `src/readability.css`
 
 Zaratha Khimer Atros consta apenas no diretório de agentes. A espécie Mantícora é informada na ficha como texto, sem criar verbete nem vínculo para uma espécie ausente do catálogo.
 
-Nas listas, as espécies usam suas ilustrações como miniatura. As fichas de agentes com vínculo em `notableMembers` usam a miniatura da espécie de referência; essa miniatura não é um retrato do agente. Agentes sem espécie catalogada conservam o ícone de agente.
+Nas listas, as espécies usam os símbolos originais dos cabeçalhos do documento, em `public/species-icons`, associados em `src/species-icons.js`. As fichas de agentes com vínculo em `notableMembers` usam o símbolo da espécie de referência; esse símbolo não é um retrato do agente. Agentes sem espécie catalogada conservam o ícone de agente.

@@ -1,3 +1,4 @@
+import { speciesIcons } from './species-icons.js';
 import { agentRecords } from './agents.js';
 import { speciesAbilities } from './species-abilities.js';
 import { speciesImages } from './species-images.js';
@@ -10,6 +11,7 @@ export const records = [
   {
     "id": "especie-abissais",
     "image": speciesImages["especie-abissais"],
+    "icon": speciesIcons["especie-abissais"],
     "kind": "verbete",
     "code": "ESP-001",
     "title": "Abissais",
@@ -51,6 +53,7 @@ export const records = [
   {
     "id": "especie-anjo",
     "image": speciesImages["especie-anjo"],
+    "icon": speciesIcons["especie-anjo"],
     "kind": "verbete",
     "code": "ESP-002",
     "title": "Anjos",
@@ -91,6 +94,7 @@ export const records = [
   {
     "id": "especie-caipora",
     "image": speciesImages["especie-caipora"],
+    "icon": speciesIcons["especie-caipora"],
     "kind": "verbete",
     "code": "ESP-003",
     "title": "Caiporas",
@@ -130,6 +134,7 @@ export const records = [
   {
     "id": "especie-capelobo",
     "image": speciesImages["especie-capelobo"],
+    "icon": speciesIcons["especie-capelobo"],
     "kind": "verbete",
     "code": "ESP-004",
     "title": "Capelobos",
@@ -170,6 +175,7 @@ export const records = [
   {
     "id": "especie-centauro",
     "image": speciesImages["especie-centauro"],
+    "icon": speciesIcons["especie-centauro"],
     "kind": "verbete",
     "code": "ESP-005",
     "title": "Centauros",
@@ -209,6 +215,7 @@ export const records = [
   {
     "id": "especie-constructo",
     "image": speciesImages["especie-constructo"],
+    "icon": speciesIcons["especie-constructo"],
     "kind": "verbete",
     "code": "ESP-006",
     "title": "Constructos",
@@ -251,6 +258,7 @@ export const records = [
   {
     "id": "especie-corpo-seco",
     "image": speciesImages["especie-corpo-seco"],
+    "icon": speciesIcons["especie-corpo-seco"],
     "kind": "verbete",
     "code": "ESP-007",
     "title": "Corpo Seco e Bradador",
@@ -295,6 +303,7 @@ export const records = [
   {
     "id": "especie-curupira",
     "image": speciesImages["especie-curupira"],
+    "icon": speciesIcons["especie-curupira"],
     "kind": "verbete",
     "code": "ESP-008",
     "title": "Curupiras",
@@ -335,6 +344,7 @@ export const records = [
   {
     "id": "especie-demonio",
     "image": speciesImages["especie-demonio"],
+    "icon": speciesIcons["especie-demonio"],
     "kind": "verbete",
     "code": "ESP-009",
     "title": "Demônios",
@@ -371,6 +381,7 @@ export const records = [
   {
     "id": "especie-fada",
     "image": speciesImages["especie-fada"],
+    "icon": speciesIcons["especie-fada"],
     "kind": "verbete",
     "code": "ESP-010",
     "title": "Fadas",
@@ -409,6 +420,7 @@ export const records = [
   {
     "id": "especie-gorgona",
     "image": speciesImages["especie-gorgona"],
+    "icon": speciesIcons["especie-gorgona"],
     "kind": "verbete",
     "code": "ESP-011",
     "title": "Górgonas",
@@ -450,6 +462,7 @@ export const records = [
   {
     "id": "especie-humano",
     "image": speciesImages["especie-humano"],
+    "icon": speciesIcons["especie-humano"],
     "kind": "verbete",
     "code": "ESP-012",
     "title": "Humanos",
@@ -490,6 +503,7 @@ export const records = [
   {
     "id": "especie-leprechaun",
     "image": speciesImages["especie-leprechaun"],
+    "icon": speciesIcons["especie-leprechaun"],
     "kind": "verbete",
     "code": "ESP-013",
     "title": "Leprechauns",
@@ -532,6 +546,7 @@ export const records = [
   {
     "id": "especie-lobisomem",
     "image": speciesImages["especie-lobisomem"],
+    "icon": speciesIcons["especie-lobisomem"],
     "kind": "verbete",
     "code": "ESP-014",
     "title": "Lobisomens",
@@ -572,6 +587,7 @@ export const records = [
   {
     "id": "especie-mumia",
     "image": speciesImages["especie-mumia"],
+    "icon": speciesIcons["especie-mumia"],
     "kind": "verbete",
     "code": "ESP-015",
     "title": "Múmias",
@@ -612,6 +628,7 @@ export const records = [
   {
     "id": "especie-ogro",
     "image": speciesImages["especie-ogro"],
+    "icon": speciesIcons["especie-ogro"],
     "kind": "verbete",
     "code": "ESP-016",
     "title": "Ogros",
@@ -651,6 +668,7 @@ export const records = [
   {
     "id": "especie-poltergeist",
     "image": speciesImages["especie-poltergeist"],
+    "icon": speciesIcons["especie-poltergeist"],
     "kind": "verbete",
     "code": "ESP-017",
     "title": "Poltergeists",
@@ -692,6 +710,7 @@ export const records = [
   {
     "id": "especie-saci",
     "image": speciesImages["especie-saci"],
+    "icon": speciesIcons["especie-saci"],
     "kind": "verbete",
     "code": "ESP-018",
     "title": "Sacis",
@@ -729,6 +748,7 @@ export const records = [
   {
     "id": "especie-salamandra",
     "image": speciesImages["especie-salamandra"],
+    "icon": speciesIcons["especie-salamandra"],
     "kind": "verbete",
     "code": "ESP-019",
     "title": "Salamandras",
@@ -770,6 +790,7 @@ export const records = [
   {
     "id": "especie-vampiro",
     "image": speciesImages["especie-vampiro"],
+    "icon": speciesIcons["especie-vampiro"],
     "kind": "verbete",
     "code": "ESP-020",
     "title": "Vampiros",

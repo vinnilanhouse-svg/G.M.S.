@@ -9,6 +9,10 @@ test('as 20 espécies têm imagens e miniaturas locais correspondentes às seç�
  assert.equal(new Set(species.map(record=>record.image?.src)).size,20);
  for(const record of species){
   const image=record.image;
+  assert.equal(record.icon?.src,`/species-icons/${record.id}.webp`);
+  const symbol=await readFile(new URL(`../public${record.icon.src}`,import.meta.url));
+  assert.equal(symbol.toString('ascii',8,12),'WEBP');
+  assert.ok(record.icon.width<=128&&record.icon.height<=128);
   assert.ok(image,record.id);
   assert.equal(image.src,`/species/${record.id}.webp`);
   assert.equal(image.thumbnail,`/species/${record.id}-thumb.webp`);

@@ -36,3 +36,24 @@
 .wiki-card{--card-padding:22px}.wiki-card-visual{aspect-ratio:4/3;margin:calc(-1 * var(--card-padding)) calc(-1 * var(--card-padding)) 23px;background:#151c13;border-bottom:1px solid #3f4c34;overflow:hidden;flex-shrink:0}.wiki-card-visual img{display:block;width:100%;height:100%;object-fit:contain}.species-figure{margin:0 0 31px;border:1px solid #435238;background:#161e14}.species-image-button{display:block;position:relative;border:0;border-radius:0;background:#151d13;padding:18px;width:100%;cursor:zoom-in;color:#d3dfc5}.species-image-button>img{display:block;width:100%;height:480px;object-fit:contain}.species-image-action{position:absolute;right:15px;bottom:15px;display:flex;align-items:center;gap:8px;background:#1d281af0;border:1px solid #647d4f;padding:9px 12px;font-size:10px;box-shadow:0 2px 14px #0003}.species-image-action .icon{width:13px;height:13px}.species-image-button:hover .species-image-action{background:#344a27;color:#edf5e3}.species-figure figcaption{display:flex;justify-content:space-between;gap:15px;padding:12px 15px;border-top:1px solid #35482b;font:7px/1.8 var(--mono);letter-spacing:.5px;color:#9aae88}.species-figure figcaption>span:last-child{color:#7f956e;text-align:right}.image-viewer{width:min(1000px,calc(100vw - 36px));max-width:none;max-height:calc(100dvh - 36px);padding:0;border:1px solid #62764f;background:#1b2417;color:#d7e5c9;box-shadow:0 18px 80px #0009}.image-viewer[open]{display:flex;flex-direction:column}.image-viewer::backdrop{background:#070c06dc;backdrop-filter:blur(5px)}.image-viewer-bar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:13px 20px;border-bottom:1px solid #3f5332;flex-shrink:0}.image-viewer-bar h2{font-size:17px;font-weight:500;margin:0;letter-spacing:-.3px}.image-viewer-bar button{padding:12px;color:#bdcfa9}.image-viewer-bar button:hover{background:#35482b}.image-viewer-body{padding:18px;min-height:0;overflow:auto;display:grid;place-items:center;background:#11190f}.image-viewer-body img{display:block;max-width:100%;max-height:calc(100dvh - 195px);width:auto;height:auto;object-fit:contain}.image-viewer-caption{font:7px/1.8 var(--mono);letter-spacing:1px;color:#91a57e;margin:0;padding:13px 20px;border-top:1px solid #3f5332;flex-shrink:0}.image-viewer-open{overflow:hidden}
 @media(max-width:760px){.wiki-card{--card-padding:18px}.species-image-button>img{height:410px}.species-image-button{padding:14px}.species-figure figcaption{font-size:7px;letter-spacing:.2px;gap:10px;padding:11px 12px}}
 @media(max-width:520px){.wiki-card{--card-padding:23px}.wiki-card-visual{aspect-ratio:1/1;margin-bottom:23px}.species-image-button>img{height:350px}.species-image-button{padding:11px}.species-image-action{padding:8px 10px;font-size:9px;right:11px;bottom:11px}.species-figure figcaption{flex-direction:column;gap:3px;font-size:7px}.species-figure figcaption>span:last-child{text-align:left}.image-viewer{width:calc(100vw - 20px);max-height:calc(100dvh - 20px)}.image-viewer-bar{padding:8px 11px;gap:10px}.image-viewer-bar h2{font-size:15px}.image-viewer-body{padding:10px}.image-viewer-body img{max-height:calc(100dvh - 160px)}.image-viewer-caption{font-size:6px;letter-spacing:.6px;padding:11px}}
+/* A prancha da espécie integra o cartão lateral de identificação. */
+.dossier-with-image .dossier-layout{grid-template-columns:minmax(0,1fr) 270px}
+.dossier-aside .species-figure{margin:0 0 25px}
+.dossier-aside .species-image-button{padding:0}
+.dossier-aside .species-image-button>img{height:auto;max-height:360px}
+.dossier-aside .species-image-action{position:static;justify-content:center;border:0;border-top:1px solid #435238;background:#26331f;padding:10px;margin:0;box-shadow:none;font-size:10px}
+.dossier-aside .species-figure figcaption{flex-direction:column;gap:4px;padding:11px 12px;font-size:7px;letter-spacing:.3px}
+.dossier-aside .species-figure figcaption>span:last-child{text-align:left}
+@media(min-width:1001px) and (max-width:1190px){.dossier-with-image .dossier-layout{grid-template-columns:minmax(0,1fr) 220px}}
+@media(max-width:1000px){
+ .dossier-with-image .dossier-layout{grid-template-columns:minmax(0,1fr)}
+ .dossier-with-image .dossier-aside{grid-row:1;border-top:0;border-bottom:1px solid #35452b}
+ .dossier-with-image .dossier-body{grid-row:2;min-width:0}
+ .dossier-aside .species-figure{margin:0;min-width:0}
+ .dossier-aside .species-image-button>img{max-height:280px}
+}
+@media(max-width:520px){
+ .dossier-aside .species-image-action{font-size:9px;gap:6px;padding:9px 5px}
+ .dossier-aside .species-image-action .icon{width:11px;height:11px}
+ .dossier-aside .species-figure figcaption{font-size:6px;padding:9px 8px;letter-spacing:.1px}
+}

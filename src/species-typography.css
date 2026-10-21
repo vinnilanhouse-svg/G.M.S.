@@ -1,0 +1,53 @@
+/* Fontes dos títulos das espécies no manual de referência, edição 1.7. */
+@import "@fontsource/cinzel/latin-400.css";
+@import "@fontsource/cinzel-decorative/latin-400.css";
+@import "@fontsource/amatic-sc/latin-400.css";
+@import "@fontsource/metal-mania/latin-400.css";
+@import "@fontsource/marcellus/latin-400.css";
+@import "@fontsource/roboto-mono/latin-400.css";
+@import "@fontsource/creepster/latin-400.css";
+@import "@fontsource/new-rocker/latin-400.css";
+@import "@fontsource/pirata-one/latin-400.css";
+@import "@fontsource/dancing-script/latin-400.css";
+@import "@fontsource/caesar-dressing/latin-400.css";
+@import "@fontsource/libre-baskerville/latin-400.css";
+@import "@fontsource/uncial-antiqua/latin-400.css";
+@import "@fontsource/lacquer/latin-400.css";
+@import "@fontsource/almendra/latin-400.css";
+@import "@fontsource/freckle-face/latin-400.css";
+@import "@fontsource/nosifer/latin-400.css";
+@import "@fontsource/bangers/latin-400.css";
+@import "@fontsource/eater/latin-400.css";
+@import "@fontsource/medievalsharp/latin-400.css";
+
+.dossier h1.species-title {
+  font-family: var(--species-font), Georgia, serif;
+  font-size: clamp(30px, 4vw, 48px);
+  font-weight: 400;
+  font-synthesis: none;
+  line-height: 1.5;
+  letter-spacing: .02em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.species-title[data-species="especie-abissais"] { --species-font: "Cinzel"; }
+.species-title[data-species="especie-anjo"] { --species-font: "Cinzel Decorative"; }
+.species-title[data-species="especie-caipora"] { --species-font: "Amatic SC"; }
+.species-title[data-species="especie-capelobo"] { --species-font: "Metal Mania"; }
+.species-title[data-species="especie-centauro"] { --species-font: "Marcellus"; }
+.species-title[data-species="especie-constructo"] { --species-font: "Roboto Mono"; }
+.species-title[data-species="especie-corpo-seco"] { --species-font: "Creepster"; }
+.species-title[data-species="especie-curupira"] { --species-font: "New Rocker"; }
+.species-title[data-species="especie-demonio"] { --species-font: "Pirata One"; }
+.species-title[data-species="especie-fada"] { --species-font: "Dancing Script"; }
+.species-title[data-species="especie-gorgona"] { --species-font: "Caesar Dressing"; }
+.species-title[data-species="especie-humano"] { --species-font: "Libre Baskerville"; }
+.species-title[data-species="especie-leprechaun"] { --species-font: "Uncial Antiqua"; }
+.species-title[data-species="especie-lobisomem"] { --species-font: "Lacquer"; }
+.species-title[data-species="especie-mumia"] { --species-font: "Almendra"; }
+.species-title[data-species="especie-ogro"] { --species-font: "Freckle Face"; }
+.species-title[data-species="especie-poltergeist"] { --species-font: "Nosifer"; }
+.species-title[data-species="especie-saci"] { --species-font: "Bangers"; }
+.species-title[data-species="especie-salamandra"] { --species-font: "Eater"; }
+.species-title[data-species="especie-vampiro"] { --species-font: "MedievalSharp"; }

@@ -122,3 +122,5 @@ O mapeamento fica em `src/species-images.js` e cada verbete referencia sua image
 Ao abrir ou recarregar o site, a vinheta exibe **Validando credenciais** em uma barra segmentada e, ao concluir, **Acesso permitido! Bem vindo agente!**. A validação leva 1,8 segundo; a mensagem permanece por 0,7 segundo e o fechamento leva 0,15 segundo (2,65 segundos no total). A vinheta não se repete na navegação entre abas e não altera as permissões narrativas existentes. É possível dispensá-la com Escape; a preferência por movimento reduzido mostra uma versão breve, sem animação da barra.
 
 O comportamento e os tempos ficam em `src/entry-screen.js`; o visual usa as classes `.entry-screen` em `src/style.css`.
+
+Os títulos das páginas de espécies usam as mesmas fontes do documento de referência. As associações e o tamanho dos títulos ficam em `src/species-typography.css`; as fontes são servidas junto com o site.

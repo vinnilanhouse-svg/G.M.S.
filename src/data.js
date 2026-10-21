@@ -104,8 +104,7 @@ export const records = [
       "A essência definitiva de sua origem e os propósitos de cada missão."
     ],
     "related": [
-      "especie-demonio",
-      "universo"
+      "especie-demonio"
     ],
     "source": true,
     "sourceSection": "2.2. Anjo;",
@@ -473,8 +472,7 @@ export const records = [
       "Os desígnios específicos das hierarquias do submundo."
     ],
     "related": [
-      "especie-anjo",
-      "universo"
+      "especie-anjo"
     ],
     "source": true,
     "sourceSection": "2.9. Demônio;",
@@ -940,7 +938,6 @@ export const records = [
       "A origem do vínculo entre o gorro e seus poderes."
     ],
     "related": [
-      "pessoa-saci-azul",
       "especie-caipora"
     ],
     "source": true,
@@ -1065,7 +1062,7 @@ export const records = [
     "sourceUrl": "https://docs.google.com/document/d/1TE0Lkf15QSkwPb__VTUvIX-rXlIBIaQSQPhWGbyStgQ/edit",
     "id": "org-gms",
     "code": "ORG-001",
-    "title": "Global Monster Security",
+    "title": "A G.M.S.",
     "category": "Organizações",
     "summary": "Uma instituição de alcance global, formada por agentes de todas as espécies, dedicada à convivência e à investigação de crimes.",
     "report": [
@@ -1093,82 +1090,11 @@ export const records = [
       "Os nomes anteriores e as datas exatas de cada reorganização não são especificados."
     ],
     "related": [
-      "universo",
       "doc-convivencia",
       "especie-humano",
       "especie-gorgona"
     ],
     "sourceSection": "A G.M.S."
-  },
-  {
-    "kind": "verbete",
-    "access": "Público",
-    "status": "Catalogado",
-    "date": "2026-10-21",
-    "department": "Documentação e Memória",
-    "author": "Arquivo GMS · síntese documental",
-    "source": true,
-    "sourceUrl": "https://docs.google.com/document/d/1TE0Lkf15QSkwPb__VTUvIX-rXlIBIaQSQPhWGbyStgQ/edit",
-    "id": "universo",
-    "code": "COS-001",
-    "title": "Entre o caos e a paz",
-    "category": "Fenômenos",
-    "summary": "A narrativa de origem de um mundo onde humanos e criaturas sobrenaturais aprenderam a coexistir.",
-    "report": [
-      "No princípio, havia apenas a escuridão. Então, surgiu a luz, e em meio à paz, nasceu o caos. Foi desse caos que a vida emergiu. Em um planeta que, mais tarde, seria chamado de Terra, células começaram a agir por conta própria, agrupando-se e transformando-se em algo maior. Aos poucos, nessa rocha flutuante no espaço, seres apareceram e evoluíram, seguindo caminhos distintos. Alguns decidiram deixar os mares e habitar a terra firme, enquanto outros preferiram permanecer nas águas. Outros ainda escolheram viver ao acaso, sem um rumo definido.",
-      "Quando o primeiro ser se ergueu, a existência foi criada, pois só é possível contar histórias a partir do primeiro personagem. E quando esse primeiro ser pereceu, algo extraordinário aconteceu. Não se sabe se foi a crença das criaturas primitivas ou se algo sempre esteve lá, despercebido, mas, com a primeira morte, o Céu brilhou e o Inferno acendeu. A partir desse momento, não havia mais volta.",
-      "Seres se enfrentaram, se uniram e evoluíram. Aqueles que permaneceram nas águas e os que conquistaram a terra cresceram. Alguns dominaram os céus, enquanto outros lutaram pela sobrevivência. Muitos viveram em harmonia, mas muitos outros entraram em guerra, pois a diferença gerou ódio, e o ódio gerou Caos. No entanto, como sempre acontece, onde há caos, também há paz.",
-      "Foi assim que humanos e monstros, apesar de suas diferenças, se uniram. Juntos, criaram vidas, religiões, crenças, medos, aldeias, reinos e cidades. Em um único mundo, independentemente de suas origens, ódios ou preconceitos, eles aprenderam a coexistir. Vivendo juntos na paz, mas sempre à beira do caos.",
-      "E mesmo agora, em cada esquina, em cada decisão, caos e paz continuam sua batalha, guiando o destino de todos que ousam existir. Pois viver é isso: abraçar a paz enquanto se caminha no caos."
-    ],
-    "facts": [
-      "Humanos e outras espécies compartilham o mesmo mundo.",
-      "Céu e Inferno integram a narrativa de origem."
-    ],
-    "hypotheses": [
-      "O primeiro despertar do Céu e do Inferno pode estar ligado às crenças primitivas."
-    ],
-    "unknown": [
-      "A fonte não determina se os reinos já existiam antes da primeira morte."
-    ],
-    "related": [
-      "org-gms",
-      "especie-anjo",
-      "especie-demonio"
-    ],
-    "sourceSection": "O Universo"
-  },
-  {
-    "kind": "verbete",
-    "access": "Público",
-    "status": "Catalogado",
-    "date": "2026-10-21",
-    "department": "Documentação e Memória",
-    "author": "Arquivo GMS · síntese documental",
-    "source": true,
-    "sourceUrl": "https://docs.google.com/document/d/1TE0Lkf15QSkwPb__VTUvIX-rXlIBIaQSQPhWGbyStgQ/edit",
-    "id": "pessoa-saci-azul",
-    "code": "PES-001",
-    "title": "O Saci de olhos azuis",
-    "category": "Pessoas",
-    "summary": "Um Saci conhecido por levar suas travessuras à internet, com pegadinhas e desafios enviados por seguidores.",
-    "report": [
-      "O registro das espécies menciona um Saci de olhos azuis que ganhou notoriedade em um canal de internet. Suas transmissões incluem o desaparecimento de objetos e desafios propostos pelo público.",
-      "O caso ilustra a presença de criaturas das matas em meios contemporâneos, sem abandonar as características de sua espécie."
-    ],
-    "facts": [
-      "É citado no verbete sobre Sacis.",
-      "Mantém um canal de pegadinhas e desafios."
-    ],
-    "hypotheses": [],
-    "unknown": [
-      "Nome, localização e identificação do canal não são fornecidos."
-    ],
-    "related": [
-      "especie-saci",
-      "org-gms"
-    ],
-    "sourceSection": "2.18. Saci;"
   },
   {
     "kind": "documento",

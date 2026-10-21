@@ -8,6 +8,7 @@ import '@fontsource/ibm-plex-mono/latin-400.css';
 import '@fontsource/ibm-plex-mono/latin-500.css';
 import './style.css';
 import './species-typography.css';
+import './readability.css';
 import { records as allRecords, categories } from './data.js';
 import { credentials, accessStorageKey, findCredential, readActiveCredentials, visibleRecords } from './permissions.js';
 

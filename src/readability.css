@@ -1,0 +1,100 @@
+/* Ajustes de leitura aplicados após os estilos de layout e de tipografia das espécies. */
+:root {
+  --text: #edf1e8;
+  --muted: #b5c3ac;
+  --accent: #cfdfb8;
+  --reading-secondary: #cbd6c2;
+  color: var(--text);
+}
+
+h1, h2, h3, h4 { color: var(--text); }
+.document-section > p, .ability p, .ability-details dd, .timeline p,
+.employee-note p, .dossier-summary, .wiki-card > p, .wiki-card p,
+.page-heading p, .credential-panel-main > p, .active-credential > p,
+.credentials-empty p, .mission-reports > p {
+  color: var(--reading-secondary);
+  font-size: 17px;
+  line-height: 1.85;
+}
+.document-section > .section-intro {
+  color: var(--reading-secondary) !important;
+  font-size: 16px !important;
+}
+.ability h4, .ability-details dt { color: var(--text); font-size: 17px; line-height: 1.6; }
+.ability-group-heading p { color: var(--reading-secondary); font-size: 15px; }
+.ability-stage-code, .ability-variant { color: var(--accent); font-size: 11px; }
+
+.nav-link, .nav-sublink { color: var(--reading-secondary); font-size: 14px; }
+.nav-link .icon { color: var(--muted); }
+.nav-link.selected, .nav-sublink.selected { color: var(--text); }
+.brand small, .nav-caption, .security-mark span, .profile small, .sidebar-version,
+.breadcrumb, .topbar-code, .search-label, .search-label span:last-child,
+.eyebrow, .document-section .eyebrow, .card-top span, .card-bottom, .tiny-status,
+.record-table th, .recent-section .record-table th, .listing .record-table th,
+.record-name small, .listing .record-name small, .recent-section .record-name small,
+.record-name em, .recent-section .record-name em, .date-cell, .listing .date-cell,
+.table-foot, .table-foot > span, .footer, .footer > span:last-child, .footer-credentials,
+.results-meta, .wiki-card-top, .wiki-card-bottom, .document-index, .dossier-meta,
+.dossier-info > div > span:first-child, .aside-block h3, .aside-block dt,
+.aside-disclaimer p, .source-reference > span, .source-reference small,
+.document-end, .related-list small, .species-figure figcaption,
+.dossier-aside .species-figure figcaption, .archive-note-right span,
+.archive-note-right span:first-child, .heading-stamp span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.record-name strong, .listing .record-name strong, .recent-section .record-name strong {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.record-name em, .recent-section .record-name em { font-size: 12px; }
+.record-name strong { overflow-wrap: anywhere; }
+.dossier-info strong, .dossier-aside .aside-block p, .dossier-aside .aside-block dd,
+.aside-block p, .aside-block dd, .aside-block dd.mono, .source-reference > p,
+.source-reference > a, .related-list strong, .operations-strip small,
+.access-explanation p, .access-explanation p span {
+  color: var(--reading-secondary);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.category-card h2 { font-size: 20px; }
+.category-card p { color: var(--reading-secondary); font-size: 15px; line-height: 1.8; }
+.section-heading h2, .operations-strip strong { color: var(--text); font-size: 16px; }
+.section-heading > a, .text-button, .wiki-chip, .back-link, .save-button,
+.mission-tabs a, .active-credential-actions > a, .active-credential-actions > button {
+  color: var(--reading-secondary);
+  font-size: 13px;
+}
+.access, .recent-section .access, .listing .access, .wiki-card-bottom .access,
+.status, .listing .status, .dossier-info .status { font-size: 11px; }
+.access { color: var(--text); }
+.status, .count { color: var(--reading-secondary); }
+.filter-controls select { color: var(--text); font-size: 13px; }
+.search-form input, .local-search input, .credential-input-row input,
+.credential-panel-main .credential-input-row input { font-size: 16px; color: var(--text); }
+input::placeholder { color: var(--muted); opacity: 1; }
+.search-form button, .credential-panel-main .credential-input-row button { font-size: 13px; }
+.credential-feedback, .credential-manage, .credential-panel-heading > span,
+.credential-panel-heading > a { color: var(--reading-secondary); font-size: 12px; }
+.demo-banner { color: #e2d8ad; font-size: 11px; line-height: 1.7; }
+.system-online { color: var(--muted); font-size: 10px; }
+.footer { flex-wrap: wrap; }
+.heading-stamp { min-width: 185px; }
+.sidebar { overflow-y: auto; }
+
+@media (max-width: 600px) {
+  .document-section > p, .ability p, .ability-details dd, .timeline p,
+  .employee-note p, .dossier-summary, .wiki-card > p, .wiki-card p,
+  .page-heading p, .credential-panel-main > p, .active-credential > p,
+  .credentials-empty p { font-size: 16px; }
+  .record-name strong, .listing .record-name strong, .recent-section .record-name strong { font-size: 14px; }
+  .category-card h2 { font-size: 18px; }
+  .search-label { flex-wrap: wrap; gap: 8px; }
+  .search-label span:last-child { display: none; }
+  .search-form button { font-size: 0; }
+  .topbar-right { gap: 10px; }
+  .system-online { font-size: 8px; }
+  .footer, .footer > span:last-child { font-size: 10px; }
+}

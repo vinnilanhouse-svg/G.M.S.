@@ -131,3 +131,5 @@ As habilidades das 20 espécies ficam em `src/species-abilities.js`, com os nome
 Para cadastrar um membro notável, crie seu registro e adicione o `id` ao array `notableMembers` da espécie em `src/data.js`. A página mostra links para os registros disponíveis no acesso atual.
 
 Os seis históricos oficiais de agentes fornecidos pelo autor ficam em `src/agents.js`. As referências em `related` conectam as fichas entre si e às espécies; `notableMembers` em `src/data.js` controla a presença nas páginas de espécies. Miguel aparece entre Salamandras por classificação institucional; Bab’Din aparece entre Centauros pelo corpo atual, mantendo a origem de gênio em sua ficha. As fotos dos agentes ainda aguardam arquivos acessíveis.
+
+Os ajustes gerais de contraste e tamanho de texto ficam em `src/readability.css`, aplicado após os estilos de layout e as fontes dos títulos das espécies.

@@ -1394,19 +1394,3 @@ export const records = [
   ...operationalRecords,
   ...reservedRecords
 ];
-export const notices = [
-  {
-    "tag": "INSTITUCIONAL",
-    "date": "CIRCULAÇÃO INTERNA",
-    "title": "Convivência é o nosso mandato",
-    "text": "Compreender as diferenças. Proteger pessoas. Impedir que a culpa individual se torne perseguição coletiva.",
-    "related": "doc-convivencia"
-  },
-  {
-    "tag": "REFERÊNCIA",
-    "date": "EDIÇÃO 1.7",
-    "title": "Catálogo de espécies disponível",
-    "text": "Características, modos de vida e capacidades naturais reunidos em registros de consulta.",
-    "related": "especie-abissais"
-  }
-];

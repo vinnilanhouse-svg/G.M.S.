@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {records,notices} from '../src/data.js';
+import {records} from '../src/data.js';
 
 test('o acervo tem identificadores únicos e todos os vínculos apontam para arquivos existentes',()=>{
  const ids=new Set(records.map(r=>r.id));
@@ -13,7 +13,6 @@ test('o acervo tem identificadores únicos e todos os vínculos apontam para arq
   assert.match(r.date,/^\d{4}-\d{2}-\d{2}$/);
   for(const id of r.related)assert.ok(ids.has(id),`${r.id}: vínculo inválido ${id}`);
  }
- for(const n of notices)assert.ok(ids.has(n.related));
 });
 
 test('as 20 espécies têm fonte e capacidades narrativas sem notação de regras',()=>{

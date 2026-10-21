@@ -45,7 +45,7 @@ O conteúdo de referência está em **`src/data.js`** e os cadastros operacionai
 
 Duplique um objeto do mesmo tipo, atribua um `id` e `code` únicos e atualize `related`. Para censurar um trecho visualmente, use `████████` no texto. Essa apresentação **não protege a informação**; não inclua material realmente secreto no código.
 
-Os comunicados estão no array `notices`; as categorias da wiki, em `categories`. Contagens, resultados e vínculos são calculados a partir dos registros. A seleção inicial de atualizações recentes é organizada no painel em `src/main.js`.
+As categorias da wiki estão no array `categories`. Contagens, resultados e vínculos são calculados a partir dos registros. A seleção inicial de atualizações recentes é organizada no painel em `src/main.js`.
 
 ## Recursos e limites
 

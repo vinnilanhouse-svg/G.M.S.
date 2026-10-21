@@ -339,5 +339,52 @@ export const agentRecords = [
       "especie-gorgona",
       "org-gms"
     ]
+  },
+  {
+    "kind": "agente",
+    "demo": false,
+    "source": false,
+    "sourceNote": "Histórico de agente fornecido ao arquivo.",
+    "date": "2026-10-21",
+    "department": "Arquivo de Pessoal",
+    "author": "Secretaria de Registro · G.M.S.",
+    "access": "Restrito",
+    "status": "Cadastro registrado",
+    "id": "agente-zaratha-khimer-atros",
+    "code": "AGT-007",
+    "title": "Zaratha Khimer Atros",
+    "category": "Comando de agentes",
+    "summary": "Chefe dos Agentes da G.M.S., responsável pela preparação das equipes, avaliação de riscos e coordenação de operações. Mantícora reconhecida pela firmeza e pelo cuidado com seus subordinados.",
+    "report": [
+      "Zaratha Khimer Atros é a principal responsável pelos agentes da G.M.S., acompanhando desde a preparação das equipes até as consequências de cada operação. Respeitada por toda a organização, construiu sua autoridade pela competência, pela firmeza de suas decisões e pela atenção que dedica àqueles que trabalham sob seu comando. Quando uma missão exige experiência para distribuir responsabilidades, avaliar riscos ou decidir se uma equipe está pronta para partir, é a ela que muitos recorrem.",
+      "Sua aparência costuma provocar silêncio antes mesmo que diga qualquer coisa. Uma mantícora de constituição forte, Zaratha possui traços felinos marcantes, olhos atentos e uma expressão severa que raramente se desfaz. Uma juba espessa emoldura seu rosto e se prolonga pelas laterais da mandíbula, formando uma espécie de barba sob o queixo. Seus chifres, grandes asas e a cauda terminada em ferrão completam uma presença difícil de ignorar. Mesmo entre criaturas acostumadas a conviver com monstros, poucos deixam de perceber quando ela entra em uma sala.",
+      "Zaratha leva seu trabalho a sério e espera o mesmo de cada agente. Brincadeiras durante uma instrução, equipamentos malcuidados e tentativas de esconder um erro encontram pouca tolerância diante dela. Suas cobranças são diretas, e tentar transformá-las em uma discussão costuma apenas prolongar uma conversa desagradável. Para quem acaba de ingressar na G.M.S., a primeira reunião com a chefe frequentemente se torna uma lembrança bastante duradoura.",
+      "Sua exigência acompanha a responsabilidade de enviar pessoas para situações das quais talvez não retornem. Antes de autorizar uma operação, Zaratha examina os relatórios, conhece as limitações da equipe e cobra respostas sobre rotas de retirada, apoio e comunicação. Um agente disposto a assumir todos os riscos pode descobrir que precisará convencê-la de que também sabe reconhecer a hora de recuar. Coragem sem preparo é uma preocupação constante para alguém encarregada de receber os pedidos de socorro.",
+      "Por trás de sua expressão dura, existe uma preocupação profunda e sincera com os agentes. Zaratha percebe o cansaço que alguém tenta esconder, acompanha a recuperação dos feridos e se lembra de assuntos pessoais mencionados semanas antes. É capaz de repreender duramente um subordinado por uma imprudência e, poucas horas depois, aparecer na enfermaria para verificar se ele está comendo e recebendo os cuidados necessários. Nessas visitas, costuma manter a mesma voz firme de quem está dando uma ordem.",
+      "Durante operações difíceis, permanece atenta às comunicações e acompanha cada mudança de situação. O atraso de uma equipe ou o silêncio inesperado de um agente recebem sua atenção imediata. Também cabe a ela reconhecer quando alguém precisa de descanso, de treinamento adicional ou de ajuda para lidar com o que viveu em campo. Esses cuidados nem sempre são bem recebidos no primeiro momento, especialmente por agentes orgulhosos demais para admitir que chegaram ao próprio limite.",
+      "Com o tempo, até aqueles que mais reclamam de suas cobranças aprendem a confiar em seu julgamento. Sabem que Zaratha defenderá uma decisão bem fundamentada, ouvirá quem tiver informações importantes e assumirá a responsabilidade pelas ordens que der. Sua relação com os agentes foi construída em instruções, discussões, esperas angustiantes e retornos acompanhados pessoalmente. O respeito que recebe carrega a memória de todos esses encontros.",
+      "Na G.M.S., muitos aprendem rapidamente a evitar gracinhas diante de Zaratha Khimer Atros. Também aprendem a reconhecer sua voz no rádio quando uma missão dá errado. Nesses momentos, ouvi-la dizer “Informe sua posição. Estamos indo buscar vocês” costuma trazer um alívio que poucos conseguem explicar depois."
+    ],
+    "profile": [
+      {
+        "label": "Identificação",
+        "value": "Zaratha Khimer Atros"
+      },
+      {
+        "label": "Espécie",
+        "value": "Mantícora"
+      },
+      {
+        "label": "Cargo",
+        "value": "Chefe dos Agentes da G.M.S."
+      },
+      {
+        "label": "Especialidade",
+        "value": "Comando, estratégia e coordenação de operações"
+      }
+    ],
+    "related": [
+      "org-gms"
+    ]
   }
 ];

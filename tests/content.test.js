@@ -96,4 +96,10 @@ test('os seis agentes fornecidos têm fichas próprias e vínculos coerentes com
  assert.ok(get('agente-miguel').profile.some(f=>f.value==='Salamandra'));
  assert.ok(get('agente-babdin').profile.some(f=>f.value==='Gênio'));
  assert.ok(get('agente-babdin').profile.some(f=>f.value==='Centauro'));
+ const zaratha=get('agente-zaratha-khimer-atros');
+ assert.equal(zaratha.kind,'agente');
+ assert.equal(zaratha.demo,false);
+ assert.ok(zaratha.profile.some(f=>f.label==='Espécie'&&f.value==='Mantícora'));
+ assert.ok(!zaratha.related.some(id=>id.startsWith('especie-')));
+ assert.ok(!records.some(r=>r.category==='Espécies'&&r.notableMembers?.includes(zaratha.id)));
 });

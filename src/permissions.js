@@ -16,7 +16,7 @@ export const credentials = [
     route: '#/arquivo/alvo-reservado-demo',
   },
   {
-    id: 'morrow-noone', code: 'Nathalism0',
+    id: 'morrow-noone', code: 'NATHALISM0', caseSensitive: true,
     label: 'Ficha reservada de agente',
     description: 'Consulta individual a um cadastro fora do diretório institucional.',
     route: '#/arquivo/agente-morrow-noone', entryOnly: true,
@@ -29,7 +29,8 @@ export function normalizeAccessCode(value) {
 
 export function findCredential(code) {
   const normalized = normalizeAccessCode(code);
-  return credentials.find(credential => normalizeAccessCode(credential.code) === normalized);
+  const trimmed = typeof code === 'string' ? code.trim() : '';
+  return credentials.find(credential => credential.caseSensitive ? credential.code === trimmed : normalizeAccessCode(credential.code) === normalized);
 }
 
 export function readActiveCredentials(raw) {

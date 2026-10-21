@@ -48,12 +48,12 @@ test('todo registro condicionado possui uma credencial válida e os destinos ind
   }
 });
 
-test('Nathalism0 permite a consulta de Morrow sem publicar a ficha nem guardar sua autorização',()=>{
- const credential=findCredential('Nathalism0');
+test('NATHALISM0 permite a consulta de Morrow sem publicar a ficha nem guardar sua autorização',()=>{
+ const credential=findCredential('NATHALISM0');
  assert.equal(credential.id,'morrow-noone');
  assert.equal(credential.entryOnly,true);
- assert.equal(findCredential(' nathalism0 ')?.id,credential.id);
- for(const code of ['Nathalismo','NathalismO','Nathalism','Nathalism01'])assert.equal(findCredential(code),undefined);
+ assert.equal(findCredential(' NATHALISM0 ')?.id,credential.id);
+ for(const code of ['nathalism0','Nathalism0','Nathalismo','NathalismO','Nathalism','Nathalism01'])assert.equal(findCredential(code),undefined);
  const target=records.find(r=>r.id==='agente-morrow-noone');
  assert.equal(target.title,'Morrow Noone');
  assert.equal(target.requiredGrant,credential.id);

@@ -25,8 +25,8 @@ for (const url of jsAssets) {
   js = js.replaceAll(url, `data:${mime};base64,${bytes.toString('base64')}`);
 }
 const favicon = await readFile(resolve(root, 'public/favicon.svg'));
-html = html.replace(script[0], `<script type="module">${js.replaceAll('</script', '<\\/script')}</script>`);
-html = html.replace(stylesheet[0], `<style>${css}</style>`);
+html = html.replace(script[0], () => `<script type="module">${js.replaceAll('</script', '<\\/script')}</script>`);
+html = html.replace(stylesheet[0], () => `<style>${css}</style>`);
 html = html.replace('href="/favicon.svg"', `href="data:image/svg+xml;base64,${favicon.toString('base64')}"`);
 const output = resolve(root, 'preview');
 await mkdir(output, { recursive: true });

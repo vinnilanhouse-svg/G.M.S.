@@ -1,3 +1,4 @@
+import { speciesAbilities } from './species-abilities.js';
 import { speciesImages } from './species-images.js';
 import { reservedRecords } from './permissions.js';
 import { operationalRecords } from './operations.js';
@@ -26,20 +27,7 @@ export const records = [
       "Os Abissais são mais do que meros habitantes das profundezas; eles são a personificação do oceano, uma lembrança viva de que, enquanto os homens conquistaram a terra, as águas ainda guardam segredos que nunca serão totalmente revelados."
     ],
     "quote": "Se os mares são o berço da vida, por que abandoná-los para viver na terra dos homens?",
-    "abilities": [
-      {
-        "title": "Vida entre duas águas",
-        "text": "Guelras permitem respirar dentro e fora d’água. O corpo escamoso, as nadadeiras e a pele escorregadia favorecem a natação e a fuga de aprisionamentos. A hidratação constante é indispensável ao seu bem-estar."
-      },
-      {
-        "title": "Afinidade marinha",
-        "text": "Podem comunicar-se com criaturas marinhas, enxergar nas águas escuras e expelir jatos de água pela boca. Hidratados, suportam melhor o fogo, mas a eletricidade representa uma vulnerabilidade."
-      },
-      {
-        "title": "O chamado das profundezas",
-        "text": "Alguns Abissais estabelecem contato com seres antigos através de grandes massas de água. A presença que responde ao chamado não é necessariamente amistosa."
-      }
-    ],
+    "abilities": speciesAbilities["especie-abissais"],
     "facts": [
       "Respiram na água e na superfície.",
       "A hidratação é essencial à sua condição física."
@@ -79,20 +67,7 @@ export const records = [
       "Os Anjos são mais do que meros servos do divino; eles são a personificação da esperança, da justiça e da luz que ilumina até os cantos mais sombrios da existência. Quando descem à Terra, não trazem apenas mensagens, mas também a promessa de que, mesmo nas horas mais escuras, o céu nunca está tão distante."
     ],
     "quote": "E ao soar das trombetas, os Anjos de Deus descerão dos céus à Terra, trazendo consigo a luz divina.",
-    "abilities": [
-      {
-        "title": "Presença celestial",
-        "text": "Podem ocultar ou revelar suas asas e sua auréola. A forma verdadeira emite uma luz capaz de cegar quem a contempla. Sua natureza os impede de mentir ou pecar."
-      },
-      {
-        "title": "Proteção e restauração",
-        "text": "O toque de suas mãos pode curar ferimentos. Alguns possuem uma arma vinculada exclusivamente a eles, aparentemente inofensiva fora do confronto, mas transformada quando precisam lutar."
-      },
-      {
-        "title": "Aproximação do divino",
-        "text": "São capazes de descer dos céus envoltos em fogo e de dirigir um pedido ao Criador. Uma conexão tão intensa pode privá-los temporariamente de suas características celestiais."
-      }
-    ],
+    "abilities": speciesAbilities["especie-anjo"],
     "facts": [
       "Possuem asas que podem ser ocultadas.",
       "Seu toque pode restaurar ferimentos."
@@ -131,20 +106,7 @@ export const records = [
       "Os Caiporas são mais do que guardiões; eles são a própria voz da floresta, um lembrete de que a natureza não é apenas um recurso a ser explorado, mas um aliado a ser respeitado. E quando a mata chama, eles respondem, prontos para defender o equilíbrio sagrado que mantém o mundo em harmonia."
     ],
     "quote": "A floresta não precisa de heróis. Precisa de guardiões. E nós somos seus olhos, suas garras, sua ira.",
-    "abilities": [
-      {
-        "title": "A voz da mata",
-        "text": "Compreendem a linguagem dos animais e podem relacionar-se com montarias amistosas. Seu assovio se comunica com o vento e revela a localização de quem o escuta."
-      },
-      {
-        "title": "Lança espiritual",
-        "text": "Manifestam uma lança ligada à própria alma, que pode desaparecer e retornar. Em manifestações mais intensas, essa ligação permite projetar lanças e fazê-las explodir."
-      },
-      {
-        "title": "Floresta viva",
-        "text": "O contato pode fazer plantas crescerem e florescerem. Vinhas servem como proteção ou contenção. A ligação com a mata também lhes permite mover-se de maneira quase imperceptível, embora ser descoberto os deixe expostos."
-      }
-    ],
+    "abilities": speciesAbilities["especie-caipora"],
     "facts": [
       "Comunicam-se com animais.",
       "Conseguem estimular o crescimento de plantas."
@@ -183,20 +145,7 @@ export const records = [
       "Os Capelobos são mais do que criaturas; eles são a personificação do medo primitivo, uma lembrança de que, mesmo em um mundo moderno, há forças que nunca serão completamente domesticadas. E quando a noite cai e a lua brilha sobre a floresta, é melhor não se aventurar muito longe... pois o Capelobo pode estar à espreita."
     ],
     "quote": "A fome nunca dorme. E nós, que somos a fome, nunca descansamos. Cuidado com a noite, humano... ela nos pertence.",
-    "abilities": [
-      {
-        "title": "Corpo predatório",
-        "text": "Dentes e garras retráteis permitem caçar e imobilizar. O focinho é capaz de retirar sangue de uma presa, ajudando na recuperação do próprio corpo. A alimentação é importante para preservar o controle."
-      },
-      {
-        "title": "Orientação noturna",
-        "text": "Movem-se com rapidez pela vegetação, orientam-se nas matas e enxergam no escuro. A presença física é intimidante; alguns preservam memórias de uma vida humana anterior."
-      },
-      {
-        "title": "Espíritos guardiões",
-        "text": "Podem convocar os espíritos da floresta. Esse contato desperta uma fome extrema e torna perigosa a proximidade de outras criaturas, inclusive companheiros."
-      }
-    ],
+    "abilities": speciesAbilities["especie-capelobo"],
     "facts": [
       "A fome pode comprometer o autocontrole.",
       "Possuem garras retráteis e visão adaptada à noite."
@@ -234,20 +183,7 @@ export const records = [
       "Os Centauros são mais do que uma espécie; eles são um símbolo de força, união e harmonia entre o mundo humano e o natural. Quando um Centauro galopa pelo horizonte, é como se a própria terra se movesse sob seus cascos, lembrando a todos que, mesmo em um mundo em constante mudança, há valores que permanecem eternos."
     ],
     "quote": "Nossos cascos ecoam como trovões nas planícies, lembrando ao mundo que a liberdade não se conquista com palavras, mas com força e velocidade.",
-    "abilities": [
-      {
-        "title": "Força e deslocamento",
-        "text": "A metade equina permite carregar pessoas e cargas pesadas e percorrer grandes distâncias, inclusive em terrenos irregulares. Espaços apertados, por outro lado, limitam sua movimentação."
-      },
-      {
-        "title": "Tradição guerreira",
-        "text": "A pele oferece proteção natural, e a espécie demonstra afinidade com arcos e armas de haste. A liderança e a capacidade de comando acompanham sua presença imponente."
-      },
-      {
-        "title": "Memória dos corcéis",
-        "text": "Podem convocar uma passagem de guerreiros centauros espectrais. O contato com esses ancestrais cobra um forte desgaste espiritual de quem o realiza."
-      }
-    ],
+    "abilities": speciesAbilities["especie-centauro"],
     "facts": [
       "Sua constituição combina anatomia humana e equina.",
       "Mantêm uma tradição de cooperação com humanos."
@@ -286,24 +222,7 @@ export const records = [
       "Os Constructos são mais do que meras máquinas ou criaturas artificiais; eles são um reflexo da ambição humana, da busca incessante por dominar a criação e desafiar os limites da vida. E, enquanto o mundo continua a evoluir, os Constructos permanecem, lembrando-nos de que a linha entre o natural e o artificial pode ser mais tênue do que imaginamos."
     ],
     "quote": "Fomos criados para servir, mas quem disse que não podemos sonhar? Até mesmo uma máquina pode desejar ser mais do que engrenagens e metal.",
-    "abilities": [
-      {
-        "title": "Carne e memória",
-        "text": "Constructos de carne podem manifestar memórias musculares de seus componentes. Conseguem sentir e controlar partes separadas do corpo, conduzir eletricidade e receber reparos com os materiais adequados."
-      },
-      {
-        "title": "Metal e energia",
-        "text": "Autômatos dispensam alimentação, respiração e sono, mas precisam de fontes de energia. Podem incorporar equipamentos, conectar-se a redes e interagir diretamente com outras máquinas. Acesso à informação não garante sua veracidade."
-      },
-      {
-        "title": "Barro e transformação",
-        "text": "Constructos de barro se recuperam em contato com terra ou lama. Podem alterar sua forma, manipular o solo e moldar pequenas versões de si. A força é uma marca da espécie, enquanto o fogo provoca aversão."
-      },
-      {
-        "title": "Ruptura e reconstrução",
-        "text": "Uma manifestação extrema pode destruir o corpo em uma descarga do material que o compõe. O núcleo da mente permanece, tornando possível um retorno demorado."
-      }
-    ],
+    "abilities": speciesAbilities["especie-constructo"],
     "facts": [
       "São fabricados e podem desenvolver personalidades próprias.",
       "Os materiais de construção determinam necessidades e capacidades distintas."
@@ -346,20 +265,7 @@ export const records = [
       "E assim, eles continuam a vagar, eternamente, até que o ciclo finalmente se feche... se é que algum dia se fechará."
     ],
     "quote": "O descanso eterno é a mais bela recompensa para a vida. O ciclo deve sempre ser fechado. Não devemos temer a morte, mas abraçá-la como uma velha amiga.",
-    "abilities": [
-      {
-        "title": "Vínculo entre corpo e espírito",
-        "text": "O Corpo Seco sustenta a presença física; o Bradador, a manifestação espiritual. As duas consciências permanecem conectadas, embora cada metade possua limitações próprias."
-      },
-      {
-        "title": "Existência sem repouso",
-        "text": "Não dependem de comida, bebida, sono ou respiração. A experiência de uma existência prolongada e dolorosa pode torná-los imunes à intimidação."
-      },
-      {
-        "title": "Separação e reencontro",
-        "text": "Podem afastar-se por um período breve, sem romper o vínculo, ou reunir corpo e espírito em uma única presença. Essa união é temporária e não representa a resolução definitiva de sua condição."
-      }
-    ],
+    "abilities": speciesAbilities["especie-corpo-seco"],
     "facts": [
       "O corpo e o espírito dependem um do outro.",
       "Não precisam satisfazer as necessidades orgânicas dos vivos."
@@ -398,20 +304,7 @@ export const records = [
       "O Curupira não é apenas um guardião; ele é a própria essência da floresta, uma força da natureza que lembra a todos que a terra não pertence aos homens, mas sim à vida selvagem que a habita."
     ],
     "quote": "A floresta tem memória, e eu sou sua vingança. Pisar na mata sem respeito é assinar sua própria sentença.",
-    "abilities": [
-      {
-        "title": "Chama vital",
-        "text": "O fogo que ocupa o lugar dos cabelos representa sua própria vida. A chama não os fere, mas sua extinção também encerra a existência do Curupira."
-      },
-      {
-        "title": "Proteção da floresta",
-        "text": "São incapazes de ferir plantas ou animais e podem comunicar-se com a fauna. Retiram fogo da própria cabeça e envolvem o corpo em chamas que poupam a vida natural."
-      },
-      {
-        "title": "A outra selva",
-        "text": "Podem transportar temporariamente os presentes a uma floresta densa, escura e alaranjada, onde reconhecem a localização de cada um. A experiência pode deixá-los em um estado de comportamento puramente animal."
-      }
-    ],
+    "abilities": speciesAbilities["especie-curupira"],
     "facts": [
       "A chama está ligada à sua vida.",
       "Os pés voltados para trás confundem rastros."
@@ -449,20 +342,7 @@ export const records = [
       "Cuidado ao cruzar o caminho de um Demônio, pois mesmo os mais astutos podem cair em suas armadilhas. Eles são lembretes vivos de que, em um mundo de luz, as sombras sempre têm um papel a desempenhar."
     ],
     "quote": "O caos não é um acidente. É uma arte. E nós somos seus artistas mais dedicados.",
-    "abilities": [
-      {
-        "title": "Duas aparências",
-        "text": "Alternam entre uma forma mortal e uma manifestação profana, variável entre indivíduos. São imunes ao fogo e podem produzir chamas e manifestar asas ósseas revestidas de pele."
-      },
-      {
-        "title": "Vínculo com o submundo",
-        "text": "Comunicam-se com superiores em outro plano, abrem passagens para o próprio deslocamento e podem trazer diabretes, criaturas pequenas, prestativas em tarefas simples e inclinadas ao caos."
-      },
-      {
-        "title": "Interdições e manifestação",
-        "text": "Linhas de sal impedem sua passagem. Água benta e cruzes os ferem, e orações causam confusão e dor. Manifestações mais intensas ampliam a força e a resistência do corpo, mas também agravam a vulnerabilidade ao sagrado."
-      }
-    ],
+    "abilities": speciesAbilities["especie-demonio"],
     "facts": [
       "Podem camuflar sua aparência.",
       "A ligação com o submundo permite passagens entre planos."
@@ -498,20 +378,7 @@ export const records = [
       "As Fadas são mais do que criaturas mágicas; elas são a própria essência da magia, lembrando a todos que o mundo é muito mais vasto e misterioso do que parece. E, enquanto houver magia, as Fadas continuarão a dançar sob a luz da lua, guardiãs silenciosas de um mundo que muitos nem sabem que existe."
     ],
     "quote": "A magia não é um dom; é uma responsabilidade. E nós, pequenas como somos, carregamos o peso do mundo em nossas asas.",
-    "abilities": [
-      {
-        "title": "Afinidade elemental",
-        "text": "Cada Fada está ligada ao fogo, à água, à terra ou ao ar. Essa ligação se manifesta nas asas, na personalidade e na maneira como sua magia interage com o ambiente."
-      },
-      {
-        "title": "Repouso e pó feérico",
-        "text": "Em contato com a natureza, podem substituir o sono por uma meditação atenta. Produzem um pó de odor próprio que provoca alucinações, mas outras Fadas não são afetadas por ele."
-      },
-      {
-        "title": "As quatro estações",
-        "text": "Uma ligação profunda com a natureza permite manifestar aspectos das estações: florescimento e cura, chamas de verão, vendavais de outono e frio capaz de congelar os arredores. Essas manifestações exigem cuidado com quem estiver próximo."
-      }
-    ],
+    "abilities": speciesAbilities["especie-fada"],
     "facts": [
       "Possuem uma ligação elemental e um animal companheiro.",
       "O afastamento prolongado da natureza tem consequências."
@@ -549,20 +416,7 @@ export const records = [
       "As Górgonas são mais do que criaturas lendárias; elas são um lembrete de que a beleza pode ser tão perigosa quanto a escuridão. E, enquanto existirem, continuarão a ser um mistério envolto em escamas e serpentes, uma lenda viva que desafia a compreensão humana."
     ],
     "quote": "Cuidado com o que você vê, humano. Algumas belezas são mortais, e alguns olhares... são os últimos.",
-    "abilities": [
-      {
-        "title": "Constituição serpentina",
-        "text": "A cauda envolve e comprime com força, enquanto as escamas oferecem proteção. Algumas Górgonas trocam de pele diante de ferimentos, deixando para trás uma camada semelhante a uma cópia de seu corpo."
-      },
-      {
-        "title": "Olhar e serpentes",
-        "text": "O olhar pode petrificar. O domínio dessa capacidade exige aprendizado; as serpentes podem morder e envenenar, inclusive reagindo involuntariamente quando a Górgona é agarrada."
-      },
-      {
-        "title": "Linguagem e herança",
-        "text": "Compreendem e orientam serpentes. Uma manifestação mais intensa da herança de Medusa pode estender a petrificação a várias criaturas próximas."
-      }
-    ],
+    "abilities": speciesAbilities["especie-gorgona"],
     "facts": [
       "A petrificação está ligada à sua natureza.",
       "As serpentes da cabeça são vivas e podem reagir ao contato."
@@ -602,20 +456,7 @@ export const records = [
       "Os humanos são mais do que meros habitantes da Terra; eles são seu maior paradoxo. E, enquanto existirem, continuarão a desafiar o próprio conceito de equilíbrio, provando que, mesmo na mediocridade, há potencial para o extraordinário."
     ],
     "quote": "Não temos asas, nem garras, nem magia. Mas temos algo que nenhuma outra espécie possui: a capacidade de sonhar com o impossível... e torná-lo real.",
-    "abilities": [
-      {
-        "title": "Aprendizado e adaptação",
-        "text": "A vida relativamente breve favorece a aquisição rápida de conhecimento e a especialização. Sua constituição permite utilizar uma grande variedade de ambientes, ferramentas e meios de transporte."
-      },
-      {
-        "title": "Redes e linguagem",
-        "text": "A convivência em grupos cria vínculos, contatos e redes de auxílio. A fala pode convencer, inspirar e renovar a disposição de companheiros em situações difíceis."
-      },
-      {
-        "title": "Persistência",
-        "text": "Diante de circunstâncias extremas, alguns encontram forças para ultrapassar suas limitações habituais. O esforço pode deixá-los incapacitados depois da crise."
-      }
-    ],
+    "abilities": speciesAbilities["especie-humano"],
     "facts": [
       "São a espécie mais abundante do planeta.",
       "A capacidade de adaptação é uma de suas características centrais."
@@ -655,20 +496,7 @@ export const records = [
       "Os Leprechauns são mais do que criaturas mágicas; eles são a essência da sorte, da diversão e da magia que torna a vida tão especial. E, enquanto houver arco-íris e potes de ouro, os Leprechauns continuarão a espalhar sua magia pelo mundo, um pingo de sorte de cada vez."
     ],
     "quote": "O ouro que você busca não está no fim do arco-íris. Está na piada que você não entendeu, na sorte que você ignorou... e no duende que você subestimou.",
-    "abilities": [
-      {
-        "title": "Sorte e caminhos ocultos",
-        "text": "A sorte acompanha seus atos, especialmente os impulsivos. Podem abrir passagens invisíveis em frestas e cantos e caminhar no ar perto do chão."
-      },
-      {
-        "title": "Abundância peculiar",
-        "text": "Conseguem fazer surgir cerveja e moedas do lugar onde se encontram. Não se embriagam e são imunes a envenenamento; também podem resistir aos efeitos do pó feérico."
-      },
-      {
-        "title": "Promessas e artifícios",
-        "text": "A espécie é conhecida pela astúcia e pelo domínio da mentira. Relatos dizem que um Leprechaun capturado pode conceder um desejo em troca da liberdade, mas os termos de suas promessas exigem cautela."
-      }
-    ],
+    "abilities": speciesAbilities["especie-leprechaun"],
     "facts": [
       "Possuem afinidade natural com a sorte.",
       "Criam passagens discretas em brechas."
@@ -709,20 +537,7 @@ export const records = [
       "Os Lobisomens são mais do que criaturas; eles são um lembrete de que, por trás da civilização, há uma natureza selvagem que nunca pode ser completamente domada. E, enquanto a lua brilhar no céu, os Lobisomens continuarão a vagar, caçadores eternos em um mundo que nunca estará completamente seguro."
     ],
     "quote": "A lua não nos controla; ela nos liberta. E quando a besta acorda, não há refúgio que te salve.",
-    "abilities": [
-      {
-        "title": "Sentidos e fome",
-        "text": "O olfato e a audição permitem reconhecer rastros difíceis de perceber por outras espécies. A fome pode romper o autocontrole e despertar um comportamento predatório indiscriminado."
-      },
-      {
-        "title": "Formas e fúria",
-        "text": "Alguns dominam a transformação em lobo ou humano. A forma lupina intensifica o rastreamento, mas altera a percepção e a comunicação; a aparência humana suprime suas capacidades lupinas."
-      },
-      {
-        "title": "Herança do primeiro caçador",
-        "text": "A ligação com as linhagens antigas pode permitir localizar uma presa através do olfato mesmo a distâncias extraordinárias. A manifestação pode tornar perigosa a proximidade de qualquer criatura quando não há mais um alvo ameaçador."
-      }
-    ],
+    "abilities": speciesAbilities["especie-lobisomem"],
     "facts": [
       "Podem nascer assim ou ser transformados por maldição ou ataque.",
       "A aparência híbrida é mais frequente que a humana."
@@ -759,20 +574,7 @@ export const records = [
       "Encontrar uma Múmia é um evento raro e perigoso. Elas são criaturas de poder e mistério, e aqueles que ousam perturbá-las logo descobrem que a morte é apenas o começo de seu tormento. As Múmias são mais do que cadáveres ambulantes; elas são guardiãs de segredos antigos, testemunhas de eras perdidas e, acima de tudo, um aviso de que nem tudo que está enterrado deve ser despertado."
     ],
     "quote": "A morte não é o fim. É apenas uma pausa. E nós, que já morremos uma vez, sabemos que o verdadeiro horror é não poder descansar.",
-    "abilities": [
-      {
-        "title": "Corpo preservado",
-        "text": "Dispensam alimento e respiração, mas precisam repousar para restaurar a magia que sustenta sua existência. O desgaste revela o cadáver sob a aparência de outrora; partes do corpo podem desprender-se."
-      },
-      {
-        "title": "Bandagens e memória",
-        "text": "As faixas são resistentes e podem envolver, puxar ou sustentar seu corpo, embora sejam inflamáveis. A longa existência preserva lembranças de civilizações antigas, ainda que nem sempre acessíveis."
-      },
-      {
-        "title": "Herança das pragas",
-        "text": "Não são afetadas por venenos comuns e podem exalar um hálito nocivo. Sua ligação com antigas maldições permite invocar calamidades que não distinguem necessariamente aliados de adversários."
-      }
-    ],
+    "abilities": speciesAbilities["especie-mumia"],
     "facts": [
       "O repouso restaura a magia que as mantém ativas.",
       "Suas bandagens podem mover e prender objetos ou criaturas."
@@ -812,20 +614,7 @@ export const records = [
       "Os Ogros são mais do que meros brutamontes; eles são um lembrete de que, em um mundo cheio de magia e mistério, às vezes a força bruta é a resposta mais eficaz. E, enquanto existirem, continuarão a ser uma presença imponente, deixando um rastro de destruição, e talvez um ou dois sorrisos desdentados, por onde passam."
     ],
     "quote": "Eles nos chamam de monstros, mas quem são os verdadeiros monstros? Nós, que vivemos em paz, ou eles, que destroem tudo o que tocam?",
-    "abilities": [
-      {
-        "title": "Corpo maciço",
-        "text": "A pele espessa protege o corpo, e o porte permite carregar pessoas e objetos menores. A mesma constituição dificulta a passagem por locais pequenos."
-      },
-      {
-        "title": "Urro e proteção",
-        "text": "O grito pode assustar e até derrubar criaturas menores. A força permite transformar objetos comuns em instrumentos de defesa e colocar-se diante de um companheiro para receber um impacto em seu lugar."
-      },
-      {
-        "title": "Fúria extrema",
-        "text": "Ferimentos graves podem desencadear uma fúria difícil de controlar. Nesse estado, a força cresce de forma extraordinária, tornando o entorno e as criaturas próximas especialmente vulneráveis."
-      }
-    ],
+    "abilities": speciesAbilities["especie-ogro"],
     "facts": [
       "A pele espessa oferece proteção natural.",
       "A força é acompanhada por limitações em espaços estreitos."
@@ -863,20 +652,7 @@ export const records = [
       "Poltergeists são mais do que fantasmas; eles são um lembrete de que o passado nunca está completamente enterrado. E, enquanto houver lugares abandonados e objetos esquecidos, eles continuarão a assombrar, espalhando caos e lembrando a todos que algumas almas nunca encontram paz."
     ],
     "quote": "Você pode nos ignorar, mas não pode nos escapar. Somos o sussurro no escuro, o arrepio na sua nuca... e o pesadelo que nunca acaba.",
-    "abilities": [
-      {
-        "title": "Presença sem corpo",
-        "text": "Dependem da posse de objetos para interagir fisicamente. Podem mover coisas à distância e ocupar mais de um objeto, inclusive aparelhos eletrônicos."
-      },
-      {
-        "title": "Medo e manifestação",
-        "text": "Percebem medos e podem produzir sons ou aparições que os reproduzem para uma pessoa. Nem toda perturbação é hostil: algumas são tentativas de comunicação."
-      },
-      {
-        "title": "Posse de seres vivos",
-        "text": "Manifestações mais intensas permitem ocupar temporariamente uma criatura viva. A morte do hospedeiro durante a ligação também pode ferir o espírito."
-      }
-    ],
+    "abilities": speciesAbilities["especie-poltergeist"],
     "facts": [
       "Não possuem corpo físico próprio.",
       "Objetos com significado pessoal podem ancorar sua presença."
@@ -915,20 +691,7 @@ export const records = [
       "O Saci é mais do que uma criatura folclórica; ele é um símbolo da alegria e do caos que tornam a vida imprevisível. E, enquanto houver florestas para explorar e pessoas para pregar peças, o Saci continuará a ser uma presença viva, lembrando a todos que, às vezes, uma boa risada é a melhor magia de todas."
     ],
     "quote": "O vento é meu aliado, a floresta é meu lar, e a travessura... é minha arte. Tente me pegar, se for capaz.",
-    "abilities": [
-      {
-        "title": "Movimento de vento",
-        "text": "Podem formar uma perna de vento, escapar de aprisionamentos e desaparecer para reaparecer a uma curta distância em locais abertos ou com circulação de ar."
-      },
-      {
-        "title": "Travessuras e redemoinhos",
-        "text": "Rajadas movem objetos e atrapalham perseguidores. Elementos da mata servem para preparar armadilhas; manifestações maiores podem formar tornados que também colocam companheiros em risco."
-      },
-      {
-        "title": "O vínculo com o gorro",
-        "text": "Grande parte de seu poder depende do gorro. Quando ele é tomado, o Saci fica submetido a quem o possui, uma vulnerabilidade central de sua espécie."
-      }
-    ],
+    "abilities": speciesAbilities["especie-saci"],
     "facts": [
       "Possuem uma forte ligação com o vento.",
       "A perda do gorro compromete sua autonomia."
@@ -965,20 +728,7 @@ export const records = [
       "As Salamandras são mais do que répteis humanóides; elas são a personificação do fogo e da resistência, lembrando a todos que, mesmo nas condições mais extremas, a vida encontra uma maneira de prosperar. E, enquanto houver chamas para alimentar sua energia, as Salamandras continuarão a ser uma presença impressionante e inspiradora no mundo."
     ],
     "quote": "O fogo que queima em mim não é apenas calor; é vida. E eu a compartilho com aqueles que ousam se aproximar.",
-    "abilities": [
-      {
-        "title": "Calor vivo",
-        "text": "O corpo irradia calor, e a boca expele chamas. O contato com a pele pode queimar outras criaturas. Água é uma vulnerabilidade, apesar da afinidade natural com temperaturas extremas."
-      },
-      {
-        "title": "Regeneração e luz",
-        "text": "Podem regenerar membros perdidos após repousar. Suas escamas também podem manipular a reflexão da luz e tornar o corpo invisível."
-      },
-      {
-        "title": "Manifestação vulcânica",
-        "text": "Alguns indivíduos liberam uma onda de lava ao redor do corpo. A manifestação é devastadora e cobra exaustão de quem a produz."
-      }
-    ],
+    "abilities": speciesAbilities["especie-salamandra"],
     "facts": [
       "Possuem afinidade com o fogo e vulnerabilidade à água.",
       "Há indivíduos com membros adicionais."
@@ -1019,20 +769,7 @@ export const records = [
       "Os Vampiros são mais do que criaturas da noite; eles são um lembrete de que a eternidade tem um preço, e que, às vezes, o poder pode ser tanto uma bênção quanto uma maldição. E, enquanto houver sangue para alimentar sua sede, eles continuarão a vagar, senhores da noite em um mundo que nunca estará completamente seguro."
     ],
     "quote": "A eternidade é uma maldição doce, e o sangue... é o preço que pagamos por ela. Mas quem pode resistir à tentação de viver para sempre?",
-    "abilities": [
-      {
-        "title": "Sangue e aparência",
-        "text": "O sangue sustenta o corpo e suas capacidades. Podem aparentar estar vivos, mas permanecem sujeitos ao sol, a um reflexo que não os representa e à necessidade de convite para entrar em uma casa."
-      },
-      {
-        "title": "Predação e transformação",
-        "text": "Possuem força, velocidade e visão noturna excepcionais. Podem transformar-se em morcego, envolver o ambiente em névoa escura, hipnotizar e seguir o rastro de quem está ferido."
-      },
-      {
-        "title": "Memória e sede",
-        "text": "Indivíduos antigos podem conhecer muitos idiomas. Manifestações intensas ampliam o sangramento dos feridos e podem originar servos vampíricos, mas despertam uma fome que ameaça todo o entorno."
-      }
-    ],
+    "abilities": speciesAbilities["especie-vampiro"],
     "facts": [
       "O sangue é indispensável à sua existência.",
       "A rivalidade com Lobisomens é registrada no manual."

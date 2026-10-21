@@ -35,7 +35,7 @@ O conteúdo de referência está em **`src/data.js`** e os cadastros operacionai
 | `status`, `date` | Situação e data ISO `AAAA-MM-DD` |
 | `author`, `department` | Metadados documentais |
 | `report` | Array de parágrafos, em texto simples |
-| `abilities` | Opcional: array de `{ title, text }` com capacidades narrativas |
+| `abilities` | Opcional: array de `{ title, text, stage }` com capacidades narrativas; `details` guarda desdobramentos e `variant`, a composição |
 | `facts`, `hypotheses`, `unknown` | Arrays separados de fatos, hipóteses e lacunas |
 | `people`, `locations`, `evidence` | Dados opcionais do caso |
 | `timeline` | Opcional: array de `{ date, text }` |
@@ -124,3 +124,5 @@ Ao abrir ou recarregar o site, a vinheta exibe **Validando credenciais** em uma 
 O comportamento e os tempos ficam em `src/entry-screen.js`; o visual usa as classes `.entry-screen` em `src/style.css`.
 
 Os títulos das páginas de espécies usam as mesmas fontes do documento de referência. As associações e o tamanho dos títulos ficam em `src/species-typography.css`; as fontes são servidas junto com o site.
+
+As habilidades das 20 espécies ficam em `src/species-abilities.js`, com os nomes do documento e descrições narrativas. `stage` distingue `initial` (iniciais), `acquired` (adquiridas) e `apex` (ápice da espécie). Os Constructos mantêm as variantes Carne, Metal e Barro. Os desdobramentos de uma habilidade ficam em `details`, como as quatro estações das Fadas e as manifestações de Linha de sangue dos Vampiros.

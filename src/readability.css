@@ -131,3 +131,15 @@ input::placeholder { color: var(--muted); opacity: 1; }
   .dossier-info > .dossier-situation-highlight { padding: 16px; }
   .dossier-info .dossier-situation-highlight .status { font-size: 25px; }
 }
+
+/* No celular, o retrato permanece acima dos dados de identificação. */
+@media (max-width: 1000px) {
+  .dossier-with-portrait .dossier-aside .species-figure {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: 260px;
+    justify-self: center;
+    margin: 0 auto 10px;
+  }
+  .dossier-with-portrait .dossier-aside .species-image-button > img { max-height: 390px; }
+}

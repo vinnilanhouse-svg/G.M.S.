@@ -1,3 +1,4 @@
+import { agentImages } from './agent-images.js';
 // Históricos fornecidos pelo autor da campanha; códigos e metadados são editoriais.
 // Não vincular estes agentes a missões demonstrativas como se fossem fatos da lore.
 export const agentRecords = [
@@ -12,6 +13,7 @@ export const agentRecords = [
     "access": "Restrito",
     "status": "Cadastro registrado",
     "id": "agente-miguel",
+    "image": agentImages["agente-miguel"],
     "code": "AGT-001",
     "title": "Miguel",
     "category": "Liderança",
@@ -64,6 +66,7 @@ export const agentRecords = [
     "access": "Restrito",
     "status": "Desaparecido",
     "id": "agente-patrick",
+    "image": agentImages["agente-patrick"],
     "code": "AGT-002",
     "title": "Patrick",
     "category": "Registro de desaparecidos",
@@ -122,6 +125,7 @@ export const agentRecords = [
     "access": "Restrito",
     "status": "Cadastro registrado",
     "id": "agente-babdin",
+    "image": agentImages["agente-babdin"],
     "code": "AGT-003",
     "title": "Bab’Din",
     "category": "Registro operacional",
@@ -185,6 +189,7 @@ export const agentRecords = [
     "access": "Restrito",
     "status": "Cadastro registrado",
     "id": "agente-ze-teixeira",
+    "image": agentImages["agente-ze-teixeira"],
     "code": "AGT-004",
     "title": "Zé Teixeira",
     "category": "Equipe de campo",
@@ -241,6 +246,7 @@ export const agentRecords = [
     "access": "Restrito",
     "status": "Cadastro registrado",
     "id": "agente-belias",
+    "image": agentImages["agente-belias"],
     "code": "AGT-005",
     "title": "Belias",
     "category": "Diretoria",
@@ -297,6 +303,7 @@ export const agentRecords = [
     "access": "Restrito",
     "status": "Cadastro registrado",
     "id": "agente-suzan-popov",
+    "image": agentImages["agente-suzan-popov"],
     "code": "AGT-006",
     "title": "Suzan Popov",
     "category": "Pesquisa e Alquimia",
@@ -351,6 +358,7 @@ export const agentRecords = [
     "access": "Restrito",
     "status": "Cadastro registrado",
     "id": "agente-zaratha-khimer-atros",
+    "image": agentImages["agente-zaratha-khimer-atros"],
     "code": "AGT-007",
     "title": "Zaratha Khimer Atros",
     "category": "Comando de agentes",

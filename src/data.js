@@ -869,91 +869,10 @@ export const records = [
       "Os nomes anteriores e as datas exatas de cada reorganização não são especificados."
     ],
     "related": [
-      "doc-convivencia",
       "especie-humano",
       "especie-gorgona"
     ],
     "sourceSection": "A G.M.S."
-  },
-  {
-    "kind": "documento",
-    "status": "Registrado",
-    "date": "2026-10-21",
-    "department": "Documentação e Memória",
-    "author": "Secretaria de Registro · adaptação editorial",
-    "source": true,
-    "sourceUrl": "https://docs.google.com/document/d/1TE0Lkf15QSkwPb__VTUvIX-rXlIBIaQSQPhWGbyStgQ/edit",
-    "id": "doc-convivencia",
-    "code": "DOC-001",
-    "title": "Mandato de convivência",
-    "category": "Memorandos",
-    "access": "Público",
-    "summary": "Síntese do mandato institucional: preservar a harmonia sem transformar a culpa individual em perseguição coletiva.",
-    "report": [
-      "A Global Monster Security investiga crimes cometidos por indivíduos de diferentes espécies, protege pessoas em risco e atua para que a violência não se transforme em perseguição contra comunidades inteiras.",
-      "A composição da agência reúne experiências e capacidades de diversas origens. Compreender as pessoas envolvidas e as particularidades de cada espécie é parte essencial do trabalho.",
-      "A cooperação com a polícia e outras autoridades locais inclui troca de informações, investigações conjuntas e operações coordenadas."
-    ],
-    "note": "Síntese documental da seção “A G.M.S.”. A forma de memorando e a classificação de circulação são editoriais.",
-    "related": [
-      "org-gms",
-      "especie-gorgona",
-      "especie-humano"
-    ],
-    "sourceSection": "A G.M.S."
-  },
-  {
-    "kind": "documento",
-    "status": "Registrado",
-    "date": "2026-10-21",
-    "department": "Documentação e Memória",
-    "author": "Secretaria de Registro · adaptação editorial",
-    "source": true,
-    "sourceUrl": "https://docs.google.com/document/d/1TE0Lkf15QSkwPb__VTUvIX-rXlIBIaQSQPhWGbyStgQ/edit",
-    "id": "doc-feerico",
-    "code": "DOC-002",
-    "title": "Notas sobre a natureza feérica",
-    "category": "Relatórios de referência",
-    "access": "Restrito",
-    "summary": "Registro descritivo das relações entre Fadas, ambiente natural e afinidades elementais.",
-    "report": [
-      "Fadas são seres de pura magia, ligados individualmente a um dos elementos: fogo, água, terra ou ar. Cada uma mantém um vínculo com um animal companheiro.",
-      "Em contato com a natureza, podem repousar em meditação sem perder a atenção ao entorno. O afastamento prolongado de ambientes naturais cobra consequências.",
-      "O pó produzido por essas criaturas pode provocar alucinações. A própria espécie não é afetada por essa substância. O registro também alerta para a perseguição de Fadas por quem deseja explorar sua magia."
-    ],
-    "note": "Adaptação narrativa da seção sobre Fadas. Não corresponde a um relatório de missão ocorrido.",
-    "related": [
-      "especie-fada",
-      "especie-leprechaun",
-      "org-gms"
-    ],
-    "sourceSection": "2.10. Fada;"
-  },
-  {
-    "kind": "documento",
-    "status": "Registrado",
-    "date": "2026-10-21",
-    "department": "Documentação e Memória",
-    "author": "Secretaria de Registro · adaptação editorial",
-    "source": true,
-    "sourceUrl": "https://docs.google.com/document/d/1TE0Lkf15QSkwPb__VTUvIX-rXlIBIaQSQPhWGbyStgQ/edit",
-    "id": "doc-censurado",
-    "code": "DOC-003",
-    "title": "Circulação do manual de referência",
-    "category": "Memorandos",
-    "access": "Censurado",
-    "summary": "Extrato da identificação e da classificação de confidencialidade do documento de referência.",
-    "report": [
-      "RELATÓRIO: P5.I1.001.0. Classificação documental: Prioridade 5, Importância 1.",
-      "O manual apresenta a organização responsável por preservar a paz entre seres humanos e criaturas sobrenaturais. Seu conteúdo é destinado aos membros autorizados da G.M.S.",
-      "Autorização: ████████████████. Identificações de revisão: ████████████."
-    ],
-    "note": "Cópia com censura editorial para demonstrar a apresentação de documentos. A fonte integral permanece no manual de referência.",
-    "related": [
-      "org-gms",
-      "doc-convivencia"
-    ],
-    "sourceSection": "Identificação do relatório P5.I1.001.0"
   },
   {
     "kind": "investigacao",
@@ -1001,8 +920,7 @@ export const records = [
     ],
     "related": [
       "especie-abissais",
-      "org-gms",
-      "doc-convivencia"
+      "org-gms"
     ]
   },
   {
@@ -1034,10 +952,10 @@ export const records = [
     "summary": "Exemplo não canônico de organização de referências sobre a proteção de criaturas mágicas.",
     "report": [
       "EXEMPLO NÃO CANÔNICO. A fonte menciona a perseguição de Fadas por criminosos interessados em sua magia. Este registro apenas demonstra a estrutura de um caso associado a esse tema.",
-      "Nenhuma operação, apreensão ou ocorrência concreta é afirmada neste dossiê. Consulte os documentos relacionados para acessar o conteúdo narrativo da fonte."
+      "Nenhuma operação, apreensão ou ocorrência concreta é afirmada neste dossiê. Consulte o verbete das Fadas nos arquivos relacionados para acessar o conteúdo narrativo da fonte."
     ],
     "evidence": [
-      "DOC-002 · Referência narrativa sobre Fadas."
+      "Nenhuma evidência oficial incorporada."
     ],
     "timeline": [
       {
@@ -1047,7 +965,6 @@ export const records = [
     ],
     "related": [
       "especie-fada",
-      "doc-feerico",
       "org-gms"
     ]
   },
@@ -1092,7 +1009,6 @@ export const records = [
       }
     ],
     "related": [
-      "doc-censurado",
       "org-gms"
     ]
   },

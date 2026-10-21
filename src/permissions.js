@@ -60,7 +60,7 @@ export const reservedRecords = [
       'EXEMPLO NÃO CANÔNICO. Este anexo demonstra a liberação de conteúdo adicional por credencial. Não descreve um acontecimento da história oficial.',
       'A autorização deste terminal permite consultar os documentos desta coleção. Informações sobre operações, pessoas e locais aguardam incorporação ao registro.',
     ],
-    related: ['doc-reservado-demo-002', 'doc-convivencia', 'org-gms'],
+    related: ['doc-reservado-demo-002', 'org-gms'],
   },
   {
     ...demo,
@@ -72,7 +72,7 @@ export const reservedRecords = [
       'EXEMPLO NÃO CANÔNICO. Este registro apresenta um segundo documento da coleção reservada.',
       'Destinatário: ████████████. Referência de encaminhamento: ████████. Nenhuma identidade oficial foi atribuída a este modelo.',
     ],
-    related: ['doc-reservado-demo-001', 'doc-censurado'],
+    related: ['doc-reservado-demo-001'],
   },
   {
     ...demo,

@@ -43,7 +43,7 @@ export const operationalRecords = [
       'Foram reunidas referências sobre os Abissais e sobre o mandato de convivência da GMS. Nenhuma diligência ou observação de campo real é afirmada neste modelo.',
       'Permanecem pendentes a identificação da equipe efetiva, a definição do local e a autorização da operação.',
     ],
-    related: ['missao-demo-001', 'especie-abissais', 'doc-convivencia'],
+    related: ['missao-demo-001', 'especie-abissais'],
   },
   {
     ...demo,

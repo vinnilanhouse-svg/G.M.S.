@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { records } from '../src/data.js';
-import { credentials, findCredential, readActiveCredentials, visibleRecords } from '../src/permissions.js';
+import { credentials, findCredential, readActiveCredentials, visibleRecords, listedRecords } from '../src/permissions.js';
 
 test('a validação aceita variações de caixa e espaços externos, mas não códigos parciais ou inválidos', () => {
   assert.equal(findCredential(' gms-arquivo ')?.id, 'arquivo-reservado');
@@ -37,7 +37,7 @@ test('o conteúdo adicional fica ausente do acervo até a credencial corresponde
 test('todo registro condicionado possui uma credencial válida e os destinos individuais existem', () => {
   for (const record of records.filter(record => record.requiredGrant)) {
     assert.ok(credentials.some(c => c.id === record.requiredGrant), record.id);
-    assert.equal(record.demo, true);
+    if(record.demo)assert.match(record.report[0],/NÃO CANÔNICO/);
   }
   for (const credential of credentials) {
     assert.ok(records.some(record => record.requiredGrant === credential.id));
@@ -46,4 +46,22 @@ test('todo registro condicionado possui uma credencial válida e os destinos ind
       assert.equal(target?.requiredGrant, credential.id);
     }
   }
+});
+
+test('Nathalism0 permite a consulta de Morrow sem publicar a ficha nem guardar sua autorização',()=>{
+ const credential=findCredential('Nathalism0');
+ assert.equal(credential.id,'morrow-noone');
+ assert.equal(credential.entryOnly,true);
+ assert.equal(findCredential(' nathalism0 ')?.id,credential.id);
+ for(const code of ['Nathalismo','NathalismO','Nathalism','Nathalism01'])assert.equal(findCredential(code),undefined);
+ const target=records.find(r=>r.id==='agente-morrow-noone');
+ assert.equal(target.title,'Morrow Noone');
+ assert.equal(target.requiredGrant,credential.id);
+ assert.equal(target.unlisted,true);
+ assert.ok(!visibleRecords(records,new Set()).some(r=>r.id===target.id));
+ const withAccess=visibleRecords(records,new Set([credential.id]));
+ assert.ok(withAccess.some(r=>r.id===target.id));
+ assert.deepEqual(listedRecords(withAccess),listedRecords(visibleRecords(records,new Set())));
+ assert.ok(!readActiveCredentials(JSON.stringify([credential.id])).has(credential.id));
+ assert.deepEqual([...readActiveCredentials(JSON.stringify(['arquivo-reservado',credential.id]))],['arquivo-reservado']);
 });

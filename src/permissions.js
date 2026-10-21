@@ -15,6 +15,12 @@ export const credentials = [
     description: 'Consulta a um dossiê complementar em Alvos de interesse.',
     route: '#/arquivo/alvo-reservado-demo',
   },
+  {
+    id: 'morrow-noone', code: 'Nathalism0',
+    label: 'Ficha reservada de agente',
+    description: 'Consulta individual a um cadastro fora do diretório institucional.',
+    route: '#/arquivo/agente-morrow-noone', entryOnly: true,
+  },
 ];
 
 export function normalizeAccessCode(value) {
@@ -23,13 +29,13 @@ export function normalizeAccessCode(value) {
 
 export function findCredential(code) {
   const normalized = normalizeAccessCode(code);
-  return credentials.find(credential => credential.code === normalized);
+  return credentials.find(credential => normalizeAccessCode(credential.code) === normalized);
 }
 
 export function readActiveCredentials(raw) {
   try {
     const ids = JSON.parse(raw);
-    return new Set(Array.isArray(ids) ? ids.filter(id => credentials.some(c => c.id === id)) : []);
+    return new Set(Array.isArray(ids) ? ids.filter(id => credentials.some(c => c.id === id && !c.entryOnly)) : []);
   } catch {
     return new Set();
   }
@@ -41,6 +47,10 @@ export function hasRecordAccess(record, activeCredentials) {
 
 export function visibleRecords(records, activeCredentials) {
   return records.filter(record => hasRecordAccess(record, activeCredentials));
+}
+
+export function listedRecords(records) {
+  return records.filter(record => !record.unlisted);
 }
 
 const demo = {

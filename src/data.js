@@ -1,3 +1,4 @@
+import { privateAgentRecords } from './private-agents.js';
 import { speciesIcons } from './species-icons.js';
 import { agentRecords } from './agents.js';
 import { speciesAbilities } from './species-abilities.js';
@@ -1013,6 +1014,7 @@ export const records = [
     ]
   },
   ...agentRecords,
+  ...privateAgentRecords,
   ...operationalRecords,
   ...reservedRecords
 ];

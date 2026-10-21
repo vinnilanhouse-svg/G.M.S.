@@ -10,7 +10,7 @@ import './style.css';
 import './species-typography.css';
 import './readability.css';
 import { records as allRecords, categories } from './data.js';
-import { credentials, accessStorageKey, findCredential, readActiveCredentials, visibleRecords } from './permissions.js';
+import { credentials, accessStorageKey, findCredential, readActiveCredentials, visibleRecords, listedRecords } from './permissions.js';
 
 const paths = { inicio: 'Painel inicial', investigacoes: 'Investigações', conhecimento: 'Base de conhecimento', documentos: 'Documentos internos', favoritos: 'Arquivos salvos', busca: 'Busca no arquivo', agentes: 'Agentes', missoes: 'Missões', 'missoes/relatorios': 'Relatórios de missão', alvos: 'Alvos de interesse', credenciais: 'Credenciais de acesso', reservado: 'Arquivo reservado' };
 const kinds = { investigacao: 'Investigação', verbete: 'Base de conhecimento', documento: 'Documento interno', agente: 'Agente', missao: 'Missão', relatorio: 'Relatório de missão', alvo: 'Alvo de interesse' };
@@ -50,7 +50,10 @@ try { saved = new Set(JSON.parse(localStorage.getItem('gms-saved')||'[]')); } ca
 let activeCredentials;
 try { activeCredentials = readActiveCredentials(localStorage.getItem(accessStorageKey)); } catch { activeCredentials = new Set(); }
 let records=visibleRecords(allRecords,activeCredentials);
+let catalog=listedRecords(records);
 let pendingNotice='';
+let pendingPrivateEntry=null;
+let openPrivateEntry=null;
 let toastTimer;
 let current={};
 let filters={q:'',status:'',category:'',access:'',missionId:''};
@@ -87,6 +90,11 @@ function redeemCredential(form) {
   input.setAttribute('aria-invalid','true');input.focus();return;
  }
  input.removeAttribute('aria-invalid');
+ if(credential.entryOnly){
+  pendingPrivateEntry=credential;
+  if(location.hash===credential.route)render();else location.hash=credential.route;
+  return;
+ }
  if(activeCredentials.has(credential.id)){
   feedback.innerHTML=`Esta credencial já está ativa. <a href="${esc(credential.route)}">Consultar acesso ${icon('arrow')}</a>`;
   return;
@@ -117,7 +125,7 @@ function nav() {
  <a href="#/inicio" class="brand" aria-label="Arquivo GMS, painel inicial"><img src="${gmsLogo}" class="gms-mark brand-logo" alt="" width="138" height="138"><div>ARQUIVO <b>GMS</b><small>SISTEMA DE DOCUMENTAÇÃO</small></div></a>
  <div class="sidebar-rule"></div><span class="nav-caption">ESPAÇO DE CONSULTA</span>
  <nav>${links.map(([path,ic,label])=>`<a href="#/${path}" class="nav-link ${selected(path)?'selected':''}" ${selected(path)?'aria-current="page"':''}>${icon(ic)}<span>${label}</span>${selected(path)?'<span class="nav-indicator"></span>':''}</a>${path==='missoes'&&selected(path)?`<a href="#/missoes/relatorios" class="nav-sublink ${activePath==='missoes/relatorios'?'selected':''}" ${activePath==='missoes/relatorios'?'aria-current="page"':''}>${icon('clipboard')}Relatórios</a>`:''}`).join('')}</nav>
- <div class="sidebar-rule short"></div><nav><a href="#/favoritos" class="nav-link ${current.page==='favoritos'?'selected':''}">${icon('bookmark')}<span>Arquivos salvos</span><span class="count">${records.filter(r=>saved.has(r.id)).length.toString().padStart(2,'0')}</span></a></nav>
+ <div class="sidebar-rule short"></div><nav><a href="#/favoritos" class="nav-link ${current.page==='favoritos'?'selected':''}">${icon('bookmark')}<span>Arquivos salvos</span><span class="count">${catalog.filter(r=>saved.has(r.id)).length.toString().padStart(2,'0')}</span></a></nav>
  <div class="sidebar-bottom">${credentialForm('sidebar')}<div class="security-mark">${icon('lock')}<span>CONEXÃO INSTITUCIONAL<br><b>Ambiente de consulta</b></span><i></i></div><div class="profile"><div class="avatar">CO</div><div>Consulta de arquivos<small>PERFIL · OBSERVADOR</small></div>${icon('chevron')}</div><div class="sidebar-version"><span>GMS / ARQUIVO CENTRAL</span><span>v.01</span></div></div></aside>`;
 }
 function shell(content) {
@@ -139,13 +147,13 @@ function recentTable(list,full=false) {
 }
 function dashboard() {
  const priority=['org-gms','especie-abissais','especie-gorgona','especie-vampiro'];
- const recent=[...records].sort((a,b)=>b.date.localeCompare(a.date)||(priority.indexOf(a.id)<0?99:priority.indexOf(a.id))-(priority.indexOf(b.id)<0?99:priority.indexOf(b.id))).slice(0,5);
- const count=kind=>records.filter(r=>r.kind===kind).length.toString().padStart(2,'0');
+ const recent=[...catalog].sort((a,b)=>b.date.localeCompare(a.date)||(priority.indexOf(a.id)<0?99:priority.indexOf(a.id))-(priority.indexOf(b.id)<0?99:priority.indexOf(b.id))).slice(0,5);
+ const count=kind=>catalog.filter(r=>r.kind===kind).length.toString().padStart(2,'0');
  shell(`${heading('SISTEMA INTERNO DE DOCUMENTAÇÃO','Arquivo central<span class="title-dot">.</span>','Conhecimento preservado. Ocorrências documentadas. Memória sob custódia.',`<div class="heading-stamp"><span>REGISTRO INSTITUCIONAL</span><b>GMS — AC / 001</b><span>CONSULTA AUTORIZADA</span></div>`)}
  <section class="search-section" aria-label="Busca no arquivo"><div class="search-label"><span>O QUE VOCÊ PROCURA?</span><span>CONSULTE. RELACIONE. INVESTIGUE.</span></div>${searchForm()}</section>
  <section class="operations-strip" aria-label="Central de operações">${[['agentes','users','agente','Agentes','Equipe e histórico funcional'],['missoes','flag','missao','Missões','Ordens de missão e relatórios'],['alvos','target','alvo','Alvos de interesse','Indivíduos e grupos sob apuração']].map(([path,ic,kind,label,description])=>`<a href="#/${path}"><span class="operation-icon">${icon(ic)}</span><span><strong>${label}</strong><small>${description}</small></span><span class="operation-count">${count(kind)}</span>${icon('arrow')}</a>`).join('')}</section>
- <section class="category-section" aria-label="Seções principais"><a class="category-card" href="#/investigacoes"><div class="card-top">${icon('folder')}<span>01 / INVESTIGAÇÃO</span>${icon('arrow')}</div><h2>Arquivo de investigações</h2><p>Casos, evidências e linhas de investigação.</p><div class="card-bottom"><span><b>${count('investigacao')}</b> CASOS DEMONSTRATIVOS</span><span class="tiny-status"><i></i>${records.filter(r=>r.kind==='investigacao'&&r.status==='Em andamento').length.toString().padStart(2,'0')} EM ANDAMENTO</span></div></a><a class="category-card" href="#/conhecimento"><div class="card-top">${icon('book')}<span>02 / CONHECIMENTO</span>${icon('arrow')}</div><h2>Base de conhecimento</h2><p>Espécies, suas origens e modos de existir.</p><div class="card-bottom"><span><b>${count('verbete')}</b> VERBETES · ${records.filter(r=>r.category==='Espécies').length} ESPÉCIES</span></div></a><a class="category-card" href="#/documentos"><div class="card-top">${icon('file')}<span>03 / DOCUMENTAÇÃO</span>${icon('arrow')}</div><h2>Documentos internos</h2><p>Memória, diretrizes e registros institucionais.</p><div class="card-bottom"><span><b>${count('documento')}</b> DOCUMENTOS ARQUIVADOS</span></div></a></section>
- <section class="recent-section"><div class="section-heading"><h2>${icon('clock')}Atualizações recentes</h2><a href="#/busca">Ver todo o arquivo ${icon('arrow')}</a></div>${recentTable(recent)}<div class="table-foot"><i></i>EXIBINDO OS 5 ÚLTIMOS REGISTROS ATUALIZADOS<span>ACERVO / ${records.length.toString().padStart(3,'0')}</span></div></section>
+ <section class="category-section" aria-label="Seções principais"><a class="category-card" href="#/investigacoes"><div class="card-top">${icon('folder')}<span>01 / INVESTIGAÇÃO</span>${icon('arrow')}</div><h2>Arquivo de investigações</h2><p>Casos, evidências e linhas de investigação.</p><div class="card-bottom"><span><b>${count('investigacao')}</b> CASOS DEMONSTRATIVOS</span><span class="tiny-status"><i></i>${catalog.filter(r=>r.kind==='investigacao'&&r.status==='Em andamento').length.toString().padStart(2,'0')} EM ANDAMENTO</span></div></a><a class="category-card" href="#/conhecimento"><div class="card-top">${icon('book')}<span>02 / CONHECIMENTO</span>${icon('arrow')}</div><h2>Base de conhecimento</h2><p>Espécies, suas origens e modos de existir.</p><div class="card-bottom"><span><b>${count('verbete')}</b> VERBETES · ${catalog.filter(r=>r.category==='Espécies').length} ESPÉCIES</span></div></a><a class="category-card" href="#/documentos"><div class="card-top">${icon('file')}<span>03 / DOCUMENTAÇÃO</span>${icon('arrow')}</div><h2>Documentos internos</h2><p>Memória, diretrizes e registros institucionais.</p><div class="card-bottom"><span><b>${count('documento')}</b> DOCUMENTOS ARQUIVADOS</span></div></a></section>
+ <section class="recent-section"><div class="section-heading"><h2>${icon('clock')}Atualizações recentes</h2><a href="#/busca">Ver todo o arquivo ${icon('arrow')}</a></div>${recentTable(recent)}<div class="table-foot"><i></i>EXIBINDO OS 5 ÚLTIMOS REGISTROS ATUALIZADOS<span>ACERVO / ${catalog.length.toString().padStart(3,'0')}</span></div></section>
  <section class="archive-note"><img src="${gmsLogo}" class="gms-mark archive-note-logo" alt="" width="100" height="100"><div><span class="eyebrow">DIRETRIZ DO ARQUIVO</span><p>Proteger a convivência.<br>Compreender as diferenças.</p></div><div class="archive-note-right"><span>GLOBAL MONSTER SECURITY.</span><span>DEPARTAMENTO DE DOCUMENTAÇÃO / GMS</span></div></section>`);
 }
 function missionTabs() {
@@ -154,7 +162,7 @@ function missionTabs() {
 function listPage() {
  const page=pageKey();
  const selectedKind={investigacoes:'investigacao',conhecimento:'verbete',documentos:'documento',agentes:'agente',missoes:'missao','missoes/relatorios':'relatorio',alvos:'alvo'}[page];
- const all=records.filter(r=>page==='favoritos'?saved.has(r.id):page==='reservado'?r.collection==='reservado':!selectedKind||r.kind===selectedKind);
+ const all=catalog.filter(r=>page==='favoritos'?saved.has(r.id):page==='reservado'?r.collection==='reservado':!selectedKind||r.kind===selectedKind);
  const meta={
   investigacoes:['REGISTROS DE CAMPO','Arquivo de investigações','Acompanhe ocorrências, conecte evidências e consulte o histórico de cada caso.'],
   conhecimento:['ÍNDICE DE REFERÊNCIA','Base de conhecimento','Espécies, origens e capacidades naturais. Conhecimento para compreender a convivência.'],
@@ -201,7 +209,7 @@ function detail(id) {
  const notableMembers=(r.notableMembers||[]).map(id=>records.find(record=>record.id===id)).filter(Boolean);
  const reportTitle={verbete:'Descrição e observações',agente:'Registro do agente',missao:'Ordem de missão',relatorio:'Relatório de missão',alvo:'Síntese de inteligência'}[r.kind]||(r.category==='Depoimentos'?'Transcrição do depoimento':'Relatório');
  const missionReports=records.filter(x=>x.kind==='relatorio'&&x.missionId===r.id);
- shell(`<div class="detail-top"><a class="back-link" href="#/${parent}">${icon('arrow')} ${paths[parent]}</a><button class="save-button ${saved.has(r.id)?'is-saved':''}" data-save="${r.id}">${icon('bookmark')}<span>${saved.has(r.id)?'Arquivo salvo':'Salvar arquivo'}</span></button></div><article class="dossier ${r.image?'dossier-with-image':''} ${r.image&&r.kind==='agente'?'dossier-with-portrait':''}"><header class="dossier-header">${r.demo?'<div class="demo-banner">REGISTRO ILUSTRATIVO · NÃO CANÔNICO — exemplo de navegação, sem vínculo com acontecimentos da lore.</div>':''}<div class="dossier-meta"><span>${r.code} <span class="separator">/</span> ${kinds[r.kind].toUpperCase()}</span>${accessBadge(r.access)}</div><h1${r.category==='Espécies'?` class="species-title" data-species="${esc(r.id)}"`:""}>${esc(r.title)}</h1><p class="dossier-summary">${r.summary}</p><div class="dossier-info"><div><span>AUTORIA</span><strong>${r.author}</strong></div><div><span>DEPARTAMENTO</span><strong>${r.department}</strong></div><div><span>ATUALIZAÇÃO</span><strong>${date(r.date)}</strong></div><div${r.kind==='agente'&&r.status==='Desaparecido'?' class="dossier-situation-highlight"':''}><span>SITUAÇÃO</span>${statusBadge(r.status)}</div></div></header>
+ shell(`<div class="detail-top"><a class="back-link" href="#/${parent}">${icon('arrow')} ${paths[parent]}</a>${!r.unlisted?`<button class="save-button ${saved.has(r.id)?'is-saved':''}" data-save="${r.id}">${icon('bookmark')}<span>${saved.has(r.id)?'Arquivo salvo':'Salvar arquivo'}</span></button>`:''}</div><article class="dossier ${r.image?'dossier-with-image':''} ${r.image&&r.kind==='agente'?'dossier-with-portrait':''}"><header class="dossier-header">${r.demo?'<div class="demo-banner">REGISTRO ILUSTRATIVO · NÃO CANÔNICO — exemplo de navegação, sem vínculo com acontecimentos da lore.</div>':''}<div class="dossier-meta"><span>${r.code} <span class="separator">/</span> ${kinds[r.kind].toUpperCase()}</span>${accessBadge(r.access)}</div><h1${r.category==='Espécies'?` class="species-title" data-species="${esc(r.id)}"`:""}>${esc(r.title)}</h1><p class="dossier-summary">${r.summary}</p><div class="dossier-info"><div><span>AUTORIA</span><strong>${r.author}</strong></div><div><span>DEPARTAMENTO</span><strong>${r.department}</strong></div><div><span>ATUALIZAÇÃO</span><strong>${date(r.date)}</strong></div><div${r.kind==='agente'&&r.status==='Desaparecido'?' class="dossier-situation-highlight"':''}><span>SITUAÇÃO</span>${statusBadge(r.status)}</div></div></header>
  <div class="dossier-layout"><div class="dossier-body"><nav class="document-index" aria-label="Seções deste arquivo"><a href="#relatorio" data-section="relatorio">01 / ${r.kind==='verbete'?'Descrição':r.kind==='agente'?'Perfil':r.kind==='missao'?'Ordem de missão':r.kind==='alvo'?'Síntese':'Relatório'}</a>${r.abilities?'<a href="#capacidades" data-section="capacidades">02 / Capacidades naturais</a>':''}${r.timeline?`<a href="#cronologia" data-section="cronologia">${r.abilities?'03':'02'} / Cronologia</a>`:''}${isSpecies?'<a href="#membros-notaveis" data-section="membros-notaveis">03 / Membros notáveis</a>':'<a href="#relacionados" data-section="relacionados">↗ / Vínculos</a>'}</nav><section id="relatorio" class="document-section"><div class="eyebrow">01 / ${r.kind==='verbete'?'REGISTRO DESCRITIVO':'DOCUMENTO INTEGRAL'}</div><h2>${reportTitle}</h2>${r.report.map(p=>`<p>${esc(p).replace(/█+/g,m=>`<span class="redaction" aria-label="Trecho censurado">${m}</span>`)}</p>`).join('')}${r.note?`<aside class="employee-note"><span>ANOTAÇÃO DE ARQUIVO</span><p>${r.note}</p></aside>`:''}</section>
  ${r.abilities?`<section id="capacidades" class="document-section"><div class="eyebrow">NATUREZA DA ESPÉCIE</div><h2>Capacidades e particularidades</h2><p class="section-intro">Manifestações próprias da espécie, suas condições e seus limites.</p>${speciesAbilityGroups(r.abilities)}</section>`:''}
 
@@ -244,11 +252,19 @@ function bind() {
  document.querySelector('[data-save]')?.addEventListener('click',e=>{const id=e.currentTarget.dataset.save;if(saved.has(id))saved.delete(id);else saved.add(id);try{localStorage.setItem('gms-saved',JSON.stringify([...saved]));}catch{}const y=scrollY;detail(id);scrollTo(0,y);showToast(saved.has(id)?'Arquivo adicionado aos salvos.':'Arquivo removido dos salvos.');});
 }
 function render() {
- records=visibleRecords(allRecords,activeCredentials);
  document.querySelectorAll('body > .overlay').forEach(x=>x.remove());
  const [path,qs='']=location.hash.replace(/^#\/?/,'').split('?');
  const [page='inicio',id]=path.split('/');
  current={page:page||'inicio',id};mobileOpen=false;
+ if(openPrivateEntry&&location.hash!==openPrivateEntry.route)openPrivateEntry=null;
+ if(pendingPrivateEntry){
+  if(location.hash===pendingPrivateEntry.route)openPrivateEntry=pendingPrivateEntry;
+  pendingPrivateEntry=null;
+ }
+ const viewCredentials=new Set(activeCredentials);
+ if(openPrivateEntry)viewCredentials.add(openPrivateEntry.id);
+ records=visibleRecords(allRecords,viewCredentials);
+ catalog=listedRecords(records);
  if(pageKey()!==previousPage){filters={q:'',status:'',category:'',access:'',missionId:''};previousPage=pageKey();}
  if(pageKey()==='missoes/relatorios')filters.missionId=new URLSearchParams(qs).get('missao')||'';
  if(current.page==='busca')filters.q=new URLSearchParams(qs).get('q')||'';

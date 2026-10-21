@@ -11,7 +11,7 @@ test('o acervo tem identificadores únicos e todos os vínculos apontam para arq
   assert.ok(['investigacao','verbete','documento','agente','missao','relatorio','alvo'].includes(r.kind));
   assert.ok(['Público','Restrito','Censurado'].includes(r.access));
   assert.match(r.date,/^\d{4}-\d{2}-\d{2}$/);
-  for(const id of r.related)assert.ok(ids.has(id),`${r.id}: vínculo inválido ${id}`);
+  for(const id of [...r.related,...(r.notableMembers||[])])assert.ok(ids.has(id),`${r.id}: vínculo inválido ${id}`);
  }
 });
 

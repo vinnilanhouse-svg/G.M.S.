@@ -28,6 +28,7 @@ export const records = [
     ],
     "quote": "Se os mares são o berço da vida, por que abandoná-los para viver na terra dos homens?",
     "abilities": speciesAbilities["especie-abissais"],
+    "notableMembers": [],
     "facts": [
       "Respiram na água e na superfície.",
       "A hidratação é essencial à sua condição física."
@@ -68,6 +69,7 @@ export const records = [
     ],
     "quote": "E ao soar das trombetas, os Anjos de Deus descerão dos céus à Terra, trazendo consigo a luz divina.",
     "abilities": speciesAbilities["especie-anjo"],
+    "notableMembers": [],
     "facts": [
       "Possuem asas que podem ser ocultadas.",
       "Seu toque pode restaurar ferimentos."
@@ -107,6 +109,7 @@ export const records = [
     ],
     "quote": "A floresta não precisa de heróis. Precisa de guardiões. E nós somos seus olhos, suas garras, sua ira.",
     "abilities": speciesAbilities["especie-caipora"],
+    "notableMembers": [],
     "facts": [
       "Comunicam-se com animais.",
       "Conseguem estimular o crescimento de plantas."
@@ -146,6 +149,7 @@ export const records = [
     ],
     "quote": "A fome nunca dorme. E nós, que somos a fome, nunca descansamos. Cuidado com a noite, humano... ela nos pertence.",
     "abilities": speciesAbilities["especie-capelobo"],
+    "notableMembers": [],
     "facts": [
       "A fome pode comprometer o autocontrole.",
       "Possuem garras retráteis e visão adaptada à noite."
@@ -184,6 +188,7 @@ export const records = [
     ],
     "quote": "Nossos cascos ecoam como trovões nas planícies, lembrando ao mundo que a liberdade não se conquista com palavras, mas com força e velocidade.",
     "abilities": speciesAbilities["especie-centauro"],
+    "notableMembers": [],
     "facts": [
       "Sua constituição combina anatomia humana e equina.",
       "Mantêm uma tradição de cooperação com humanos."
@@ -223,6 +228,7 @@ export const records = [
     ],
     "quote": "Fomos criados para servir, mas quem disse que não podemos sonhar? Até mesmo uma máquina pode desejar ser mais do que engrenagens e metal.",
     "abilities": speciesAbilities["especie-constructo"],
+    "notableMembers": [],
     "facts": [
       "São fabricados e podem desenvolver personalidades próprias.",
       "Os materiais de construção determinam necessidades e capacidades distintas."
@@ -266,6 +272,7 @@ export const records = [
     ],
     "quote": "O descanso eterno é a mais bela recompensa para a vida. O ciclo deve sempre ser fechado. Não devemos temer a morte, mas abraçá-la como uma velha amiga.",
     "abilities": speciesAbilities["especie-corpo-seco"],
+    "notableMembers": [],
     "facts": [
       "O corpo e o espírito dependem um do outro.",
       "Não precisam satisfazer as necessidades orgânicas dos vivos."
@@ -305,6 +312,7 @@ export const records = [
     ],
     "quote": "A floresta tem memória, e eu sou sua vingança. Pisar na mata sem respeito é assinar sua própria sentença.",
     "abilities": speciesAbilities["especie-curupira"],
+    "notableMembers": [],
     "facts": [
       "A chama está ligada à sua vida.",
       "Os pés voltados para trás confundem rastros."
@@ -343,6 +351,7 @@ export const records = [
     ],
     "quote": "O caos não é um acidente. É uma arte. E nós somos seus artistas mais dedicados.",
     "abilities": speciesAbilities["especie-demonio"],
+    "notableMembers": [],
     "facts": [
       "Podem camuflar sua aparência.",
       "A ligação com o submundo permite passagens entre planos."
@@ -379,6 +388,7 @@ export const records = [
     ],
     "quote": "A magia não é um dom; é uma responsabilidade. E nós, pequenas como somos, carregamos o peso do mundo em nossas asas.",
     "abilities": speciesAbilities["especie-fada"],
+    "notableMembers": [],
     "facts": [
       "Possuem uma ligação elemental e um animal companheiro.",
       "O afastamento prolongado da natureza tem consequências."
@@ -417,6 +427,7 @@ export const records = [
     ],
     "quote": "Cuidado com o que você vê, humano. Algumas belezas são mortais, e alguns olhares... são os últimos.",
     "abilities": speciesAbilities["especie-gorgona"],
+    "notableMembers": [],
     "facts": [
       "A petrificação está ligada à sua natureza.",
       "As serpentes da cabeça são vivas e podem reagir ao contato."
@@ -457,6 +468,7 @@ export const records = [
     ],
     "quote": "Não temos asas, nem garras, nem magia. Mas temos algo que nenhuma outra espécie possui: a capacidade de sonhar com o impossível... e torná-lo real.",
     "abilities": speciesAbilities["especie-humano"],
+    "notableMembers": [],
     "facts": [
       "São a espécie mais abundante do planeta.",
       "A capacidade de adaptação é uma de suas características centrais."
@@ -497,6 +509,7 @@ export const records = [
     ],
     "quote": "O ouro que você busca não está no fim do arco-íris. Está na piada que você não entendeu, na sorte que você ignorou... e no duende que você subestimou.",
     "abilities": speciesAbilities["especie-leprechaun"],
+    "notableMembers": [],
     "facts": [
       "Possuem afinidade natural com a sorte.",
       "Criam passagens discretas em brechas."
@@ -538,6 +551,7 @@ export const records = [
     ],
     "quote": "A lua não nos controla; ela nos liberta. E quando a besta acorda, não há refúgio que te salve.",
     "abilities": speciesAbilities["especie-lobisomem"],
+    "notableMembers": [],
     "facts": [
       "Podem nascer assim ou ser transformados por maldição ou ataque.",
       "A aparência híbrida é mais frequente que a humana."
@@ -575,6 +589,7 @@ export const records = [
     ],
     "quote": "A morte não é o fim. É apenas uma pausa. E nós, que já morremos uma vez, sabemos que o verdadeiro horror é não poder descansar.",
     "abilities": speciesAbilities["especie-mumia"],
+    "notableMembers": [],
     "facts": [
       "O repouso restaura a magia que as mantém ativas.",
       "Suas bandagens podem mover e prender objetos ou criaturas."
@@ -615,6 +630,7 @@ export const records = [
     ],
     "quote": "Eles nos chamam de monstros, mas quem são os verdadeiros monstros? Nós, que vivemos em paz, ou eles, que destroem tudo o que tocam?",
     "abilities": speciesAbilities["especie-ogro"],
+    "notableMembers": [],
     "facts": [
       "A pele espessa oferece proteção natural.",
       "A força é acompanhada por limitações em espaços estreitos."
@@ -653,6 +669,7 @@ export const records = [
     ],
     "quote": "Você pode nos ignorar, mas não pode nos escapar. Somos o sussurro no escuro, o arrepio na sua nuca... e o pesadelo que nunca acaba.",
     "abilities": speciesAbilities["especie-poltergeist"],
+    "notableMembers": [],
     "facts": [
       "Não possuem corpo físico próprio.",
       "Objetos com significado pessoal podem ancorar sua presença."
@@ -692,6 +709,7 @@ export const records = [
     ],
     "quote": "O vento é meu aliado, a floresta é meu lar, e a travessura... é minha arte. Tente me pegar, se for capaz.",
     "abilities": speciesAbilities["especie-saci"],
+    "notableMembers": [],
     "facts": [
       "Possuem uma forte ligação com o vento.",
       "A perda do gorro compromete sua autonomia."
@@ -729,6 +747,7 @@ export const records = [
     ],
     "quote": "O fogo que queima em mim não é apenas calor; é vida. E eu a compartilho com aqueles que ousam se aproximar.",
     "abilities": speciesAbilities["especie-salamandra"],
+    "notableMembers": [],
     "facts": [
       "Possuem afinidade com o fogo e vulnerabilidade à água.",
       "Há indivíduos com membros adicionais."
@@ -770,6 +789,7 @@ export const records = [
     ],
     "quote": "A eternidade é uma maldição doce, e o sangue... é o preço que pagamos por ela. Mas quem pode resistir à tentação de viver para sempre?",
     "abilities": speciesAbilities["especie-vampiro"],
+    "notableMembers": [],
     "facts": [
       "O sangue é indispensável à sua existência.",
       "A rivalidade com Lobisomens é registrada no manual."

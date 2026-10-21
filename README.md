@@ -39,7 +39,8 @@ O conteúdo de referência está em **`src/data.js`** e os cadastros operacionai
 | `facts`, `hypotheses`, `unknown` | Arrays separados de fatos, hipóteses e lacunas |
 | `people`, `locations`, `evidence` | Dados opcionais do caso |
 | `timeline` | Opcional: array de `{ date, text }` |
-| `related` | Array de IDs de outros registros para criar links clicáveis |
+| `related` | Array de IDs de outros registros para criar links clicáveis nas páginas que não são de espécies |
+| `notableMembers` | Nas espécies, array de IDs dos membros notáveis; vazio exibe a mensagem de ausência de registros |
 | `source`, `sourceSection`, `sourceUrl` | Indicação e referência à fonte narrativa |
 | `demo` | Use `true` para sinalizar um caso não canônico |
 
@@ -126,3 +127,5 @@ O comportamento e os tempos ficam em `src/entry-screen.js`; o visual usa as clas
 Os títulos das páginas de espécies usam as mesmas fontes do documento de referência. As associações e o tamanho dos títulos ficam em `src/species-typography.css`; as fontes são servidas junto com o site.
 
 As habilidades das 20 espécies ficam em `src/species-abilities.js`, com os nomes do documento e descrições narrativas. `stage` distingue `initial` (iniciais), `acquired` (adquiridas) e `apex` (ápice da espécie). Os Constructos mantêm as variantes Carne, Metal e Barro. Os desdobramentos de uma habilidade ficam em `details`, como as quatro estações das Fadas e as manifestações de Linha de sangue dos Vampiros.
+
+Para cadastrar um membro notável, crie seu registro e adicione o `id` ao array `notableMembers` da espécie em `src/data.js`. A página mostra links para os registros disponíveis no acesso atual.

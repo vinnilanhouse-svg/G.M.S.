@@ -20,9 +20,9 @@
 @import "@fontsource/eater/latin-400.css";
 @import "@fontsource/medievalsharp/latin-400.css";
 
-.dossier h1.species-title {
+.dossier h1.species-title,
+.wiki-card h2.species-title {
   font-family: var(--species-font), Georgia, serif;
-  font-size: clamp(30px, 4vw, 48px);
   font-weight: 400;
   font-synthesis: none;
   line-height: 1.5;
@@ -30,6 +30,9 @@
   overflow-wrap: anywhere;
   text-wrap: balance;
 }
+
+.dossier h1.species-title { font-size: clamp(30px, 4vw, 48px); }
+.wiki-card h2.species-title { font-size: 26px; }
 
 .species-title[data-species="especie-abissais"] { --species-font: "Cinzel"; }
 .species-title[data-species="especie-anjo"] { --species-font: "Cinzel Decorative"; }

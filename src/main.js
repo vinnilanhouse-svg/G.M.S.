@@ -127,8 +127,15 @@ function shell(content) {
 }
 function heading(kicker,title,description,extra='') {return `<div class="page-heading"><div><div class="eyebrow"><span></span>${kicker}</div><h1>${title}</h1><p>${description}</p></div>${extra}</div>`;}
 function searchForm(value='',compact=false) {return `<form class="search-form ${compact?'compact':''}" role="search" data-search><label class="sr-only" for="global-search">Buscar em todo o arquivo</label>${icon('search')}<input id="global-search" name="q" type="search" placeholder="Busque por uma espécie, agente ou arquivo..." value="${esc(value)}" autocomplete="off"><button type="submit">Buscar no arquivo ${icon('arrow')}</button></form>`;}
+function recordVisual(record) {
+ const species=record.category==='Espécies'?record:records.find(r=>r.category==='Espécies'&&r.notableMembers?.includes(record.id));
+ const image=record.image||species?.image;
+ if(!image)return `<span class="record-icon">${icon(recordIcons[record.kind])}</span>`;
+ const label=record.kind==='agente'?`Espécie de referência: ${species?.title||record.title}`:record.title;
+ return `<span class="record-icon record-icon--image" title="${esc(label)}"><img src="${esc(image.thumbnail||image.src)}" alt="${esc(label)}" width="${image.thumbnailWidth||image.width}" height="${image.thumbnailHeight||image.height}" loading="lazy" decoding="async"></span>`;
+}
 function recentTable(list,full=false) {
- return `<div class="table-wrap"><table class="record-table"><thead><tr><th>IDENTIFICAÇÃO / ARQUIVO</th>${full?'<th>SITUAÇÃO</th>':''}<th>ACESSO</th><th>ATUALIZAÇÃO</th><th><span class="sr-only">Abrir</span></th></tr></thead><tbody>${list.map(r=>`<tr><td><a href="#/arquivo/${r.id}" class="record-name"><span class="record-icon">${icon(recordIcons[r.kind])}</span><span><small>${r.code}</small><strong>${esc(r.title)}</strong>${!full?`<em>${kinds[r.kind]} · ${date(r.date)}</em>`:''}</span></a></td>${full?`<td>${statusBadge(r.status)}</td>`:''}<td>${accessBadge(r.access)}</td><td class="date-cell">${date(r.date)}</td><td><a href="#/arquivo/${r.id}" class="row-arrow" aria-label="Abrir ${esc(r.title)}">${icon('arrow')}</a></td></tr>`).join('')}</tbody></table></div>`;
+ return `<div class="table-wrap"><table class="record-table"><thead><tr><th>IDENTIFICAÇÃO / ARQUIVO</th>${full?'<th>SITUAÇÃO</th>':''}<th>ACESSO</th><th>ATUALIZAÇÃO</th><th><span class="sr-only">Abrir</span></th></tr></thead><tbody>${list.map(r=>`<tr><td><a href="#/arquivo/${r.id}" class="record-name">${recordVisual(r)}<span><small>${r.code}</small><strong>${esc(r.title)}</strong>${!full?`<em>${kinds[r.kind]} · ${date(r.date)}</em>`:''}</span></a></td>${full?`<td>${statusBadge(r.status)}</td>`:''}<td>${accessBadge(r.access)}</td><td class="date-cell">${date(r.date)}</td><td><a href="#/arquivo/${r.id}" class="row-arrow" aria-label="Abrir ${esc(r.title)}">${icon('arrow')}</a></td></tr>`).join('')}</tbody></table></div>`;
 }
 function dashboard() {
  const priority=['org-gms','especie-abissais','especie-gorgona','doc-feerico','especie-vampiro'];

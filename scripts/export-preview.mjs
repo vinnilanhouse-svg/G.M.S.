@@ -18,7 +18,7 @@ for (const url of urls) {
   css = css.replaceAll(url, `data:${mime};base64,${bytes.toString('base64')}`);
 }
 // Inclui as imagens importadas pelo JavaScript, mantendo a prévia independente.
-const jsAssets = [...new Set([...js.matchAll(/["'](\/(?:assets|species|species-icons)\/[^"']+\.(?:png|webp|jpg|svg))["']/g)].map(m => m[1]))];
+const jsAssets = [...new Set([...js.matchAll(/["'](\/(?:assets|species|species-icons|agent-icons)\/[^"']+\.(?:png|webp|jpg|svg))["']/g)].map(m => m[1]))];
 for (const url of jsAssets) {
   const bytes = await readFile(resolve(dist, url.slice(1)));
   const mime = url.endsWith('.svg') ? 'image/svg+xml' : url.endsWith('.webp') ? 'image/webp' : url.endsWith('.jpg') ? 'image/jpeg' : 'image/png';

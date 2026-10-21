@@ -12,23 +12,6 @@ const demo = {
 export const operationalRecords = [
   {
     ...demo,
-    id: 'agente-demo-001', kind: 'agente', code: 'AGT-DEMO-001',
-    title: 'Agente de referência — modelo', category: 'Equipe de campo', status: 'Cadastro pendente',
-    summary: 'Ficha de demonstração para reunir identificação, lotação e histórico de missões de um agente.',
-    report: [
-      'EXEMPLO NÃO CANÔNICO. Este cadastro demonstra a organização do diretório de agentes. Não representa uma pessoa da história oficial.',
-      'A identificação, a espécie, a lotação e o histórico funcional aguardam preenchimento. As missões e os relatórios relacionados podem ser consultados nos vínculos deste registro.',
-    ],
-    profile: [
-      { label: 'Identificação', value: 'Não informada' },
-      { label: 'Espécie', value: 'Não informada' },
-      { label: 'Lotação', value: 'A definir' },
-      { label: 'Função', value: 'Agente de campo · modelo' },
-    ],
-    related: ['missao-demo-001', 'relatorio-demo-001', 'org-gms'],
-  },
-  {
-    ...demo,
     id: 'missao-demo-001', kind: 'missao', code: 'MIS-DEMO-001',
     title: 'Verificação costeira — modelo', category: 'Reconhecimento', status: 'Em planejamento',
     summary: 'Ordem ilustrativa para demonstrar o vínculo entre uma missão, a equipe designada e seus relatórios.',
@@ -37,7 +20,7 @@ export const operationalRecords = [
       'Objetivo: reunir referências sobre convivência em uma comunidade costeira e organizar o reconhecimento antes de qualquer intervenção. Local, equipe efetiva e autorização aguardam definição.',
       'Os relatórios vinculados registram separadamente a preparação e as observações da missão. O estado da missão não confirma nem encerra automaticamente a investigação relacionada.',
     ],
-    agentIds: ['agente-demo-001'], targetIds: ['alvo-demo-001'],
+    agentIds: [], targetIds: ['alvo-demo-001'],
     profile: [
       { label: 'Objetivo', value: 'Reconhecimento e reunião de referências' },
       { label: 'Local', value: 'Não estabelecido na lore' },
@@ -47,26 +30,26 @@ export const operationalRecords = [
       { date: 'PREPARAÇÃO', text: 'Consulta às referências de convivência e ao verbete dos Abissais.' },
       { date: 'REGISTRO', text: 'Reunião dos relatórios ilustrativos vinculados à missão.' },
     ],
-    related: ['agente-demo-001', 'caso-001', 'especie-abissais', 'alvo-demo-001'],
+    related: ['caso-001', 'especie-abissais', 'alvo-demo-001'],
   },
   {
     ...demo,
     id: 'relatorio-demo-001', kind: 'relatorio', code: 'REL-DEMO-001',
     title: 'Preparação do reconhecimento costeiro', category: 'Relatório preliminar', status: 'Preliminar',
-    missionId: 'missao-demo-001', agentIds: ['agente-demo-001'],
+    missionId: 'missao-demo-001', agentIds: [],
     summary: 'Modelo de relatório vinculado à missão MIS-DEMO-001, com referências preparatórias.',
     report: [
       'EXEMPLO NÃO CANÔNICO. Este documento demonstra como um relatório é arquivado dentro de uma missão.',
       'Foram reunidas referências sobre os Abissais e sobre o mandato de convivência da GMS. Nenhuma diligência ou observação de campo real é afirmada neste modelo.',
       'Permanecem pendentes a identificação da equipe efetiva, a definição do local e a autorização da operação.',
     ],
-    related: ['missao-demo-001', 'agente-demo-001', 'especie-abissais', 'doc-convivencia'],
+    related: ['missao-demo-001', 'especie-abissais', 'doc-convivencia'],
   },
   {
     ...demo,
     id: 'relatorio-demo-002', kind: 'relatorio', code: 'REL-DEMO-002',
     title: 'Registro complementar de referências', category: 'Relatório complementar', status: 'Em revisão',
-    missionId: 'missao-demo-001', agentIds: ['agente-demo-001'],
+    missionId: 'missao-demo-001', agentIds: [],
     summary: 'Complemento ilustrativo que mantém observações e lacunas separadas do planejamento da missão.',
     report: [
       'EXEMPLO NÃO CANÔNICO. Este é um segundo documento de demonstração associado à mesma missão.',

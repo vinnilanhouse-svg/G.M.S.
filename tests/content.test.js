@@ -46,7 +46,7 @@ test('relatórios pertencem a missões e os vínculos operacionais usam os tipos
   for(const id of r.agentIds||[])assert.equal(get(id)?.kind,'agente');
   for(const id of r.targetIds||[])assert.equal(get(id)?.kind,'alvo');
  }
- for(const kind of ['agente','missao','relatorio','alvo']){
+ for(const kind of ['missao','relatorio','alvo']){
   const examples=records.filter(r=>r.kind===kind&&r.demo);
   assert.ok(examples.length,`Sem exemplo navegável de ${kind}`);
   for(const r of examples){assert.equal(r.demo,true);assert.match(r.report[0],/NÃO CANÔNICO/);}
@@ -96,7 +96,9 @@ test('os seis agentes fornecidos têm fichas próprias e vínculos coerentes com
  assert.ok(get('agente-miguel').profile.some(f=>f.value==='Salamandra'));
  assert.ok(get('agente-babdin').profile.some(f=>f.value==='Gênio'));
  assert.ok(get('agente-babdin').profile.some(f=>f.value==='Centauro'));
+ assert.ok(!get('agente-demo-001'));
  const zaratha=get('agente-zaratha-khimer-atros');
+ assert.equal(zaratha.icon.src,'/agent-icons/zaratha-manticora.webp');
  assert.equal(zaratha.kind,'agente');
  assert.equal(zaratha.demo,false);
  assert.ok(zaratha.profile.some(f=>f.label==='Espécie'&&f.value==='Mantícora'));

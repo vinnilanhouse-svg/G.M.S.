@@ -385,6 +385,12 @@ export const agentRecords = [
     ],
     "related": [
       "org-gms"
-    ]
+    ],
+    "icon": {
+      "src": "/agent-icons/zaratha-manticora.webp",
+      "width": 128,
+      "height": 128,
+      "alt": "Símbolo de Zaratha: rosto de mantícora"
+    }
   }
 ];

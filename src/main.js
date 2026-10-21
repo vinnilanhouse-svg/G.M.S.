@@ -129,9 +129,9 @@ function heading(kicker,title,description,extra='') {return `<div class="page-he
 function searchForm(value='',compact=false) {return `<form class="search-form ${compact?'compact':''}" role="search" data-search><label class="sr-only" for="global-search">Buscar em todo o arquivo</label>${icon('search')}<input id="global-search" name="q" type="search" placeholder="Busque por uma espécie, agente ou arquivo..." value="${esc(value)}" autocomplete="off"><button type="submit">Buscar no arquivo ${icon('arrow')}</button></form>`;}
 function recordVisual(record) {
  const species=record.category==='Espécies'?record:records.find(r=>r.category==='Espécies'&&r.notableMembers?.includes(record.id));
- const image=species?.icon;
+ const image=record.icon||species?.icon;
  if(!image)return `<span class="record-icon">${icon(recordIcons[record.kind])}</span>`;
- const label=record.kind==='agente'?`Espécie de referência: ${species?.title||record.title}`:record.title;
+ const label=image.alt||(record.kind==='agente'?`Espécie de referência: ${species?.title||record.title}`:record.title);
  return `<span class="record-icon record-icon--species" title="${esc(label)}"><img src="${esc(image.thumbnail||image.src)}" alt="${esc(label)}" width="${image.thumbnailWidth||image.width}" height="${image.thumbnailHeight||image.height}" loading="lazy" decoding="async"></span>`;
 }
 function recentTable(list,full=false) {

@@ -143,3 +143,18 @@ input::placeholder { color: var(--muted); opacity: 1; }
   }
   .dossier-with-portrait .dossier-aside .species-image-button > img { max-height: 390px; }
 }
+
+/* Símbolos minimalistas nos cartões do catálogo de espécies. */
+.wiki-card-visual.wiki-card-symbol {
+  display: grid;
+  place-items: center;
+  aspect-ratio: auto;
+  padding: 24px;
+  min-height: 176px;
+}
+.wiki-card-symbol img {
+  width: 128px;
+  height: 128px;
+  max-width: 100%;
+  object-fit: contain;
+}

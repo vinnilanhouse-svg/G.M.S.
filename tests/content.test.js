@@ -47,7 +47,7 @@ test('relatórios pertencem a missões e os vínculos operacionais usam os tipos
   for(const id of r.targetIds||[])assert.equal(get(id)?.kind,'alvo');
  }
  for(const kind of ['agente','missao','relatorio','alvo']){
-  const examples=records.filter(r=>r.kind===kind);
+  const examples=records.filter(r=>r.kind===kind&&r.demo);
   assert.ok(examples.length,`Sem exemplo navegável de ${kind}`);
   for(const r of examples){assert.equal(r.demo,true);assert.match(r.report[0],/NÃO CANÔNICO/);}
  }
@@ -74,4 +74,26 @@ test('cada espécie distingue habilidades iniciais, adquiridas e um único ápic
  assert.equal(get('especie-mumia','As Pragas').details.length,6);
  assert.equal(get('especie-vampiro','Linha de sangue').details.length,5);
  assert.equal(get('especie-leprechaun','Você Acredita em Duendes?').details.length,2);
+});
+
+test('os seis agentes fornecidos têm fichas próprias e vínculos coerentes com suas histórias',()=>{
+ const get=id=>records.find(r=>r.id===id);
+ const agentIds=['agente-miguel','agente-patrick','agente-babdin','agente-ze-teixeira','agente-belias','agente-suzan-popov'];
+ for(const id of agentIds){
+  const agent=get(id);
+  assert.equal(agent.kind,'agente',id);
+  assert.equal(agent.demo,false,id);
+  assert.ok(agent.report.length>=4,id);
+  assert.ok(!agent.related.some(id=>id.includes('-demo-')),id);
+  const species=records.find(r=>r.notableMembers?.includes(id));
+  assert.ok(species,id);
+  assert.ok(agent.related.includes(species.id),id);
+ }
+ assert.equal(get('agente-patrick').status,'Desaparecido');
+ assert.ok(get('agente-belias').profile.some(f=>f.value.includes('████')));
+ assert.doesNotMatch(JSON.stringify(get('agente-belias')),/Raulson/i);
+ assert.ok(get('agente-miguel').profile.some(f=>f.value==='Draconato'));
+ assert.ok(get('agente-miguel').profile.some(f=>f.value==='Salamandra'));
+ assert.ok(get('agente-babdin').profile.some(f=>f.value==='Gênio'));
+ assert.ok(get('agente-babdin').profile.some(f=>f.value==='Centauro'));
 });

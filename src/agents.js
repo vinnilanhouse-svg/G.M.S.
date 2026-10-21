@@ -1,0 +1,343 @@
+// Históricos fornecidos pelo autor da campanha; códigos e metadados são editoriais.
+// Não vincular estes agentes a missões demonstrativas como se fossem fatos da lore.
+export const agentRecords = [
+  {
+    "kind": "agente",
+    "demo": false,
+    "source": false,
+    "sourceNote": "Histórico de agente fornecido ao arquivo.",
+    "date": "2026-10-21",
+    "department": "Arquivo de Pessoal",
+    "author": "Secretaria de Registro · G.M.S.",
+    "access": "Restrito",
+    "status": "Cadastro registrado",
+    "id": "agente-miguel",
+    "code": "AGT-001",
+    "title": "Miguel",
+    "category": "Liderança",
+    "summary": "Integrante da liderança da G.M.S., especializado em estratégia e conhecimentos sobrenaturais. Draconato classificado entre as Salamandras nos registros institucionais.",
+    "report": [
+      "Miguel é uma das figuras mais importantes e respeitadas da G.M.S., ocupando uma posição de destaque entre os responsáveis por liderar a organização. Pertencente à espécie dos draconatos, uma linhagem de criaturas de características dracônicas, Miguel possui uma presença naturalmente imponente, capaz de despertar respeito mesmo entre os agentes mais experientes.",
+      "Diferentemente das salamandras, espécie à qual é associado para fins de classificação nos registros da organização, Miguel possui uma natureza dracônica que o torna uma figura singular. Sua existência demonstra a enorme diversidade de criaturas que compõem a G.M.S. e a complexidade de um mundo no qual nem todas as espécies podem ser facilmente enquadradas em categorias convencionais.",
+      "Ao longo de sua trajetória, Miguel conquistou uma posição de liderança, tornando-se responsável por decisões que influenciam diretamente o funcionamento e o futuro da organização. Sua atuação exige não apenas autoridade, mas também a capacidade de compreender as diferentes necessidades e interesses das inúmeras espécies que convivem sob a proteção da G.M.S.",
+      "Entre os acontecimentos mais curiosos associados ao seu passado, destaca-se sua participação em um experimento realizado ao lado de Belias, um dos membros da diretoria. Durante o procedimento, ambos acabaram trazendo acidentalmente de volta à vida um antigo gênio conhecido como Bab'Din. Entretanto, a ressurreição não ocorreu conforme qualquer expectativa: a criatura retornou à existência no corpo de um centauro. As circunstâncias exatas do experimento e suas consequências permanecem pouco esclarecidas.",
+      "Apesar da importância de seu cargo, Miguel não é conhecido apenas por sua posição hierárquica. Sua participação em acontecimentos extraordinários e seu envolvimento direto com questões sobrenaturais demonstram que sua trajetória vai muito além das responsabilidades administrativas.",
+      "Dentro da G.M.S., Miguel representa uma das principais autoridades de uma instituição que reúne criaturas de origens, capacidades e histórias completamente diferentes. Sua presença na liderança é um lembrete de que, em um mundo habitado por monstros, o verdadeiro poder não se resume à força de uma criatura, mas também à responsabilidade de conduzir outras."
+    ],
+    "profile": [
+      {
+        "label": "Identificação",
+        "value": "Miguel"
+      },
+      {
+        "label": "Espécie",
+        "value": "Draconato"
+      },
+      {
+        "label": "Classificação institucional",
+        "value": "Salamandra"
+      },
+      {
+        "label": "Cargo",
+        "value": "Membro da liderança da G.M.S."
+      },
+      {
+        "label": "Especialidade",
+        "value": "Liderança, estratégia e conhecimentos sobrenaturais"
+      }
+    ],
+    "related": [
+      "org-gms",
+      "especie-salamandra",
+      "agente-belias",
+      "agente-babdin"
+    ]
+  },
+  {
+    "kind": "agente",
+    "demo": false,
+    "source": false,
+    "sourceNote": "Histórico de agente fornecido ao arquivo.",
+    "date": "2026-10-21",
+    "department": "Arquivo de Pessoal",
+    "author": "Secretaria de Registro · G.M.S.",
+    "access": "Restrito",
+    "status": "Desaparecido",
+    "id": "agente-patrick",
+    "code": "AGT-002",
+    "title": "Patrick",
+    "category": "Registro de desaparecidos",
+    "summary": "Leprechaun de sorte extraordinária, associado à realização de desejos. Consta como desaparecido, sem localização conhecida.",
+    "report": [
+      "Patrick é um dos indivíduos mais peculiares que já passaram pelos registros da G.M.S. Conhecido por sua sorte aparentemente inesgotável, seu comportamento imprevisível e seu consumo excessivo de bebidas alcoólicas, o leprechaun construiu uma reputação tão curiosa quanto controversa. Apesar de suas atitudes frequentemente irresponsáveis, Patrick possui habilidades sobrenaturais extraordinárias, sendo capaz de escapar de situações nas quais qualquer outra criatura dificilmente sobreviveria.",
+      "Dono de uma personalidade extrovertida, inconveniente e extremamente despreocupada, Patrick raramente é visto sem uma garrafa ou um copo nas mãos. Seu gosto exagerado por bebidas alcoólicas tornou-se uma de suas características mais conhecidas, assim como sua tendência a transformar situações sérias em acontecimentos completamente absurdos. Entretanto, por trás de sua aparência pouco confiável, esconde-se uma criatura astuta, capaz de utilizar sua sorte e inteligência para superar adversários muito mais poderosos.",
+      "Entre suas relações mais conhecidas estão suas amizades com Bab'Din e Zé Teixeira, dois indivíduos com os quais desenvolveu laços de grande confiança. Embora suas personalidades sejam bastante diferentes, os três compartilham uma amizade que já resistiu a inúmeras situações perigosas e, em alguns casos, absolutamente inexplicáveis. Patrick demonstra especial consideração por Zé Teixeira, a quem deve a realização de um desejo. As circunstâncias que deram origem a essa dívida permanecem desconhecidas, assim como o motivo pelo qual ela ainda não foi quitada.",
+      "Sua sorte extraordinária é frequentemente considerada sua maior habilidade. Acidentes improváveis, encontros inesperados e acontecimentos que desafiam qualquer explicação lógica parecem favorecer Patrick de maneira quase constante. Não se sabe até que ponto esses eventos são resultado de seus poderes naturais ou simplesmente de uma sequência inacreditável de coincidências. O fato é que, mesmo nas situações mais desesperadoras, Patrick costuma encontrar uma maneira de sair ileso, frequentemente sem compreender a gravidade do perigo que acabou de enfrentar.",
+      "Entretanto, seu histórico tomou um rumo inesperado quando o leprechaun desapareceu sem deixar informações concretas sobre seu paradeiro. Desde então, seu nome consta nos registros da G.M.S. como desaparecido. As circunstâncias de seu sumiço permanecem um mistério, e não existem informações suficientes para determinar se Patrick foi vítima de algum acontecimento sobrenatural, decidiu desaparecer por vontade própria ou simplesmente se envolveu em mais uma de suas confusões.",
+      "Apesar de seu comportamento irresponsável, Patrick continua sendo uma figura importante para aqueles que o conheceram, especialmente Bab'Din e Zé Teixeira. Seu desaparecimento permanece uma questão em aberto, agravada pelo fato de que o desejo devido ao lobisomem ainda não foi realizado.",
+      "Considerando seu histórico, alguns acreditam que Patrick esteja enfrentando problemas sérios. Outros suspeitam que esteja simplesmente perdido em algum lugar, completamente bêbado e sem a menor ideia de como chegou até lá.",
+      "De qualquer forma, uma coisa é certa: se existe alguém capaz de desaparecer do mundo inteiro e ainda ter sorte o suficiente para sair dessa, esse alguém é Patrick."
+    ],
+    "profile": [
+      {
+        "label": "Identificação",
+        "value": "Patrick"
+      },
+      {
+        "label": "Espécie",
+        "value": "Leprechaun"
+      },
+      {
+        "label": "Origem",
+        "value": "Desconhecida"
+      },
+      {
+        "label": "Especialidade",
+        "value": "Sorte e realização de desejos"
+      },
+      {
+        "label": "Condição",
+        "value": "Desaparecido"
+      },
+      {
+        "label": "Última localização",
+        "value": "Desconhecida"
+      }
+    ],
+    "related": [
+      "especie-leprechaun",
+      "agente-babdin",
+      "agente-ze-teixeira",
+      "org-gms"
+    ]
+  },
+  {
+    "kind": "agente",
+    "demo": false,
+    "source": false,
+    "sourceNote": "Histórico de agente fornecido ao arquivo.",
+    "date": "2026-10-21",
+    "department": "Arquivo de Pessoal",
+    "author": "Secretaria de Registro · G.M.S.",
+    "access": "Restrito",
+    "status": "Cadastro registrado",
+    "id": "agente-babdin",
+    "code": "AGT-003",
+    "title": "Bab’Din",
+    "category": "Registro operacional",
+    "summary": "Gênio ressuscitado acidentalmente em um corpo de centauro durante um experimento de Miguel e Belias. Especialista em combate e habilidades sobrenaturais.",
+    "report": [
+      "Bab'Din é uma das criaturas mais extraordinárias e peculiares relacionadas à história da G.M.S. Originalmente um poderoso gênio, sua existência foi interrompida pela morte, embora as circunstâncias que levaram ao seu fim permaneçam pouco conhecidas. Entretanto, aquilo que deveria ter sido o encerramento definitivo de sua história acabou se tornando o início de uma existência completamente diferente.",
+      "Durante um experimento conduzido por Miguel e Belias, Bab'Din foi acidentalmente trazido de volta à vida. O procedimento, que não tinha como objetivo produzir aquele resultado, acabou restaurando sua consciência em um corpo que jamais lhe pertenceu: o de um centauro. As razões para essa transformação ainda são pouco compreendidas, tornando seu caso um dos acontecimentos mais incomuns já associados às pesquisas da organização.",
+      "De aparência imponente, Bab'Din possui traços característicos de um homem do Oriente Médio, barba espessa e um marcante moicano que se estende pelo topo de sua cabeça. Seu torso humano apresenta uma constituição robusta, enquanto a metade inferior de seu corpo possui a anatomia de um grande cavalo. Em um de seus pulsos, carrega um enorme bracelete dourado, adornado por uma corrente quebrada, cuja presença remete à sua antiga existência como gênio.",
+      "Apesar das circunstâncias de seu retorno, Bab'Din demonstrou ser um guerreiro extraordinário. Sua força, resistência e impressionante habilidade em combate fazem dele um adversário extremamente perigoso, capaz de enfrentar inimigos que representariam uma ameaça até mesmo para agentes experientes. Sua nova anatomia, embora inicialmente estranha à sua natureza original, tornou-se parte fundamental de seu estilo de luta.",
+      "Entretanto, a transformação trouxe consequências que vão muito além de sua aparência. Para uma criatura que outrora pertenceu a uma espécie associada a poderes sobrenaturais extraordinários, despertar aprisionado em um corpo completamente diferente representa uma mudança profunda em sua própria existência. Ainda assim, Bab'Din demonstra uma capacidade impressionante de adaptação, recusando-se a permitir que as circunstâncias de seu renascimento determinem aquilo que ele pode ou não se tornar.",
+      "Sua relação com Miguel e Belias permanece diretamente ligada ao experimento responsável por sua ressurreição. Embora os detalhes do procedimento não sejam amplamente conhecidos, a existência de Bab'Din representa uma descoberta de enorme importância e levanta questionamentos sobre os limites entre a vida, a morte e a transformação das criaturas sobrenaturais.",
+      "Hoje, Bab'Din é a prova viva de que nem mesmo a morte representa necessariamente um fim definitivo nesse universo. Um gênio que perdeu a vida, retornou como centauro e encontrou na guerra uma nova maneira de demonstrar seu poder."
+    ],
+    "profile": [
+      {
+        "label": "Identificação",
+        "value": "Bab’Din"
+      },
+      {
+        "label": "Espécie de origem",
+        "value": "Gênio"
+      },
+      {
+        "label": "Corpo atual",
+        "value": "Centauro"
+      },
+      {
+        "label": "Idade",
+        "value": "Desconhecida"
+      },
+      {
+        "label": "Especialidade",
+        "value": "Combate e habilidades sobrenaturais"
+      },
+      {
+        "label": "Condição",
+        "value": "Ressuscitado por meio de experimento"
+      },
+      {
+        "label": "Cargo",
+        "value": "Não informado"
+      }
+    ],
+    "related": [
+      "especie-centauro",
+      "agente-miguel",
+      "agente-belias",
+      "agente-patrick",
+      "agente-ze-teixeira",
+      "org-gms"
+    ]
+  },
+  {
+    "kind": "agente",
+    "demo": false,
+    "source": false,
+    "sourceNote": "Histórico de agente fornecido ao arquivo.",
+    "date": "2026-10-21",
+    "department": "Arquivo de Pessoal",
+    "author": "Secretaria de Registro · G.M.S.",
+    "access": "Restrito",
+    "status": "Cadastro registrado",
+    "id": "agente-ze-teixeira",
+    "code": "AGT-004",
+    "title": "Zé Teixeira",
+    "category": "Equipe de campo",
+    "summary": "José Teixeira, investigador mineiro e agente de campo. Combina análise metódica, experiência operacional e os sentidos aguçados de um lobisomem.",
+    "report": [
+      "Natural de Minas Gerais, José Teixeira, mais conhecido como Zé Teixeira, é considerado um dos melhores agentes de campo da G.M.S. Reconhecido por sua inteligência, experiência e extraordinária capacidade de investigação, Zé conquistou o respeito de seus companheiros ao demonstrar que, mesmo entre criaturas conhecidas pela força e ferocidade, o conhecimento pode ser a arma mais poderosa.",
+      "Diferentemente da imagem que muitos possuem dos lobisomens, Zé é um indivíduo extremamente intelectual, observador e metódico. Sua curiosidade e seu interesse pelo conhecimento o levaram a desenvolver uma impressionante capacidade de analisar situações, identificar padrões e encontrar soluções para problemas aparentemente impossíveis. Entretanto, aqueles que confundem sua natureza estudiosa com fragilidade costumam descobrir rapidamente que, por trás de sua inteligência, ainda existe a força de uma verdadeira fera.",
+      "Sua entrada na G.M.S. aconteceu após uma operação de proporções extraordinárias, cujos acontecimentos marcaram profundamente a história da organização. Embora grande parte dos registros permaneça sob sigilo, sabe-se que a participação de Zé foi fundamental para o desfecho da missão. Suas habilidades chamaram a atenção dos responsáveis pela agência, que reconheceram nele um talento raro e o convidaram a integrar suas equipes operacionais.",
+      "Desde então, Zé Teixeira construiu uma carreira marcada por investigações complexas, missões perigosas e decisões que exigiram tanto raciocínio quanto coragem. Sua capacidade de compreender o comportamento de outras criaturas, aliada aos sentidos aguçados de sua espécie, faz dele um investigador excepcional. Não é raro que seja convocado para operações nas quais outros agentes já esgotaram suas possibilidades.",
+      "Apesar de sua reputação, Zé conserva muito de suas origens mineiras, demonstrando uma personalidade tranquila e um jeito simples de lidar com aqueles ao seu redor. Prefere uma boa conversa e uma análise cuidadosa antes de recorrer à violência, embora não hesite em mostrar suas garras quando a situação exige.",
+      "Dentro da G.M.S., Zé Teixeira tornou-se uma referência para agentes que desejam seguir carreira em operações de campo. Sua trajetória demonstra que a verdadeira força de um lobisomem não está apenas em seus músculos, dentes ou garras, mas também na capacidade de compreender o mundo que o cerca."
+    ],
+    "profile": [
+      {
+        "label": "Identificação",
+        "value": "José Teixeira"
+      },
+      {
+        "label": "Nome usual",
+        "value": "Zé Teixeira"
+      },
+      {
+        "label": "Espécie",
+        "value": "Lobisomem"
+      },
+      {
+        "label": "Origem",
+        "value": "Minas Gerais, Brasil"
+      },
+      {
+        "label": "Cargo",
+        "value": "Agente de campo da G.M.S."
+      },
+      {
+        "label": "Especialidade",
+        "value": "Investigação e operações de campo"
+      }
+    ],
+    "related": [
+      "especie-lobisomem",
+      "agente-patrick",
+      "agente-babdin",
+      "org-gms"
+    ]
+  },
+  {
+    "kind": "agente",
+    "demo": false,
+    "source": false,
+    "sourceNote": "Histórico de agente fornecido ao arquivo.",
+    "date": "2026-10-21",
+    "department": "Arquivo de Pessoal",
+    "author": "Secretaria de Registro · G.M.S.",
+    "access": "Censurado",
+    "status": "Cadastro registrado",
+    "id": "agente-belias",
+    "code": "AGT-005",
+    "title": "Belias",
+    "category": "Diretoria",
+    "summary": "Integrante da diretoria da G.M.S., de origem e idade desconhecidas. Seu envolvimento no experimento que trouxe Bab’Din de volta à vida permanece parcialmente sob sigilo.",
+    "report": [
+      "Belias é um dos mais antigos e enigmáticos membros da diretoria da G.M.S. Pouco se sabe sobre sua verdadeira origem, sua idade ou mesmo seu nome completo, cujo sobrenome permanece censurado nos registros oficiais da organização. Apesar de aparentar ser um homem comum, sua existência é cercada de mistérios que nem mesmo os agentes mais experientes conseguem explicar.",
+      "Em sua forma humana, Belias apresenta a aparência de um senhor de meia-idade, alto, magro e sempre bem-vestido. Seus cabelos brancos, a barba curta e os óculos discretos lhe conferem um ar de autoridade e experiência. Sua postura séria e seu comportamento reservado fazem com que muitos o considerem uma figura intimidadora, mesmo sem conhecerem sua verdadeira natureza. Entretanto, por trás daquela aparência respeitável, esconde-se um demônio de poder extraordinário, cuja verdadeira forma é conhecida por pouquíssimos indivíduos.",
+      "Sua entrada na G.M.S. está diretamente relacionada a uma antiga missão, cujos acontecimentos permanecem, em grande parte, classificados. Sabe-se que Belias desempenhou um papel importante durante essa operação e que sua participação foi determinante para sua posterior integração à organização. Entre os poucos registros associados ao seu passado, encontra-se sua participação no experimento responsável pela criação de uma figura conhecida como Bab'Din. A natureza de seu envolvimento, assim como os objetivos e as consequências desse experimento, permanece envolta em sigilo.",
+      "Apesar de sua posição na diretoria, Belias raramente revela suas verdadeiras intenções ou demonstra a extensão de suas capacidades. É reconhecido por sua inteligência, firmeza e habilidade para tomar decisões difíceis, características que o tornaram uma figura respeitada dentro da instituição. Sua presença costuma ser suficiente para encerrar discussões, embora poucos saibam dizer se isso acontece por respeito à sua autoridade ou pelo receio do que ele realmente é capaz de fazer.",
+      "Curiosamente, Belias quase sempre está acompanhado de um pequeno diabrete chamado Luquinhas. A criatura, capaz de voar e conhecida por seu comportamento inquieto, parece contrastar completamente com a personalidade séria de seu companheiro. Apesar de suas travessuras e de sua aparência pouco convencional, Luquinhas demonstra uma ligação singular com Belias, sendo uma das poucas criaturas que parecem desfrutar de sua companhia sem qualquer receio.",
+      "Para a maioria dos agentes, Belias representa uma das maiores contradições da G.M.S.: um demônio ocupando uma das posições mais importantes de uma organização dedicada à preservação da harmonia entre as espécies. Entretanto, aqueles que conhecem sua trajetória sabem que sua presença na diretoria não é fruto do acaso. Seja qual for a verdadeira razão de sua lealdade à organização, uma coisa é certa: Belias possui conhecimentos e poderes que poucos seriam capazes de compreender."
+    ],
+    "profile": [
+      {
+        "label": "Identificação",
+        "value": "Belias ████████"
+      },
+      {
+        "label": "Espécie",
+        "value": "Demônio"
+      },
+      {
+        "label": "Idade",
+        "value": "Desconhecida"
+      },
+      {
+        "label": "Idade aparente",
+        "value": "Entre 50 e 60 anos"
+      },
+      {
+        "label": "Cargo",
+        "value": "Membro da diretoria da G.M.S."
+      },
+      {
+        "label": "Acompanhante",
+        "value": "Luquinhas · diabrete"
+      }
+    ],
+    "related": [
+      "especie-demonio",
+      "agente-miguel",
+      "agente-babdin",
+      "org-gms"
+    ]
+  },
+  {
+    "kind": "agente",
+    "demo": false,
+    "source": false,
+    "sourceNote": "Histórico de agente fornecido ao arquivo.",
+    "date": "2026-10-21",
+    "department": "Arquivo de Pessoal",
+    "author": "Secretaria de Registro · G.M.S.",
+    "access": "Restrito",
+    "status": "Cadastro registrado",
+    "id": "agente-suzan-popov",
+    "code": "AGT-006",
+    "title": "Suzan Popov",
+    "category": "Pesquisa e Alquimia",
+    "summary": "Pesquisadora de elevada patente, reconhecida pelo estudo de substâncias sobrenaturais, pela alquimia e por sua experiência em operações de alto risco.",
+    "report": [
+      "Suzan Popov é uma das mais respeitadas pesquisadoras da G.M.S., reconhecida por seus vastos conhecimentos em alquimia e por sua contribuição para o desenvolvimento de métodos capazes de compreender e manipular substâncias de origem sobrenatural. Sua inteligência, dedicação e experiência em campo lhe garantiram uma das patentes mais elevadas da organização, tornando-a uma referência tanto para pesquisadores quanto para agentes operacionais.",
+      "De beleza singular, a Doutora Popov é uma górgona de ascendência africana, com pele escura, olhos que lembram pérolas negras e dezenas de mambas-negras que se entrelaçam sobre sua cabeça. Da cintura para baixo, seu corpo assume a forma de uma grande serpente da mesma espécie, com escamas negras e brilhantes. Apesar de sua aparência imponente, possui uma estrutura relativamente pequena, alcançando cerca de 1,60 metro de altura e aproximadamente dois metros de comprimento total.",
+      "Embora seja conhecida por quase todos como Doutora Popov, ela costuma corrigir gentilmente aqueles que a chamam pelo título, insistindo que apenas Suzan é suficiente. Essa preferência contrasta com a formalidade de sua posição, revelando uma personalidade mais acessível do que sua reputação poderia sugerir. Ainda assim, quando o assunto envolve suas pesquisas, demonstra uma seriedade e determinação que poucos ousam questionar.",
+      "Ao longo de sua carreira, a Doutora Popov participou de inúmeras investigações e operações de alto risco, sendo uma delas considerada um dos acontecimentos mais importantes da história recente da G.M.S. Os registros dessa missão permanecem classificados, e poucos agentes possuem autorização para conhecer os detalhes do ocorrido. O que se sabe é que sua participação foi fundamental para o desfecho da operação, consolidando definitivamente seu nome entre os grandes profissionais da organização.",
+      "Atualmente, a Doutora Popov divide seu tempo entre pesquisas, desenvolvimento de compostos alquímicos e operações que exigem seus conhecimentos especializados. Apesar de sua elevada patente, não demonstra interesse em abandonar os laboratórios ou o trabalho de campo, acreditando que ainda existem inúmeros mistérios esperando para ser compreendidos.",
+      "Para muitos, a Doutora Popov representa o que há de melhor na G.M.S.: uma agente capaz de enfrentar o desconhecido não apenas com coragem, mas com conhecimento, paciência e uma curiosidade que parece não conhecer limites."
+    ],
+    "profile": [
+      {
+        "label": "Identificação",
+        "value": "Suzan Popov"
+      },
+      {
+        "label": "Tratamento usual",
+        "value": "Doutora Popov · prefere Suzan"
+      },
+      {
+        "label": "Espécie",
+        "value": "Górgona"
+      },
+      {
+        "label": "Ascendência",
+        "value": "Africana"
+      },
+      {
+        "label": "Área de atuação",
+        "value": "Pesquisa, alquimia e operações especializadas"
+      },
+      {
+        "label": "Patente",
+        "value": "Elevada · denominação não informada"
+      }
+    ],
+    "related": [
+      "especie-gorgona",
+      "org-gms"
+    ]
+  }
+];

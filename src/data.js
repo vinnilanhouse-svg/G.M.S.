@@ -1,3 +1,4 @@
+import { agentRecords } from './agents.js';
 import { speciesAbilities } from './species-abilities.js';
 import { speciesImages } from './species-images.js';
 import { reservedRecords } from './permissions.js';
@@ -188,7 +189,7 @@ export const records = [
     ],
     "quote": "Nossos cascos ecoam como trovões nas planícies, lembrando ao mundo que a liberdade não se conquista com palavras, mas com força e velocidade.",
     "abilities": speciesAbilities["especie-centauro"],
-    "notableMembers": [],
+    "notableMembers": ["agente-babdin"],
     "facts": [
       "Sua constituição combina anatomia humana e equina.",
       "Mantêm uma tradição de cooperação com humanos."
@@ -351,7 +352,7 @@ export const records = [
     ],
     "quote": "O caos não é um acidente. É uma arte. E nós somos seus artistas mais dedicados.",
     "abilities": speciesAbilities["especie-demonio"],
-    "notableMembers": [],
+    "notableMembers": ["agente-belias"],
     "facts": [
       "Podem camuflar sua aparência.",
       "A ligação com o submundo permite passagens entre planos."
@@ -427,7 +428,7 @@ export const records = [
     ],
     "quote": "Cuidado com o que você vê, humano. Algumas belezas são mortais, e alguns olhares... são os últimos.",
     "abilities": speciesAbilities["especie-gorgona"],
-    "notableMembers": [],
+    "notableMembers": ["agente-suzan-popov"],
     "facts": [
       "A petrificação está ligada à sua natureza.",
       "As serpentes da cabeça são vivas e podem reagir ao contato."
@@ -509,7 +510,7 @@ export const records = [
     ],
     "quote": "O ouro que você busca não está no fim do arco-íris. Está na piada que você não entendeu, na sorte que você ignorou... e no duende que você subestimou.",
     "abilities": speciesAbilities["especie-leprechaun"],
-    "notableMembers": [],
+    "notableMembers": ["agente-patrick"],
     "facts": [
       "Possuem afinidade natural com a sorte.",
       "Criam passagens discretas em brechas."
@@ -551,7 +552,7 @@ export const records = [
     ],
     "quote": "A lua não nos controla; ela nos liberta. E quando a besta acorda, não há refúgio que te salve.",
     "abilities": speciesAbilities["especie-lobisomem"],
-    "notableMembers": [],
+    "notableMembers": ["agente-ze-teixeira"],
     "facts": [
       "Podem nascer assim ou ser transformados por maldição ou ataque.",
       "A aparência híbrida é mais frequente que a humana."
@@ -747,7 +748,7 @@ export const records = [
     ],
     "quote": "O fogo que queima em mim não é apenas calor; é vida. E eu a compartilho com aqueles que ousam se aproximar.",
     "abilities": speciesAbilities["especie-salamandra"],
-    "notableMembers": [],
+    "notableMembers": ["agente-miguel"],
     "facts": [
       "Possuem afinidade com o fogo e vulnerabilidade à água.",
       "Há indivíduos com membros adicionais."
@@ -1074,6 +1075,7 @@ export const records = [
       "org-gms"
     ]
   },
+  ...agentRecords,
   ...operationalRecords,
   ...reservedRecords
 ];

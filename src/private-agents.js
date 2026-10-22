@@ -17,16 +17,16 @@ export const privateAgentRecords = [
     date: '2026-10-21',
     department: 'Arquivo de Pessoal',
     author: 'Secretaria de Registro · G.M.S.',
-    summary: 'Ficha de agente disponibilizada mediante credencial específica.',
+    summary: 'Agente Constructo de Carne. Ficha disponibilizada mediante credencial específica.',
     report: [
-      'Identificação registrada: Morrow Noone.',
-      'O histórico e os demais dados funcionais deste agente ainda não foram incorporados a esta ficha.',
+      'Morrow Noone é uma agente Constructo de Carne.',
+      'O histórico e os demais dados funcionais desta agente ainda não foram incorporados a esta ficha.',
     ],
     profile: [
       { label: 'Identificação', value: 'Morrow Noone' },
-      { label: 'Espécie', value: 'Não informada' },
+      { label: 'Espécie', value: 'Constructo de Carne' },
       { label: 'Cargo', value: 'Não informado' },
     ],
-    related: ['org-gms'],
+    related: ['especie-constructo', 'org-gms'],
   },
 ];

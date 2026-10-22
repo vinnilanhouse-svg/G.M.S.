@@ -6,7 +6,7 @@ export const privateAgentRecords = [
     id: 'agente-morrow-noone',
     image: agentImages['agente-morrow-noone'],
     kind: 'agente',
-    code: 'AGT-RES-001',
+    code: 'AGT-RES-090',
     title: 'Morrow Noone',
     category: 'Registro reservado',
     access: 'Restrito',

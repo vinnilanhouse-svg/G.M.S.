@@ -26,7 +26,7 @@ function mission({ sections, ...record }) {
 export const operationalRecords = [
   mission({
     id: 'missao-sol-velado',
-    code: 'MIS-001',
+    code: 'MIS-561',
     title: 'Operação Sol Velado',
     category: 'Investigação e reconhecimento',
     status: 'Contato perdido',
@@ -92,7 +92,7 @@ export const operationalRecords = [
   }),
   mission({
     id: 'missao-ultimo-sinal',
-    code: 'MIS-002',
+    code: 'MIS-568',
     title: 'Operação Último Sinal',
     category: 'Busca e reconhecimento',
     status: 'Em andamento',

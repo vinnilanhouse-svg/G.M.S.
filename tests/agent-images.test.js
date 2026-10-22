@@ -5,10 +5,14 @@ import {agentRecords} from '../src/agents.js';
 import {privateAgentRecords} from '../src/private-agents.js';
 const agents=[...agentRecords,...privateAgentRecords];
 
-test('as fichas públicas e reservadas dos agentes têm retratos locais próprios e legendas de arquivo de pessoal',async()=>{
- assert.ok(agents.length>0);
- assert.equal(new Set(agents.map(r=>r.image?.src)).size,agents.length);
- for(const r of agents){
+test('os retratos cadastrados nas fichas de agentes são locais, próprios e têm legendas de arquivo de pessoal',async()=>{
+ const illustrated=agents.filter(r=>r.image);
+ assert.ok(illustrated.length>0);
+ assert.ok(agentRecords.every(r=>r.image));
+ assert.ok(privateAgentRecords.find(r=>r.id==='agente-morrow-noone').image);
+ assert.ok(agents.filter(r=>!r.image).every(r=>r.unlisted&&r.status==='Cadastro incompleto'));
+ assert.equal(new Set(illustrated.map(r=>r.image.src)).size,illustrated.length);
+ for(const r of illustrated){
   assert.equal(r.image.src,`/agents/${r.id}.webp`);
   assert.ok(r.image.alt.includes(r.title));
   assert.equal(r.image.caption,'Arquivo de Pessoal · G.M.S.');

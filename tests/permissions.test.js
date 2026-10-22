@@ -88,3 +88,24 @@ test('NATHALISM0 permite a consulta de Morrow sem publicar a ficha nem guardar s
  assert.ok(!readActiveCredentials(JSON.stringify([credential.id])).has(credential.id));
  assert.deepEqual([...readActiveCredentials(JSON.stringify(['arquivo-reservado',credential.id]))],['arquivo-reservado']);
 });
+
+test('GAMREBELLO abre somente Wanderley e mantém as duas fichas reservadas fora do acervo público',()=>{
+ const credential=findCredential('GAMREBELLO');
+ assert.equal(credential.id,'wanderley');
+ assert.equal(credential.entryOnly,true);
+ assert.equal(credential.route,'#/arquivo/agente-wanderley');
+ assert.equal(findCredential(' GAMREBELLO ')?.id,credential.id);
+ for(const code of ['gamrebello','Gamrebello','GAMREBELO','GAMREBELLO-extra'])assert.equal(findCredential(code),undefined);
+ const target=records.find(r=>r.id==='agente-wanderley');
+ assert.equal(target.title,'Wanderley');
+ assert.equal(target.unlisted,true);
+ const original=visibleRecords(records,new Set());
+ assert.ok(!original.some(r=>r.id===target.id));
+ const withAccess=visibleRecords(records,new Set([credential.id]));
+ assert.ok(withAccess.some(r=>r.id===target.id));
+ assert.ok(!withAccess.some(r=>r.id==='agente-morrow-noone'));
+ assert.ok(!visibleRecords(records,new Set(['morrow-noone'])).some(r=>r.id===target.id));
+ assert.deepEqual(listedRecords(withAccess),listedRecords(original));
+ assert.ok(!records.some(r=>r.notableMembers?.includes(target.id)||r.related.includes(target.id)));
+ assert.deepEqual([...readActiveCredentials(JSON.stringify(['arquivo-reservado',credential.id]))],['arquivo-reservado']);
+});

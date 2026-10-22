@@ -159,6 +159,8 @@ Para substituir um retrato, troque o WebP correspondente em `public/agents/` ou 
 
 A credencial `NATHALISM0` (maiúsculas, com o número zero no final) abre diretamente a ficha de Morrow Noone. O registro fica em `src/private-agents.js`, com `requiredGrant` para condicionar a consulta e `unlisted: true` para excluí-lo do diretório, das buscas, dos favoritos, das contagens e das atualizações recentes, inclusive após a validação. O código é exigido a cada entrada: esta credencial não é salva, não cria um atalho em Credenciais de acesso e deixa de autorizar a ficha ao sair dela ou recarregar a página.
 
+A credencial `GAMREBELLO`, em maiúsculas, abre a ficha de **Wanderley** com o mesmo funcionamento de consulta individual: fora das listas, buscas, favoritos e contagens, sem salvar a autorização e exigindo novamente o código após sair ou recarregar. A ficha fica em `src/private-agents.js`; histórico, espécie, cargo e retrato aguardam informações do autor. As duas credenciais reservadas autorizam apenas suas respectivas fichas.
+
 O retrato de Morrow Noone usa o mesmo cartão lateral das demais fichas e está associado em `src/private-agents.js`; sua inclusão não altera o acesso exclusivo pelo código nem a exclusão das listagens.
 
 Bashir está cadastrado em `src/agents.js`, com retrato em `src/agent-images.js`, e vinculado em `notableMembers` à entrada das Múmias.

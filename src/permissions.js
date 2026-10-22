@@ -22,6 +22,12 @@ export const credentials = [
     route: '#/arquivo/agente-morrow-noone', entryOnly: true,
   },
   {
+    id: 'wanderley', code: 'GAMREBELLO', caseSensitive: true,
+    label: 'Ficha reservada de agente',
+    description: 'Consulta individual a um cadastro fora do diretório institucional.',
+    route: '#/arquivo/agente-wanderley', entryOnly: true,
+  },
+  {
     id: 'nome-erro', code: 'NOME_ERRO', caseSensitive: true,
     label: 'Atualização de identificação',
     description: 'Permite informar novamente o nome de acesso do agente.',

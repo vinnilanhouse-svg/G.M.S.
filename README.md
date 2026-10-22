@@ -73,7 +73,9 @@ A identidade visual usa o arquivo original da logo em `src/assets/gms-logo.png`,
 
 ## Agentes, missões e alvos de interesse
 
-Os cadastros das novas áreas ficam em `src/operations.js`, incorporados automaticamente ao acervo e à busca global. O array está vazio, pronto para receber missões, relatórios e alvos oficiais da campanha.
+Os cadastros operacionais ficam em `src/operations.js`, incorporados automaticamente ao acervo e à busca global. O acervo inclui **Operação Sol Velado** (`MIS-001`), **Operação Último Sinal** (`MIS-002`) e **Sol Velado — relatório de Bashir** (`REL-001`), com vínculos entre os documentos e a ficha do agente. O relatório pertence à Operação Sol Velado e preserva o momento da narrativa: a missão já estava em andamento e a equipe encerra o registro a caminho da ilha. A situação atual de Sol Velado é “Contato perdido”; a busca pertence a Último Sinal.
+
+Para editar uma missão, altere seus blocos `sections`: cada bloco tem `title` e `paragraphs`; `list: true` apresenta os objetivos como lista. O helper `mission()` gera `report` e `reportSections` automaticamente para manter a busca e a leitura organizadas. O relatório do Bashir usa diretamente o array `report`. As datas desses três registros indicam sua incorporação ao arquivo, sem fixar datas para os acontecimentos da campanha.
 
 - `kind: 'agente'`: ficha funcional; `profile` contém pares `{ label, value }` para identificação, espécie, função e lotação.
 - `kind: 'missao'`: ordem operacional; `agentIds` liga a equipe e `targetIds` liga os alvos. Os relatórios são encontrados automaticamente por `missionId`.

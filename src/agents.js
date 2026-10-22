@@ -448,7 +448,10 @@ export const agentRecords = [
     ],
     "related": [
       "especie-mumia",
-      "org-gms"
+      "org-gms",
+      "missao-sol-velado",
+      "missao-ultimo-sinal",
+      "relatorio-bashir-sol-velado"
     ]
   },
   {

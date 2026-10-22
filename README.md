@@ -114,9 +114,9 @@ A instalação usa o `package-lock.json`. Não é necessário configurar variáv
 
 ## Imagens das espécies
 
-As 20 espécies usam as ilustrações das respectivas seções do documento fornecido. Os arquivos ficam em `public/species/`, com versões WebP para os verbetes e miniaturas para reutilização. As imagens são servidas pelo próprio site, sem depender de links temporários do Google Docs.
+As 20 espécies usam as ilustrações das respectivas seções do documento fornecido. Os arquivos ficam em `public/species/`, com versões WebP para as entradas e miniaturas para reutilização. As imagens são servidas pelo próprio site, sem depender de links temporários do Google Docs.
 
-O mapeamento fica em `src/species-images.js` e cada verbete referencia sua imagem no campo `image` de `src/data.js`. Para substituir uma imagem, mantenha os caminhos ou atualize `src` e `thumbnail`, o texto alternativo e as dimensões no mapeamento. Os verbetes exibem a prancha completa e permitem ampliá-la; os cartões da Base de conhecimento usam os símbolos minimalistas das espécies, carregados conforme a navegação. O conteúdo e o enquadramento das ilustrações foram preservados na otimização para a web.
+O mapeamento fica em `src/species-images.js` e cada entrada referencia sua imagem no campo `image` de `src/data.js`. Para substituir uma imagem, mantenha os caminhos ou atualize `src` e `thumbnail`, o texto alternativo e as dimensões no mapeamento. As entradas exibem a prancha completa e permitem ampliá-la; os cartões da Base de conhecimento usam os símbolos minimalistas das espécies, carregados conforme a navegação. O conteúdo e o enquadramento das ilustrações foram preservados na otimização para a web.
 
 ## Vinheta de entrada
 
@@ -134,7 +134,7 @@ Os históricos oficiais de agentes fornecidos pelo autor ficam em `src/agents.js
 
 Os ajustes gerais de contraste e tamanho de texto ficam em `src/readability.css`, aplicado após os estilos de layout e as fontes dos títulos das espécies.
 
-Zaratha Khimer Atros consta apenas no diretório de agentes. A espécie Mantícora é informada na ficha como texto, sem criar verbete nem vínculo para uma espécie ausente do catálogo.
+Zaratha Khimer Atros consta apenas no diretório de agentes. A espécie Mantícora é informada na ficha como texto, sem criar entrada nem vínculo para uma espécie ausente do catálogo.
 
 Nas listas, as espécies usam os símbolos originais dos cabeçalhos do documento, em `public/species-icons`, associados em `src/species-icons.js`. As fichas de agentes com vínculo em `notableMembers` usam o símbolo da espécie de referência; esse símbolo não é um retrato do agente. Agentes sem espécie catalogada conservam o ícone de agente, a menos que tenham um símbolo próprio no campo `icon`.
 

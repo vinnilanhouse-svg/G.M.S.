@@ -1,6 +1,7 @@
 import { createAgentRenameShortcut } from './agent-rename-shortcut.js';
 import { readAgentName, requestAgentIdentification } from './agent-identity.js';
 import { showEntryScreen } from './entry-screen.js';
+import { showAccessDeniedEffect } from './access-denied.js';
 import gmsLogo from './assets/gms-logo.png';
 import '@fontsource/dm-sans/latin-400.css';
 import '@fontsource/dm-sans/latin-500.css';
@@ -12,6 +13,7 @@ import './style.css';
 import './species-typography.css';
 import './readability.css';
 import './agent-identity.css';
+import './access-denied.css';
 import { records as allRecords, categories } from './data.js';
 import { credentials, accessStorageKey, findCredential, readActiveCredentials, visibleRecords, listedRecords } from './permissions.js';
 
@@ -64,6 +66,7 @@ let current={};
 let filters={q:'',status:'',category:'',access:'',missionId:''};
 let previousPage='';
 let mobileOpen=false;
+let clearAccessEffect=null;
 
 function accessBadge(access) { return `<span class="access ${access==='Público'?'public':access==='Censurado'?'redacted':'restricted'}">${icon(access==='Público'?'globe':'lock')}${esc(access)}</span>`; }
 function statusBadge(status) { return `<span class="status ${status==='Em andamento'?'active':status==='Encerrado'?'closed':''}"><i></i>${esc(status)}</span>`; }
@@ -95,6 +98,20 @@ function redeemCredential(form) {
   input.setAttribute('aria-invalid','true');input.focus();return;
  }
  input.removeAttribute('aria-invalid');
+ if(credential.effect==='access-denied'){
+  clearAccessEffect?.();
+  mobileOpen=false;
+  document.querySelector('.sidebar')?.classList.remove('is-open');
+  document.querySelectorAll('.overlay').forEach(overlay=>overlay.remove());
+  clearAccessEffect=showAccessDeniedEffect({onComplete:()=>{
+   clearAccessEffect=null;
+   history.replaceState(null,'','#/inicio');
+   render();
+   const title=document.querySelector('main h1');
+   if(title){title.tabIndex=-1;title.focus({preventScroll:true});}
+  }});
+  return;
+ }
  if(credential.entryOnly){
   pendingPrivateEntry=credential;
   if(location.hash===credential.route)render();else location.hash=credential.route;
@@ -268,6 +285,8 @@ function bind() {
  document.querySelector('[data-save]')?.addEventListener('click',e=>{const id=e.currentTarget.dataset.save;if(saved.has(id))saved.delete(id);else saved.add(id);try{localStorage.setItem('gms-saved',JSON.stringify([...saved]));}catch{}const y=scrollY;detail(id);scrollTo(0,y);showToast(saved.has(id)?'Arquivo adicionado aos salvos.':'Arquivo removido dos salvos.');});
 }
 function render() {
+ clearAccessEffect?.();
+ clearAccessEffect=null;
  document.querySelectorAll('body > .overlay').forEach(x=>x.remove());
  const [path,qs='']=location.hash.replace(/^#\/?/,'').split('?');
  const [page='inicio',id]=path.split('/');
@@ -303,7 +322,7 @@ const agentRenameShortcut=createAgentRenameShortcut({
 addEventListener('hashchange',()=>{agentRenameShortcut.reset();render();});
 addEventListener('blur',agentRenameShortcut.reset);
 addEventListener('keydown',agentRenameShortcut.handleKeydown);
-addEventListener('keydown',e=>{if(e.key==='Escape'){mobileOpen=false;document.querySelector('.sidebar')?.classList.remove('is-open');document.querySelectorAll('.overlay').forEach(x=>x.remove());}if(e.key==='/'&&!document.querySelector('.agent-identification[open]')&&!document.querySelector('.entry-screen[open]')&&!document.querySelector('#record-image-viewer')?.open&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.querySelector('#global-search, #local-query')?.focus();}});
+addEventListener('keydown',e=>{if(e.key==='Escape'){mobileOpen=false;document.querySelector('.sidebar')?.classList.remove('is-open');document.querySelectorAll('.overlay').forEach(x=>x.remove());}if(e.key==='/'&&!document.querySelector('.access-denied-screen[open]')&&!document.querySelector('.agent-identification[open]')&&!document.querySelector('.entry-screen[open]')&&!document.querySelector('#record-image-viewer')?.open&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.querySelector('#global-search, #local-query')?.focus();}});
 render();
 if(agentName)showEntryScreen(gmsLogo);
 else requestAgentIdentification(gmsLogo,({name,persisted})=>{

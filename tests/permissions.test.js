@@ -39,13 +39,26 @@ test('todo registro condicionado possui uma credencial válida e os destinos ind
     assert.ok(credentials.some(c => c.id === record.requiredGrant), record.id);
     if(record.demo)assert.match(record.report[0],/NÃO CANÔNICO/);
   }
-  for (const credential of credentials) {
+  for (const credential of credentials.filter(credential => !credential.effect)) {
     assert.ok(records.some(record => record.requiredGrant === credential.id));
     if (credential.route.startsWith('#/arquivo/')) {
       const target = records.find(record => record.id === credential.route.split('/').at(-1));
       assert.equal(target?.requiredGrant, credential.id);
     }
   }
+});
+
+test('PAPÃO aciona somente o efeito temporário, sem persistir nem liberar registros',()=>{
+ const credential=findCredential('PAPÃO');
+ assert.equal(credential.effect,'access-denied');
+ assert.equal(credential.entryOnly,true);
+ assert.equal(credential.route,'#/inicio');
+ assert.equal(findCredential(' papão ')?.id,credential.id);
+ assert.equal(findCredential('PAPA\u0303O')?.id,credential.id);
+ assert.equal(findCredential('PAPAO'),undefined);
+ assert.ok(!records.some(record=>record.requiredGrant===credential.id));
+ assert.deepEqual(visibleRecords(records,new Set([credential.id])),visibleRecords(records,new Set()));
+ assert.deepEqual([...readActiveCredentials(JSON.stringify(['arquivo-reservado',credential.id]))],['arquivo-reservado']);
 });
 
 test('NATHALISM0 permite a consulta de Morrow sem publicar a ficha nem guardar sua autorização',()=>{

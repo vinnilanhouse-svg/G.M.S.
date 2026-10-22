@@ -21,6 +21,12 @@ export const credentials = [
     description: 'Consulta individual a um cadastro fora do diretório institucional.',
     route: '#/arquivo/agente-morrow-noone', entryOnly: true,
   },
+  {
+    id: 'papao', code: 'PAPÃO',
+    label: 'Consulta não autorizada',
+    description: 'Sequência temporária de acesso negado e retorno ao painel.',
+    route: '#/inicio', entryOnly: true, effect: 'access-denied',
+  },
 ];
 
 export function normalizeAccessCode(value) {
@@ -36,7 +42,7 @@ export function findCredential(code) {
 export function readActiveCredentials(raw) {
   try {
     const ids = JSON.parse(raw);
-    return new Set(Array.isArray(ids) ? ids.filter(id => credentials.some(c => c.id === id && !c.entryOnly)) : []);
+    return new Set(Array.isArray(ids) ? ids.filter(id => credentials.some(c => c.id === id && !c.entryOnly && !c.effect)) : []);
   } catch {
     return new Set();
   }

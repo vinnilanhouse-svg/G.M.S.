@@ -100,8 +100,11 @@ Códigos de demonstração (para quem organiza a campanha):
 | --- | --- |
 | `GMS-ARQUIVO` | A aba **Arquivo reservado**, com dois documentos adicionais |
 | `GMS-INTEL` | Um dossiê complementar em **Alvos de interesse** |
+| `PAPÃO` | Sequência temporária de acesso negado, seguida de retorno ao painel |
 
 A validação aceita diferenças de maiúsculas/minúsculas e espaços nas extremidades. A liberação é guardada neste navegador e os códigos já ativos não são registrados novamente. Se o navegador impedir o armazenamento, a autorização vale apenas durante a sessão e a interface informa isso. Na página de credenciais é possível consultar os acessos ativos e removê-los deste terminal.
+
+A credencial **PAPÃO** mantém o acento e aceita variações de maiúsculas/minúsculas. Ela apresenta uma tela vermelha com um símbolo de erro no lugar da logo e a mensagem “Você não tem autorização para acessar este arquivo”. Após **8 segundos**, abre o pop-up **Redirecionando**, com carregamento de **1,5 segundo**, e retorna ao painel inicial com as cores normais. A sequência não salva uma autorização nem modifica o nome do agente, os favoritos ou os acessos já concedidos. Sua definição fica em `src/permissions.js`, com `effect: 'access-denied'`; o comportamento e os tempos ficam em `src/access-denied.js`, e o visual em `src/access-denied.css`. A navegação para outra página cancela a sequência e seus temporizadores.
 
 As definições ficam em **`src/permissions.js`**:
 

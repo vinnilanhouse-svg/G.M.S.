@@ -1,0 +1,93 @@
+body.access-denied-active {
+  --bg: #190d0f;
+  --panel: #261214;
+  --text: #ffe5df;
+  --muted: #cba29c;
+  --accent: #ef8c83;
+  --line: #61312f;
+  --reading-secondary: #e6bcb5;
+  overflow: hidden;
+}
+
+.access-denied-screen {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  border: 0;
+  outline: none;
+  color: var(--text);
+  background: radial-gradient(ellipse at 50% 42%, #39171b 0%, #200e12 48%, #160c0e 100%);
+}
+.access-denied-screen[open] { display: grid; grid-template-rows: auto 1fr auto; }
+.access-denied-screen::backdrop { background: #190d0f; }
+.denied-header, .denied-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 25px 40px;
+  border-bottom: 1px solid #61312f;
+}
+.denied-brand { display: flex; align-items: center; gap: 16px; font-size: 17px; letter-spacing: 2px; }
+.denied-logo { width: 55px; height: 55px; color: #ef8c83; }
+.denied-logo svg { display: block; width: 100%; height: 100%; }
+.denied-brand small { display: block; margin-top: 5px; color: #cba29c; font: 10px/1.6 var(--mono); letter-spacing: 1.5px; }
+.denied-terminal, .denied-footer, .denied-kicker, .denied-detail, .redirect-heading, .redirect-meta { font-family: var(--mono); }
+.denied-terminal { color: #d8a29d; font-size: 11px; letter-spacing: 1px; }
+.denied-content { align-self: center; padding: 48px 24px; text-align: center; }
+.denied-symbol { width: 112px; height: 112px; margin: 0 auto 29px; color: #ef8c83; }
+.denied-symbol svg { width: 100%; height: 100%; }
+.denied-kicker { color: #e9a59c; font-size: 11px; letter-spacing: 3px; }
+.denied-content h1 { margin: 18px 0; color: #ffe5df; font-size: clamp(36px, 6vw, 68px); font-weight: 500; line-height: 1.15; letter-spacing: -2px; }
+.denied-message { max-width: 560px; margin: 0 auto; color: #f4c6bd; font-size: 20px; line-height: 1.7; }
+.denied-rule { width: 80px; margin: 32px auto; border-top: 2px solid #9c504b; }
+.denied-detail { max-width: 550px; margin: 0 auto; color: #cba29c; font-size: 12px; line-height: 1.9; }
+.denied-footer { border-top: 1px solid #61312f; border-bottom: 0; color: #cba29c; font-size: 10px; line-height: 1.7; letter-spacing: 1px; }
+
+.access-redirect-dialog {
+  position: fixed;
+  inset: 0;
+  width: min(460px, calc(100vw - 36px));
+  max-width: none;
+  margin: auto;
+  padding: 32px;
+  border: 1px solid #9c504b;
+  outline: none;
+  color: #ffe5df;
+  background: #271216;
+  box-shadow: 0 24px 100px #090305aa;
+}
+.access-redirect-dialog::backdrop { background: #100508c9; }
+.redirect-heading { display: flex; align-items: center; gap: 12px; color: #e9a59c; font-size: 10px; line-height: 1.7; letter-spacing: 1px; }
+.redirect-heading svg { width: 30px; height: 30px; flex-shrink: 0; }
+.access-redirect-dialog h2 { margin: 27px 0 8px; color: #ffe5df; font-size: 30px; font-weight: 500; line-height: 1.3; }
+.access-redirect-dialog > p { margin: 0 0 26px; color: #e6bcb5; font-size: 15px; line-height: 1.7; }
+.redirect-progress { display: flex; gap: 3px; padding: 5px; height: 28px; border: 1px solid #a65c54; }
+.redirect-progress > span { flex: 1; min-width: 0; background: #4d272c; }
+.redirect-progress > .is-filled { background: #ef8c83; }
+.redirect-meta { display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; color: #d9aaa2; font-size: 9px; line-height: 1.7; letter-spacing: .5px; }
+
+@media (max-width: 600px) {
+  .denied-header, .denied-footer { padding: 20px; gap: 18px; }
+  .denied-header { align-items: flex-start; }
+  .denied-brand { gap: 10px; font-size: 14px; letter-spacing: 1px; }
+  .denied-logo { width: 42px; height: 42px; }
+  .denied-brand small { font-size: 8px; }
+  .denied-terminal { max-width: 96px; text-align: right; font-size: 9px; line-height: 1.8; }
+  .denied-content { padding: 38px 22px; }
+  .denied-symbol { width: 88px; height: 88px; }
+  .denied-content h1 { letter-spacing: -1px; }
+  .denied-message { font-size: 18px; }
+  .denied-detail { font-size: 11px; }
+  .denied-footer { flex-wrap: wrap; font-size: 9px; }
+  .access-redirect-dialog { padding: 25px; }
+  .access-redirect-dialog h2 { font-size: 27px; }
+  .redirect-progress { gap: 2px; }
+  .redirect-meta { font-size: 8px; }
+}

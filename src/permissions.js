@@ -101,6 +101,6 @@ export const reservedRecords = [
     ],
     facts: ['Este dossiê é um exemplo de acesso adicional.'],
     hypotheses: [], unknown: ['Identidade, vínculos e motivações.'],
-    related: ['alvo-demo-001', 'org-gms'],
+    related: ['org-gms'],
   },
 ];

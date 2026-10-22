@@ -19,7 +19,7 @@ A fonte narrativa é o [documento fornecido, edição 1.7](https://docs.google.c
 
 Cada registro de origem tem referência à seção consultada. Lendas e incertezas não são apresentadas como fatos confirmados. O documento apresenta duas medidas para a estatura das Fadas; a divergência foi registrada como informação não consolidada.
 
-Os três casos `INV-DEMO-*` são **exemplos não canônicos**, identificados no painel e no cabeçalho de cada dossiê. Os documentos internos são adaptações editoriais de trechos da fonte, não novos acontecimentos. Códigos de catálogo, departamentos, datas de incorporação e classificações de circulação são metadados desta versão do site.
+Os casos, a missão, os dois relatórios e o alvo público de demonstração foram removidos. A seção Investigações foi retirada da navegação. Os anexos reservados demonstrativos continuam identificados como não canônicos. Códigos de catálogo, departamentos, datas de incorporação e classificações de circulação são metadados desta versão do site.
 
 ## Editar ou adicionar arquivos
 
@@ -28,7 +28,7 @@ O conteúdo de referência está em **`src/data.js`** e os cadastros operacionai
 | Campo | Uso |
 | --- | --- |
 | `id` | Identificador único e estável, usado na URL e nos vínculos |
-| `kind` | `verbete`, `documento`, `investigacao`, `agente`, `missao`, `relatorio` ou `alvo` |
+| `kind` | `verbete`, `documento`, `agente`, `missao`, `relatorio` ou `alvo` |
 | `code`, `title`, `summary` | Código, título e resumo |
 | `category` | Categoria usada nos filtros |
 | `access` | `Público`, `Restrito` ou `Censurado` |
@@ -73,7 +73,7 @@ A identidade visual usa o arquivo original da logo em `src/assets/gms-logo.png`,
 
 ## Agentes, missões e alvos de interesse
 
-Os cadastros das novas áreas ficam em `src/operations.js`, incorporados automaticamente ao acervo e à busca global. Há modelos não canônicos de agente, missão, relatórios e alvo; substitua os textos pelos dados oficiais da campanha.
+Os cadastros das novas áreas ficam em `src/operations.js`, incorporados automaticamente ao acervo e à busca global. O array está vazio, pronto para receber missões, relatórios e alvos oficiais da campanha.
 
 - `kind: 'agente'`: ficha funcional; `profile` contém pares `{ label, value }` para identificação, espécie, função e lotação.
 - `kind: 'missao'`: ordem operacional; `agentIds` liga a equipe e `targetIds` liga os alvos. Os relatórios são encontrados automaticamente por `missionId`.

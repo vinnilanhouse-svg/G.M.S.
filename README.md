@@ -177,4 +177,4 @@ Seções e fichas inexistentes, caminhos inválidos fora do hash e falhas de exe
 
 Ao abrir ou recarregar o site, há **1% de chance** de entrar nessa mesma tela. O sorteio acontece uma vez na inicialização, sem se repetir ao trocar de seção, atualizar o nome ou usar o botão de retorno. A identificação da primeira visita continua funcionando normalmente. Não há retorno automático: a pessoa escolhe quando voltar pelo botão.
 
-A resolução de rotas e a chance ficam em `src/routing.js`; a tela e seus estilos, em `src/lost-page.js` e `src/lost-page.css`. A ilustração fica em `src/assets/codex-lost.webp`, importada no build e incluída também na prévia independente.
+A resolução de rotas e a chance ficam em `src/routing.js`; a tela e seus estilos, em `src/lost-page.js` e `src/lost-page.css`. A ilustração minimalista usa apenas contornos verde-sálvia e fundo transparente, na paleta do site. Ela fica em `src/assets/codex-lost.webp`, importada no build e incluída também na prévia independente.

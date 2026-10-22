@@ -28,20 +28,8 @@
   gap: clamp(28px, 5vw, 76px);
   padding: 48px 40px;
 }
-.lost-illustration { position: relative; min-width: 0; }
-.lost-illustration::after {
-  content: '';
-  position: absolute;
-  z-index: 0;
-  bottom: 0;
-  left: 6%;
-  width: 88%;
-  height: 4%;
-  border-radius: 50%;
-  background: #0005;
-  filter: blur(14px);
-}
-.lost-illustration img { position: relative; z-index: 1; display: block; width: 100%; height: auto; }
+.lost-illustration { min-width: 0; }
+.lost-illustration img { display: block; width: 100%; height: auto; }
 .lost-eyebrow { display: flex; align-items: center; gap: 9px; font: 10px/1.7 var(--mono); letter-spacing: 1.6px; color: var(--accent); }
 .lost-eyebrow i { width: 5px; height: 5px; background: currentColor; }
 .lost-copy h1 { margin: 22px 0 18px; font-size: clamp(30px, 3.3vw, 46px); font-weight: 500; line-height: 1.2; letter-spacing: -1.3px; color: var(--text); }

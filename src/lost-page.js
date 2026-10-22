@@ -11,7 +11,7 @@ export function showLostPage({ logo, onReturnHome }) {
         <span class="lost-terminal-label">TERMINAL / ROTA NÃO LOCALIZADA</span>
       </header>
       <main class="lost-main" id="main-content">
-        <div class="lost-illustration"><img src="${codexLost}" width="1254" height="1254" alt="C.O.D.E.X em versão chibi, segurando uma chave de fenda ao lado de um gabinete de computador aberto." decoding="async"></div>
+        <div class="lost-illustration"><img src="${codexLost}" width="1254" height="1254" alt="C.O.D.E.X chibi desenhado em contornos verde-sálvia, segurando uma chave de fenda ao lado de um gabinete de computador." decoding="async"></div>
         <div class="lost-copy">
           <span class="lost-eyebrow"><i></i>ASSISTÊNCIA DO ARQUIVO</span>
           <h1>Ei, desculpa, acho que você se perdeu.</h1>

@@ -1,3 +1,5 @@
+import { startDeniedVisuals } from './denied-visuals.js';
+
 // Sequência narrativa temporária acionada pela credencial PAPÃO.
 const DENIAL_MS = 8000;
 const REDIRECT_MS = 1500;
@@ -11,6 +13,11 @@ export function showAccessDeniedEffect({ onComplete }) {
   screen.setAttribute('aria-labelledby', 'access-denied-title');
   screen.tabIndex = -1;
   screen.innerHTML = `
+    <div class="denied-effects" aria-hidden="true">
+      <canvas class="denied-code-rain"></canvas>
+      <div class="denied-scanlines"></div>
+      <span class="denied-tear"></span><span class="denied-tear"></span><span class="denied-tear"></span>
+    </div>
     <header class="denied-header">
       <div class="denied-brand"><span class="denied-logo" role="img" aria-label="Erro de autorização">${warning}</span><span>ARQUIVO <b>GMS</b><small>CONTROLE DE ACESSO</small></span></div>
       <span class="denied-terminal">TERMINAL 001 / ERRO 403</span>
@@ -18,7 +25,7 @@ export function showAccessDeniedEffect({ onComplete }) {
     <div class="denied-content">
       <div class="denied-symbol">${warning}</div>
       <p class="denied-kicker">CONSULTA INTERROMPIDA</p>
-      <h1 id="access-denied-title">Acesso negado</h1>
+      <h1 id="access-denied-title">Acesso negado<span class="denied-title-echo" aria-hidden="true">Acesso negado</span><span class="denied-title-echo" aria-hidden="true">Acesso negado</span></h1>
       <p class="denied-message">Você não tem autorização para acessar este arquivo.</p>
       <div class="denied-rule"></div>
       <p class="denied-detail">A credencial informada não habilita a consulta solicitada.</p>
@@ -43,6 +50,7 @@ export function showAccessDeniedEffect({ onComplete }) {
   document.title = 'Acesso negado — Arquivo GMS';
   screen.showModal();
   screen.focus({ preventScroll: true });
+  const stopVisuals = startDeniedVisuals(screen);
 
   const started = performance.now();
   const progress = redirect.querySelector('[role="progressbar"]');
@@ -61,6 +69,7 @@ export function showAccessDeniedEffect({ onComplete }) {
   function cleanup() {
     if (disposed) return;
     disposed = true;
+    stopVisuals();
     clearTimeout(denialTimer);
     clearTimeout(finishTimer);
     cancelAnimationFrame(frame);
@@ -92,6 +101,8 @@ export function showAccessDeniedEffect({ onComplete }) {
   function beginRedirect() {
     if (disposed || redirect.open) return;
     if (performance.now() - started >= DENIAL_MS + REDIRECT_MS) { finish(); return; }
+    stopVisuals();
+    screen.classList.add('is-redirecting');
     redirect.showModal();
     redirect.focus({ preventScroll: true });
     animate(performance.now());

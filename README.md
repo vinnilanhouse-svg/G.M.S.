@@ -106,6 +106,8 @@ A validação aceita diferenças de maiúsculas/minúsculas e espaços nas extre
 
 A credencial **PAPÃO** mantém o acento e aceita variações de maiúsculas/minúsculas. Ela apresenta uma tela vermelha com um símbolo de erro no lugar da logo e a mensagem “Você não tem autorização para acessar este arquivo”. Após **8 segundos**, abre o pop-up **Redirecionando**, com carregamento de **1,5 segundo**, e retorna ao painel inicial com as cores normais. A sequência não salva uma autorização nem modifica o nome do agente, os favoritos ou os acessos já concedidos. Sua definição fica em `src/permissions.js`, com `effect: 'access-denied'`; o comportamento e os tempos ficam em `src/access-denied.js`, e o visual em `src/access-denied.css`. A navegação para outra página cancela a sequência e seus temporizadores.
 
+Durante a tela de erro, letras e números vermelhos descem ao fundo, com linhas de varredura, cortes horizontais e distorções breves do título e da mensagem. A chuva de códigos é desenhada em `src/denied-visuals.js`, limitada a 20 quadros por segundo e com resolução ajustada à tela. A preferência por movimento reduzido apresenta os códigos estáticos e desativa os glitches. Ao começar o redirecionamento, as animações param; o retorno ou a saída da tela também descarta a animação, o observador de tamanho e o acompanhamento da preferência de movimento.
+
 As definições ficam em **`src/permissions.js`**:
 
 - `credentials`: altere `code` para mudar um código de demonstração; preserve o `id` se já houver registros vinculados.

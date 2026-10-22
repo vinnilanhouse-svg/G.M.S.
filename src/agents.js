@@ -400,5 +400,55 @@ export const agentRecords = [
       "height": 128,
       "alt": "Símbolo de Zaratha: rosto de mantícora"
     }
+  },
+  {
+    "kind": "agente",
+    "demo": false,
+    "source": false,
+    "sourceNote": "Histórico de agente fornecido ao arquivo.",
+    "date": "2026-10-21",
+    "department": "Arquivo de Pessoal",
+    "author": "Secretaria de Registro · G.M.S.",
+    "access": "Restrito",
+    "status": "Cadastro registrado",
+    "id": "agente-bashir",
+    "image": agentImages["agente-bashir"],
+    "code": "AGT-008",
+    "title": "Bashir",
+    "category": "Equipe de campo",
+    "summary": "Agente de campo da G.M.S. especializado em investigação, ocorrências funerárias e recuperação de relíquias. Múmia devota dos antigos deuses egípcios, dedicada à proteção dos vivos e ao respeito pelos mortos.",
+    "report": [
+      "Bashir é um agente de campo da G.M.S. cuja devoção aos antigos deuses egípcios acompanha cada aspecto de sua existência. Reservado, paciente e cuidadoso com as palavras, costuma observar uma situação por bastante tempo antes de se pronunciar. Entre seus companheiros, é conhecido pela serenidade com que enfrenta o perigo e pela seriedade que assume diante de qualquer desrespeito aos mortos. Sua presença transmite a disciplina de alguém que continua cumprindo deveres estabelecidos muito antes do mundo ao seu redor existir como hoje.",
+      "Em vida, Bashir serviu em um templo, auxiliando na conservação de objetos sagrados e nos cuidados dedicados aos falecidos. Conheceu famílias durante seus momentos mais difíceis e aprendeu a tratar cada funeral com atenção, independentemente da riqueza de quem seria sepultado. Quando chegou sua própria morte, recebeu os ritos que havia ajudado a preservar. Seu despertar, muito tempo depois, trouxe perguntas para as quais nenhuma das orações que conhecia oferecia uma resposta simples.",
+      "Bashir nunca conseguiu determinar se retornou pela vontade dos deuses, por uma maldição ou pela interferência de alguém em seu sepulcro. Procurou vestígios de seu passado e encontrou lugares transformados, inscrições danificadas e pessoas que conheciam suas crenças apenas por livros e peças de museu. Durante esse período, passou a interpretar sua permanência entre os vivos como uma responsabilidade: enquanto ainda pudesse agir, haveria pessoas a proteger e obrigações a cumprir.",
+      "Sua aproximação com a G.M.S. aconteceu durante uma investigação sobre o comércio clandestino de objetos funerários. Bashir reconheceu peças retiradas de sepulturas e ajudou os agentes a identificar sua procedência, conduzir buscas e recuperar restos mortais levados pelos traficantes. A atenção com que tratou as vítimas, somada à sua disposição para enfrentar os envolvidos, chamou a atenção da organização. Ingressar na agência lhe ofereceu uma maneira de continuar seu serviço em um mundo que ainda estava aprendendo a compreender.",
+      "Sua fé permanece viva na rotina. Bashir dedica orações a Osíris e Anúbis, preserva pequenos ritos e procura orientar suas decisões pelos princípios de verdade, justiça e equilíbrio que associa a Maat. Antes de uma missão, costuma segurar o ankh que carrega junto ao peito e permanecer alguns instantes em silêncio. Respeita as crenças de seus colegas e escuta com interesse quem deseja explicar os próprios costumes. Espera receber o mesmo cuidado quando precisa cumprir uma obrigação religiosa.",
+      "Em campo, sua paciência favorece investigações que exigem examinar vestígios, ouvir testemunhas e distinguir um objeto sagrado de uma peça usada para encobrir um crime. Suas faixas também lhe permitem alcançar lugares difíceis, imobilizar suspeitos e ajudar companheiros em perigo. Sob o casaco de serviço, conserva o corpo marcado pelo tempo; depois de operações desgastantes, precisa repousar e refazer cuidadosamente as bandagens que sustentam sua aparência. Esses momentos costumam ser acompanhados por preces discretas, recitadas enquanto trabalha.",
+      "Bashir pode se tornar inflexível quando encontra túmulos violados ou restos mortais tratados como mercadoria. Também carrega uma culpa difícil de abandonar: cada pessoa que não consegue salvar o faz questionar se compreendeu corretamente o propósito de seu retorno. Seus companheiros aprendem a perceber quando esse peso começa a afetá-lo, geralmente pelo silêncio prolongado depois de uma missão. Nessas ocasiões, aceitar ajuda continua sendo um dos exercícios mais difíceis de sua nova existência.",
+      "Apesar disso, mantém um cuidado constante com quem o acompanha. Oferece apoio a agentes abalados, aprende os nomes das vítimas e procura descobrir quais despedidas seriam importantes para suas famílias. Quando uma operação termina, Bashir frequentemente permanece alguns minutos além do necessário, conferindo se alguém foi esquecido. Para ele, servir à G.M.S. significa poder sustentar, com as próprias mãos, uma convicção que atravessou sua morte:",
+      "Toda vida merece proteção. Toda morte merece respeito."
+    ],
+    "profile": [
+      {
+        "label": "Identificação",
+        "value": "Bashir"
+      },
+      {
+        "label": "Espécie",
+        "value": "Múmia"
+      },
+      {
+        "label": "Cargo",
+        "value": "Agente de Campo da G.M.S."
+      },
+      {
+        "label": "Áreas de atuação",
+        "value": "Investigação, ocorrências funerárias e recuperação de relíquias"
+      }
+    ],
+    "related": [
+      "especie-mumia",
+      "org-gms"
+    ]
   }
 ];

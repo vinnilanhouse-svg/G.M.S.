@@ -6,8 +6,8 @@ import {privateAgentRecords} from '../src/private-agents.js';
 const agents=[...agentRecords,...privateAgentRecords];
 
 test('as fichas públicas e reservadas dos agentes têm retratos locais próprios e legendas de arquivo de pessoal',async()=>{
- assert.equal(agents.length,8);
- assert.equal(new Set(agents.map(r=>r.image?.src)).size,8);
+ assert.equal(agents.length,9);
+ assert.equal(new Set(agents.map(r=>r.image?.src)).size,9);
  for(const r of agents){
   assert.equal(r.image.src,`/agents/${r.id}.webp`);
   assert.ok(r.image.alt.includes(r.title));

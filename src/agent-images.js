@@ -56,5 +56,12 @@ export const agentImages = {
     "width": 1024,
     "height": 1536,
     "caption": "Arquivo de Pessoal · G.M.S."
+  },
+  "agente-bashir": {
+    "src": "/agents/agente-bashir.webp",
+    "alt": "Retrato de Bashir",
+    "width": 1024,
+    "height": 1536,
+    "caption": "Arquivo de Pessoal · G.M.S."
   }
 };

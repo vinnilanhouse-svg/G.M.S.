@@ -607,7 +607,7 @@ export const records = [
     ],
     "quote": "A morte não é o fim. É apenas uma pausa. E nós, que já morremos uma vez, sabemos que o verdadeiro horror é não poder descansar.",
     "abilities": speciesAbilities["especie-mumia"],
-    "notableMembers": [],
+    "notableMembers": ["agente-bashir"],
     "facts": [
       "O repouso restaura a magia que as mantém ativas.",
       "Suas bandagens podem mover e prender objetos ou criaturas."

@@ -149,7 +149,7 @@ export const operationalRecords = [
   {
     id: 'relatorio-bashir-sol-velado',
     kind: 'relatorio',
-    code: 'REL-001',
+    code: 'REL-561-001',
     title: 'Sol Velado — relatório de Bashir',
     category: 'Relatório de andamento',
     access: 'Restrito',

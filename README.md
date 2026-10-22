@@ -73,7 +73,7 @@ A identidade visual usa o arquivo original da logo em `src/assets/gms-logo.png`,
 
 ## Agentes, missões e alvos de interesse
 
-Os cadastros operacionais ficam em `src/operations.js`, incorporados automaticamente ao acervo e à busca global. O acervo inclui **Operação Sol Velado** (`MIS-561`), **Operação Último Sinal** (`MIS-568`) e **Sol Velado — relatório de Bashir** (`REL-001`), com vínculos entre os documentos e a ficha do agente. O relatório pertence à Operação Sol Velado e preserva o momento da narrativa: a missão já estava em andamento e a equipe encerra o registro a caminho da ilha. A situação atual de Sol Velado é “Contato perdido”; a busca pertence a Último Sinal.
+Os cadastros operacionais ficam em `src/operations.js`, incorporados automaticamente ao acervo e à busca global. O acervo inclui **Operação Sol Velado** (`MIS-561`), **Operação Último Sinal** (`MIS-568`) e **Sol Velado — relatório de Bashir** (`REL-561-001`), com vínculos entre os documentos e a ficha do agente. O relatório pertence à Operação Sol Velado e preserva o momento da narrativa: a missão já estava em andamento e a equipe encerra o registro a caminho da ilha. A situação atual de Sol Velado é “Contato perdido”; a busca pertence a Último Sinal.
 
 Os códigos de agentes e missões usam números variados e não consecutivos, para representar um recorte de um acervo maior. São identificadores fixos: não mudam ao recarregar o site. Para adicionar registros, escolha um código ainda não utilizado; os vínculos e as URLs continuam baseados em `id`.
 
@@ -81,7 +81,7 @@ Para editar uma missão, altere seus blocos `sections`: cada bloco tem `title` e
 
 - `kind: 'agente'`: ficha funcional; `profile` contém pares `{ label, value }` para identificação, espécie, função e lotação.
 - `kind: 'missao'`: ordem operacional; `agentIds` liga a equipe e `targetIds` liga os alvos. Os relatórios são encontrados automaticamente por `missionId`.
-- `kind: 'relatorio'`: documento operacional com `missionId` apontando para uma missão existente. Fica na subaba **Missões → Relatórios**, com filtro por missão; não se mistura à lista de documentos institucionais.
+- `kind: 'relatorio'`: documento operacional com `missionId` apontando para uma missão existente. O código segue `REL-{número da missão}-{número do relatório}`, com três dígitos em cada número: `REL-561-001` é o primeiro relatório de `MIS-561`, seguido por `REL-561-002`. A numeração dos relatórios começa em `001` para cada missão. Fica na subaba **Missões → Relatórios**, com filtro por missão; não se mistura à lista de documentos institucionais.
 - `kind: 'alvo'`: indivíduo ou grupo de interesse investigativo. `profile`, `facts`, `hypotheses` e `unknown` permitem separar identidade, vínculos, suspeitas e informações confirmadas. A classificação não implica culpa.
 
 Use `related` para acrescentar vínculos entre quaisquer arquivos. Remova `demo: true` apenas quando o registro representar conteúdo oficial. A rota `#/missoes/relatorios?missao=ID-DA-MISSAO` abre os relatórios de uma missão específica.

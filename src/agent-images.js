@@ -49,5 +49,12 @@ export const agentImages = {
     "width": 1024,
     "height": 1536,
     "caption": "Arquivo de Pessoal · G.M.S."
+  },
+  "agente-morrow-noone": {
+    "src": "/agents/agente-morrow-noone.webp",
+    "alt": "Retrato de Morrow Noone",
+    "width": 1024,
+    "height": 1536,
+    "caption": "Arquivo de Pessoal · G.M.S."
   }
 };

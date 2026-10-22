@@ -27,7 +27,7 @@ export function saveAgentName(storage, value) {
   }
 }
 
-export function requestAgentIdentification(logo, onConfirm) {
+export function requestAgentIdentification(logo, onConfirm, {initialName = '', canCancel = false} = {}) {
   const dialog = document.createElement('dialog');
   dialog.className = 'agent-identification';
   dialog.setAttribute('aria-labelledby', 'agent-identification-title');
@@ -40,15 +40,30 @@ export function requestAgentIdentification(logo, onConfirm) {
       <input id="agent-identification-name" name="agentName" type="text" maxlength="60" placeholder="Digite seu nome" autocomplete="name" aria-describedby="agent-identification-feedback" required autofocus>
       <p id="agent-identification-feedback" class="agent-identification-feedback" role="status"></p>
       <button type="submit">Confirmar identificação</button>
+      ${canCancel?'<button type="button" class="agent-identification-cancel">Cancelar</button>':''}
     </form>`;
   dialog.querySelector('img').src = logo;
   document.body.append(dialog);
   document.body.classList.add('agent-identification-open');
   const input = dialog.querySelector('input');
+  input.value = normalizeAgentName(initialName);
   const feedback = dialog.querySelector('#agent-identification-feedback');
   let submitted = false;
 
-  dialog.addEventListener('cancel', event => event.preventDefault());
+  function close() {
+    dialog.close();
+    dialog.remove();
+    document.body.classList.remove('agent-identification-open');
+  }
+  function cancel() {
+    submitted = true;
+    close();
+  }
+  dialog.addEventListener('cancel', event => {
+    event.preventDefault();
+    if (canCancel) cancel();
+  });
+  dialog.querySelector('.agent-identification-cancel')?.addEventListener('click', cancel);
   input.addEventListener('input', () => {
     input.removeAttribute('aria-invalid');
     feedback.textContent = '';
@@ -66,11 +81,10 @@ export function requestAgentIdentification(logo, onConfirm) {
     submitted = true;
     let persisted = false;
     try { persisted = saveAgentName(localStorage, name); } catch { /* Navegador sem armazenamento disponível. */ }
-    dialog.close();
-    dialog.remove();
-    document.body.classList.remove('agent-identification-open');
+    close();
     onConfirm({name, persisted});
   });
   dialog.showModal();
   input.focus({preventScroll: true});
+  if (input.value) input.select();
 }

@@ -32,3 +32,11 @@
   .agent-identification-brand img { width: 64px; height: 64px; }
   .agent-access-summary { padding: 13px 14px; }
 }
+
+.agent-identification .agent-identification-cancel {
+  margin-top: 12px;
+  border-color: #82966d;
+  background: transparent;
+  color: var(--reading-secondary);
+}
+.agent-identification .agent-identification-cancel:hover { background: #303e28; }

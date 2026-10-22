@@ -149,3 +149,5 @@ O retrato de Morrow Noone usa o mesmo cartão lateral das demais fichas e está 
 Bashir está cadastrado em `src/agents.js`, com retrato em `src/agent-images.js`, e vinculado em `notableMembers` à entrada das Múmias.
 
 Na primeira visita, a identificação pede o nome do agente antes da vinheta de validação. O nome é guardado na chave `gms-agent-name-v1` do `localStorage` e aparece no painel em “Acesso de agente”. A lógica fica em `src/agent-identity.js`, com estilos em `src/agent-identity.css`. O nome não concede credenciais, não altera o acesso à ficha de Morrow e é lembrado apenas neste navegador; ao limpar os dados do site ou usar outro navegador, o pedido reaparece.
+
+No painel inicial, a sequência de teclas **↑ ↓ → → ←** reabre a identificação para alterar o nome salvo neste navegador. A sequência é ignorada em outras páginas, durante a digitação e enquanto houver um diálogo aberto. A detecção fica em `src/agent-rename-shortcut.js`; a troca não altera as credenciais de acesso.

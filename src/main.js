@@ -1,3 +1,4 @@
+import { createAgentRenameShortcut } from './agent-rename-shortcut.js';
 import { readAgentName, requestAgentIdentification } from './agent-identity.js';
 import { showEntryScreen } from './entry-screen.js';
 import gmsLogo from './assets/gms-logo.png';
@@ -279,7 +280,20 @@ function render() {
  scrollTo(0,0);
  if(pendingNotice){showToast(pendingNotice);pendingNotice='';}
 }
-addEventListener('hashchange',render);
+function changeAgentName() {
+ requestAgentIdentification(gmsLogo,({name,persisted})=>{
+  agentName=name;
+  render();
+  showToast(persisted?'Identificação de agente atualizada.':'Nome atualizado nesta sessão. O navegador não permitiu salvar para a próxima visita.');
+ },{initialName:agentName,canCancel:true});
+}
+const agentRenameShortcut=createAgentRenameShortcut({
+ isEnabled:()=>current.page==='inicio'&&Boolean(agentName)&&!mobileOpen&&!document.querySelector('dialog[open]'),
+ onMatch:changeAgentName,
+});
+addEventListener('hashchange',()=>{agentRenameShortcut.reset();render();});
+addEventListener('blur',agentRenameShortcut.reset);
+addEventListener('keydown',agentRenameShortcut.handleKeydown);
 addEventListener('keydown',e=>{if(e.key==='Escape'){mobileOpen=false;document.querySelector('.sidebar')?.classList.remove('is-open');document.querySelectorAll('.overlay').forEach(x=>x.remove());}if(e.key==='/'&&!document.querySelector('.agent-identification[open]')&&!document.querySelector('.entry-screen[open]')&&!document.querySelector('#record-image-viewer')?.open&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.querySelector('#global-search, #local-query')?.focus();}});
 render();
 if(agentName)showEntryScreen(gmsLogo);

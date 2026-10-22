@@ -146,6 +146,8 @@ Zaratha Khimer Atros consta apenas no diretório de agentes. A espécie Mantíco
 
 Nas listas, as espécies usam os símbolos originais dos cabeçalhos do documento, em `public/species-icons`, associados em `src/species-icons.js`. As fichas de agentes com vínculo em `notableMembers` usam o símbolo da espécie de referência; esse símbolo não é um retrato do agente. Agentes sem espécie catalogada conservam o ícone de agente, a menos que tenham um símbolo próprio no campo `icon`.
 
+Os Constructos têm três símbolos originais diferentes no documento: Carne (costuras), Metal (placas regulares) e Barro (rachaduras). O mapa `constructIcons`, em `src/species-icons.js`, identifica cada variante. O campo `icon` de Nilo usa `constructIcons.barro`, o de C.O.D.E.X usa `constructIcons.metal` e o da ficha reservada de Morrow usa `constructIcons.carne`. A entrada geral de Constructos conserva o primeiro símbolo; a ficha de Morrow mantém as restrições de consulta existentes.
+
 O símbolo próprio de Zaratha fica em `public/agent-icons/zaratha-manticora.webp`, referenciado no campo `icon` de sua ficha. Ele não cria uma espécie no catálogo. O perfil de agente de demonstração foi removido; as missões demonstrativas permanecem sem equipe designada.
 
 Para substituir um retrato, troque o WebP correspondente em `public/agents/` ou atualize o caminho, o texto alternativo e as dimensões em `src/agent-images.js`. Os ícones das listas permanecem independentes dos retratos.
@@ -156,7 +158,7 @@ O retrato de Morrow Noone usa o mesmo cartão lateral das demais fichas e está 
 
 Bashir está cadastrado em `src/agents.js`, com retrato em `src/agent-images.js`, e vinculado em `notableMembers` à entrada das Múmias.
 
-Caio Lacerda (`AGT-205`), Dália Ferraz (`AGT-467`), Nilo Varela (`AGT-852`) e Lia Brandão (`AGT-394`) constam como agentes júniores. Codex (`AGT-906`), Constructo de Metal, é o responsável pelo Arquivo Central. As cinco fichas e seus retratos aprovados ficam em `src/agents.js`, `src/agent-images.js` e `public/agents/`. Os retratos aparecem no cartão lateral e podem ser ampliados; as listas usam os ícones das espécies. Os membros notáveis estão vinculados a Abissais (Caio), Centauros (Dália, junto de Bab’Din), Caiporas (Lia) e Constructos (Nilo e Codex). As variantes Barro e Metal são informadas nas fichas, dentro da entrada existente de Constructos.
+Caio Lacerda (`AGT-205`), Dália Ferraz (`AGT-467`), Nilo Varela (`AGT-852`) e Lia Brandão (`AGT-394`) constam como agentes júniores. C.O.D.E.X (`AGT-906`), Constructo de Metal, é o responsável pelo Arquivo Central. As cinco fichas e seus retratos aprovados ficam em `src/agents.js`, `src/agent-images.js` e `public/agents/`. Os retratos aparecem no cartão lateral e podem ser ampliados; as listas usam os ícones das espécies. Os membros notáveis estão vinculados a Abissais (Caio), Centauros (Dália, junto de Bab’Din), Caiporas (Lia) e Constructos (Nilo e C.O.D.E.X). As variantes Barro e Metal são informadas nas fichas, dentro da entrada existente de Constructos.
 
 Na primeira visita, a identificação pede o nome do agente antes da vinheta de validação. O nome é guardado na chave `gms-agent-name-v1` do `localStorage` e aparece no painel em “Acesso de agente”. A lógica fica em `src/agent-identity.js`, com estilos em `src/agent-identity.css`. O nome não concede credenciais, não altera o acesso à ficha de Morrow e é lembrado apenas neste navegador; ao limpar os dados do site ou usar outro navegador, o pedido reaparece.
 

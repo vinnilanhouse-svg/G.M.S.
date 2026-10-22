@@ -1,5 +1,5 @@
 // Símbolos originais presentes nos cabeçalhos das espécies do manual, edição 1.7.
-// O símbolo inicial identifica Constructos no catálogo.
+// O símbolo de Carne representa a entrada geral de Constructos no catálogo.
 export const speciesIcons = {
   "especie-abissais": {
     "src": "/species-icons/especie-abissais.webp",
@@ -101,4 +101,24 @@ export const speciesIcons = {
     "width": 128,
     "height": 128
   }
+};
+
+// Os três símbolos do cabeçalho de Constructos, conforme o material da ficha.
+export const constructIcons = {
+  carne: {
+    ...speciesIcons['especie-constructo'],
+    alt: 'Constructo de Carne',
+  },
+  metal: {
+    src: '/species-icons/constructo-metal.webp',
+    width: 128,
+    height: 128,
+    alt: 'Constructo de Metal',
+  },
+  barro: {
+    src: '/species-icons/constructo-barro.webp',
+    width: 128,
+    height: 128,
+    alt: 'Constructo de Barro',
+  },
 };

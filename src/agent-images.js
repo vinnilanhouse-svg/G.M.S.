@@ -101,7 +101,7 @@ export const agentImages = {
   },
   "agente-codex": {
     "src": "/agents/agente-codex.webp",
-    "alt": "Retrato de Codex",
+    "alt": "Retrato de C.O.D.E.X",
     "width": 1024,
     "height": 1536,
     "caption": "Arquivo de Pessoal · G.M.S."

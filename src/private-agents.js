@@ -1,10 +1,12 @@
 import { agentImages } from './agent-images.js';
+import { constructIcons } from './species-icons.js';
 // Fichas acessadas por credencial, fora do diretório e das buscas do acervo.
 // Preencha apenas informações fornecidas pelo autor da campanha.
 export const privateAgentRecords = [
   {
     id: 'agente-morrow-noone',
     image: agentImages['agente-morrow-noone'],
+    icon: constructIcons.carne,
     kind: 'agente',
     code: 'AGT-RES-090',
     title: 'Morrow Noone',

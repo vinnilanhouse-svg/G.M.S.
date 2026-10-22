@@ -123,7 +123,7 @@ A navegação, as contagens, os resultados de busca, os favoritos e os vínculos
 
 Importe o repositório `vinnilanhouse-svg/G.M.S.` e selecione a branch `main`. Mantenha a pasta raiz em `./`. O arquivo `vercel.json` já configura o framework Vite, o comando `npm run build` e a saída `dist`.
 
-A instalação usa o `package-lock.json`. Não é necessário configurar variáveis de ambiente nesta versão. As rotas usam hash (`#/...`), portanto não precisam de redirecionamento de SPA no servidor. A pasta `preview/` contém apenas exportações locais e não é necessária para a publicação.
+A instalação usa o `package-lock.json`. Não é necessário configurar variáveis de ambiente nesta versão. As rotas usam hash (`#/...`). O fallback de SPA em `vercel.json` permite que endereços inexistentes fora do hash também abram a tela de recuperação do C.O.D.E.X. A pasta `preview/` contém apenas exportações locais e não é necessária para a publicação.
 
 ## Imagens das espécies
 
@@ -168,3 +168,13 @@ Caio Lacerda (`AGT-205`), Dália Ferraz (`AGT-467`), Nilo Varela (`AGT-852`) e L
 Na primeira visita, a identificação pede o nome do agente antes da vinheta de validação. O nome é guardado na chave `gms-agent-name-v1` do `localStorage` e aparece no painel em “Acesso de agente”. A lógica fica em `src/agent-identity.js`, com estilos em `src/agent-identity.css`. O nome não concede credenciais, não altera o acesso à ficha de Morrow e é lembrado apenas neste navegador; ao limpar os dados do site ou usar outro navegador, o pedido reaparece.
 
 No painel inicial, a sequência de teclas **↑ ↓ → → ←** reabre a identificação para alterar o nome salvo neste navegador. A sequência é ignorada em outras páginas, durante a digitação e enquanto houver um diálogo aberto. A detecção fica em `src/agent-rename-shortcut.js`; a troca não altera as credenciais de acesso.
+
+A credencial **NOME_ERRO**, exatamente em maiúsculas e com dois Rs, também reabre a identificação, a partir do campo de credenciais em qualquer seção. O nome atual aparece preenchido; confirmar atualiza o nome local e cancelar preserva o anterior. O código não é guardado entre as autorizações ativas e não libera nenhum arquivo.
+
+## Tela de recuperação do C.O.D.E.X
+
+Seções e fichas inexistentes, caminhos inválidos fora do hash e falhas de execução da interface exibem o C.O.D.E.X chibi com uma chave de fenda ao lado de um computador. A mensagem é “Ei, desculpa, acho que você se perdeu. Vou te mandar de volta para casa.” O botão **Voltar para a tela inicial** restaura a rota inicial, mantendo nome, favoritos e credenciais. Fichas existentes que exigem uma credencial continuam exibindo a solicitação de acesso.
+
+Ao abrir ou recarregar o site, há **1% de chance** de entrar nessa mesma tela. O sorteio acontece uma vez na inicialização, sem se repetir ao trocar de seção, atualizar o nome ou usar o botão de retorno. A identificação da primeira visita continua funcionando normalmente. Não há retorno automático: a pessoa escolhe quando voltar pelo botão.
+
+A resolução de rotas e a chance ficam em `src/routing.js`; a tela e seus estilos, em `src/lost-page.js` e `src/lost-page.css`. A ilustração fica em `src/assets/codex-lost.webp`, importada no build e incluída também na prévia independente.

@@ -61,6 +61,16 @@ test('PAPÃO aciona somente o efeito temporário, sem persistir nem liberar regi
  assert.deepEqual([...readActiveCredentials(JSON.stringify(['arquivo-reservado',credential.id]))],['arquivo-reservado']);
 });
 
+test('NOME_ERRO exige maiúsculas e abre a identificação sem conceder nem guardar autorização',()=>{
+ const credential=findCredential('NOME_ERRO');
+ assert.equal(credential.effect,'rename-agent');
+ assert.equal(credential.entryOnly,true);
+ assert.equal(findCredential(' NOME_ERRO ')?.id,credential.id);
+ for(const code of ['nome_erro','Nome_Erro','NOME_ERO','NOME ERRO','NOME_ERRO_extra'])assert.equal(findCredential(code),undefined);
+ assert.deepEqual(visibleRecords(records,new Set([credential.id])),visibleRecords(records,new Set()));
+ assert.deepEqual([...readActiveCredentials(JSON.stringify(['arquivo-reservado',credential.id]))],['arquivo-reservado']);
+});
+
 test('NATHALISM0 permite a consulta de Morrow sem publicar a ficha nem guardar sua autorização',()=>{
  const credential=findCredential('NATHALISM0');
  assert.equal(credential.id,'morrow-noone');

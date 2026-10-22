@@ -2,6 +2,8 @@ import { createAgentRenameShortcut } from './agent-rename-shortcut.js';
 import { readAgentName, requestAgentIdentification } from './agent-identity.js';
 import { showEntryScreen } from './entry-screen.js';
 import { showAccessDeniedEffect } from './access-denied.js';
+import { showLostPage } from './lost-page.js';
+import { isArchivePath, resolveRoute, shouldShowEntryDetour } from './routing.js';
 import gmsLogo from './assets/gms-logo.png';
 import '@fontsource/dm-sans/latin-400.css';
 import '@fontsource/dm-sans/latin-500.css';
@@ -14,6 +16,7 @@ import './species-typography.css';
 import './readability.css';
 import './agent-identity.css';
 import './access-denied.css';
+import './lost-page.css';
 import { records as allRecords, categories } from './data.js';
 import { credentials, accessStorageKey, findCredential, readActiveCredentials, visibleRecords, listedRecords } from './permissions.js';
 
@@ -98,6 +101,14 @@ function redeemCredential(form) {
   input.setAttribute('aria-invalid','true');input.focus();return;
  }
  input.removeAttribute('aria-invalid');
+ if(credential.effect==='rename-agent'){
+  input.value='';
+  mobileOpen=false;
+  document.querySelector('.sidebar')?.classList.remove('is-open');
+  document.querySelectorAll('.overlay').forEach(overlay=>overlay.remove());
+  changeAgentName();
+  return;
+ }
  if(credential.effect==='access-denied'){
   clearAccessEffect?.();
   mobileOpen=false;
@@ -235,7 +246,7 @@ function reportContent(record) {
 function detail(id) {
  const r=records.find(x=>x.id===id);
  if(!r&&allRecords.some(x=>x.id===id&&x.requiredGrant)){credentialRequired();return;}
- if(!r) {shell(`<div class="empty-state"><h1>Arquivo não localizado</h1><p>O código solicitado não pertence a este acervo.</p><a class="primary-button" href="#/inicio">Voltar ao painel</a></div>`);return;}
+ if(!r) {lostPage();return;}
  document.title=`${r.title} — Arquivo GMS`;
  const parent=sectionForRecord(r);
  const isSpecies=r.category==='Espécies';
@@ -284,13 +295,32 @@ function bind() {
  document.querySelectorAll('[data-section]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.getElementById(a.dataset.section).scrollIntoView({behavior:'smooth',block:'start'});}));
  document.querySelector('[data-save]')?.addEventListener('click',e=>{const id=e.currentTarget.dataset.save;if(saved.has(id))saved.delete(id);else saved.add(id);try{localStorage.setItem('gms-saved',JSON.stringify([...saved]));}catch{}const y=scrollY;detail(id);scrollTo(0,y);showToast(saved.has(id)?'Arquivo adicionado aos salvos.':'Arquivo removido dos salvos.');});
 }
+function returnHome() {
+ history.replaceState(null,'',location.protocol==='file:'?'#/inicio':'/#/inicio');
+ render();
+ const title=document.querySelector('main h1');
+ if(title){title.tabIndex=-1;title.focus({preventScroll:true});}
+}
+function lostPage() {
+ clearAccessEffect?.();
+ clearAccessEffect=null;
+ document.querySelectorAll('body > .overlay').forEach(overlay=>overlay.remove());
+ current={page:'perdido'};
+ mobileOpen=false;
+ showLostPage({logo:gmsLogo,onReturnHome:returnHome});
+ scrollTo(0,0);
+}
 function render() {
+ try {renderPage();}
+ catch(error){console.error('Não foi possível abrir esta página.',error);lostPage();}
+}
+function renderPage() {
  clearAccessEffect?.();
  clearAccessEffect=null;
  document.querySelectorAll('body > .overlay').forEach(x=>x.remove());
- const [path,qs='']=location.hash.replace(/^#\/?/,'').split('?');
- const [page='inicio',id]=path.split('/');
- current={page:page||'inicio',id};mobileOpen=false;
+ const {query:qs,...route}=resolveRoute(location.hash,paths);
+ current=route;mobileOpen=false;
+ if(!isArchivePath(location)){lostPage();return;}
  if(openPrivateEntry&&location.hash!==openPrivateEntry.route)openPrivateEntry=null;
  if(pendingPrivateEntry){
   if(location.hash===pendingPrivateEntry.route)openPrivateEntry=pendingPrivateEntry;
@@ -304,11 +334,12 @@ function render() {
  if(pageKey()==='missoes/relatorios')filters.missionId=new URLSearchParams(qs).get('missao')||'';
  if(current.page==='busca')filters.q=new URLSearchParams(qs).get('q')||'';
  document.title=`${paths[pageKey()]||'Consulta'} — Arquivo GMS`;
- if(current.page==='inicio')dashboard();else if(current.page==='credenciais')credentialPage();else if(current.page==='reservado'&&!activeCredentials.has('arquivo-reservado'))credentialRequired();else if(current.page==='arquivo')detail(id);else if(paths[pageKey()])listPage();else shell(`<div class="empty-state"><h1>Seção não localizada</h1><a class="primary-button" href="#/inicio">Voltar ao painel</a></div>`);
+ if(current.page==='inicio')dashboard();else if(current.page==='credenciais')credentialPage();else if(current.page==='reservado'&&!activeCredentials.has('arquivo-reservado'))credentialRequired();else if(current.page==='arquivo')detail(current.id);else if(Object.hasOwn(paths,pageKey()))listPage();else lostPage();
  scrollTo(0,0);
  if(pendingNotice){showToast(pendingNotice);pendingNotice='';}
 }
 function changeAgentName() {
+ if(document.querySelector('.agent-identification[open]'))return;
  requestAgentIdentification(gmsLogo,({name,persisted})=>{
   agentName=name;
   render();
@@ -322,7 +353,10 @@ const agentRenameShortcut=createAgentRenameShortcut({
 addEventListener('hashchange',()=>{agentRenameShortcut.reset();render();});
 addEventListener('blur',agentRenameShortcut.reset);
 addEventListener('keydown',agentRenameShortcut.handleKeydown);
+addEventListener('error',event=>{if(event.error)lostPage();});
+addEventListener('unhandledrejection',()=>lostPage());
 addEventListener('keydown',e=>{if(e.key==='Escape'){mobileOpen=false;document.querySelector('.sidebar')?.classList.remove('is-open');document.querySelectorAll('.overlay').forEach(x=>x.remove());}if(e.key==='/'&&!document.querySelector('.access-denied-screen[open]')&&!document.querySelector('.agent-identification[open]')&&!document.querySelector('.entry-screen[open]')&&!document.querySelector('#record-image-viewer')?.open&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.querySelector('#global-search, #local-query')?.focus();}});
+if(shouldShowEntryDetour())history.replaceState(null,'','#/perdido');
 render();
 if(agentName)showEntryScreen(gmsLogo);
 else requestAgentIdentification(gmsLogo,({name,persisted})=>{

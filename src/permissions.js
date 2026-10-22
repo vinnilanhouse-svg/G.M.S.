@@ -22,6 +22,12 @@ export const credentials = [
     route: '#/arquivo/agente-morrow-noone', entryOnly: true,
   },
   {
+    id: 'nome-erro', code: 'NOME_ERRO', caseSensitive: true,
+    label: 'Atualização de identificação',
+    description: 'Permite informar novamente o nome de acesso do agente.',
+    entryOnly: true, effect: 'rename-agent',
+  },
+  {
     id: 'papao', code: 'PAPÃO',
     label: 'Consulta não autorizada',
     description: 'Sequência temporária de acesso negado e retorno ao painel.',

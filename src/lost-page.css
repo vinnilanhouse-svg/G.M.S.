@@ -1,0 +1,70 @@
+.lost-terminal {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(ellipse at 26% 49%, #2b34284d, transparent 57%), var(--bg);
+}
+.lost-header, .lost-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px clamp(22px, 5vw, 76px);
+  border-bottom: 1px solid var(--line);
+}
+.lost-brand { display: flex; align-items: center; gap: 16px; }
+.lost-brand img { object-fit: contain; }
+.lost-brand > span { font-size: 19px; letter-spacing: 2px; }
+.lost-brand small { display: block; margin-top: 6px; font: 9px var(--mono); letter-spacing: 1.3px; color: var(--muted); }
+.lost-terminal-label, .lost-footer { font: 10px/1.7 var(--mono); letter-spacing: 1px; color: var(--muted); }
+.lost-main {
+  width: 100%;
+  max-width: 1260px;
+  min-height: auto;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  align-items: center;
+  gap: clamp(28px, 5vw, 76px);
+  padding: 48px 40px;
+}
+.lost-illustration { position: relative; min-width: 0; }
+.lost-illustration::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  bottom: 0;
+  left: 6%;
+  width: 88%;
+  height: 4%;
+  border-radius: 50%;
+  background: #0005;
+  filter: blur(14px);
+}
+.lost-illustration img { position: relative; z-index: 1; display: block; width: 100%; height: auto; }
+.lost-eyebrow { display: flex; align-items: center; gap: 9px; font: 10px/1.7 var(--mono); letter-spacing: 1.6px; color: var(--accent); }
+.lost-eyebrow i { width: 5px; height: 5px; background: currentColor; }
+.lost-copy h1 { margin: 22px 0 18px; font-size: clamp(30px, 3.3vw, 46px); font-weight: 500; line-height: 1.2; letter-spacing: -1.3px; color: var(--text); }
+.lost-copy > p { margin: 0 0 30px; font-size: 19px; line-height: 1.65; color: #d2dcc6; }
+.lost-home-button { display: inline-flex; align-items: center; justify-content: center; gap: 22px; padding: 16px 20px; border: 1px solid #c6d3ae; background: var(--accent); color: #1d271b; font-size: 15px; font-weight: 600; transition: background .15s; }
+.lost-home-button:hover { background: #d9e3c8; }
+.lost-home-button svg { width: 20px; height: 20px; flex-shrink: 0; }
+.lost-signature { display: flex; flex-direction: column; gap: 7px; margin-top: 40px; padding-top: 19px; border-top: 1px solid var(--line); font: 9px/1.6 var(--mono); letter-spacing: 1.1px; color: var(--muted); }
+.lost-signature strong { font-size: 12px; font-weight: 500; color: var(--accent); letter-spacing: 2px; }
+.lost-footer { border-top: 1px solid var(--line); border-bottom: 0; padding-top: 18px; padding-bottom: 18px; font-size: 9px; }
+@media (max-width: 700px) {
+  .lost-header { padding: 16px 22px; }
+  .lost-brand img { width: 44px; height: 44px; }
+  .lost-brand > span { font-size: 16px; }
+  .lost-brand small { font-size: 8px; }
+  .lost-terminal-label { display: none; }
+  .lost-main { grid-template-columns: 1fr; gap: 26px; padding: 28px 24px 36px; }
+  .lost-illustration { width: min(100%, 320px); margin: 0 auto; }
+  .lost-copy { max-width: 460px; margin: 0 auto; }
+  .lost-copy h1 { font-size: 31px; margin: 16px 0 12px; }
+  .lost-copy > p { font-size: 17px; margin-bottom: 25px; }
+  .lost-home-button { width: 100%; font-size: 14px; padding: 15px; gap: 15px; }
+  .lost-signature { margin-top: 26px; }
+  .lost-footer { padding: 16px 24px; font-size: 8px; }
+  .lost-footer > span:last-child { display: none; }
+}

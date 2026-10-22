@@ -23,6 +23,19 @@ function mission({ sections, ...record }) {
   };
 }
 
+function fieldReport(record) {
+  return {
+    kind: 'relatorio',
+    demo: false,
+    source: false,
+    sourceNote: 'Relatório operacional · G.M.S.',
+    date: '2026-10-22',
+    department: 'Operações de Campo',
+    access: 'Restrito',
+    ...record,
+  };
+}
+
 export const operationalRecords = [
   mission({
     id: 'missao-sol-velado',
@@ -195,4 +208,206 @@ export const operationalRecords = [
       '— Agente Bashir',
     ],
   },
+  mission({
+    id: 'missao-repouso-violado',
+    code: 'MIS-083',
+    title: 'Operação Repouso Violado',
+    category: 'Contenção e negociação',
+    status: 'Encerrada',
+    summary: 'Uma múmia invadiu uma exposição de antiguidades e manteve dois seguranças imobilizados, exigindo a entrega de uma urna funerária. Bashir foi designado para negociar a libertação dos reféns.',
+    profile: [
+      { label: 'Natureza', value: 'Contenção e negociação' },
+      { label: 'Responsável', value: 'Bashir' },
+      { label: 'Local da ocorrência', value: 'Exposição de antiguidades' },
+      { label: 'Resultado', value: 'Reféns libertados · Criatura sob custódia' },
+    ],
+    agentIds: ['agente-bashir'],
+    related: ['relatorio-repouso-violado-inicial', 'relatorio-repouso-violado-encerramento', 'agente-bashir', 'especie-mumia'],
+    sections: [
+      {
+        title: 'Resumo da ocorrência',
+        paragraphs: [
+          'Uma múmia invadiu uma exposição de antiguidades, feriu um funcionário e manteve dois seguranças imobilizados por suas faixas. Ela exigia a entrega de uma urna funerária recém-incorporada ao acervo e ameaçava atacar qualquer pessoa que tentasse retirá-la do prédio.',
+        ],
+      },
+      {
+        title: 'Determinação operacional',
+        paragraphs: [
+          'A G.M.S. foi acionada para libertar os reféns, conter a criatura e investigar a relação entre ela e o objeto.',
+        ],
+      },
+    ],
+  }),
+  fieldReport({
+    id: 'relatorio-repouso-violado-inicial',
+    code: 'REL-083-001',
+    title: 'Repouso Violado — relatório inicial',
+    category: 'Relatório inicial',
+    status: 'Registro inicial',
+    author: 'Agente Bashir',
+    summary: 'Primeiro contato de Bashir com a múmia, avaliação dos reféns e preparação para a negociação dentro da exposição.',
+    missionId: 'missao-repouso-violado',
+    agentIds: ['agente-bashir'],
+    related: ['missao-repouso-violado', 'relatorio-repouso-violado-encerramento', 'agente-bashir'],
+    report: [
+      'Estabeleci contato com a múmia pela entrada lateral do edifício. Ela responde às minhas perguntas, embora interrompa a conversa sempre que percebe movimentação dos seguranças.',
+      'Afirma que a urna contém os restos de uma pessoa de sua família e que ambos foram retirados do mesmo sepulcro. Solicitei os documentos de aquisição da peça. Enquanto aguardamos, consegui autorização para que o funcionário ferido fosse retirado.',
+      'Os dois reféns permanecem conscientes. Entrarei sozinho na sala para dar continuidade à negociação.',
+      '— Agente Bashir',
+    ],
+  }),
+  fieldReport({
+    id: 'relatorio-repouso-violado-encerramento',
+    code: 'REL-083-002',
+    title: 'Repouso Violado — relatório de encerramento',
+    category: 'Relatório de encerramento',
+    status: 'Encerrado',
+    author: 'Agente Bashir',
+    summary: 'Libertação dos reféns, entrega da múmia à equipe e apreensão da urna funerária para verificação de sua procedência.',
+    missionId: 'missao-repouso-violado',
+    agentIds: ['agente-bashir'],
+    related: ['missao-repouso-violado', 'relatorio-repouso-violado-inicial', 'agente-bashir'],
+    report: [
+      'A documentação apresentada pelo museu continha divergências. As inscrições da urna e os detalhes fornecidos pela múmia sustentaram seu relato sobre a origem da peça.',
+      'Consegui convencê-la a libertar os seguranças mediante a apreensão da urna pela G.M.S. e a suspensão de sua exposição. Após a liberação dos reféns, ela aceitou entregar-se à equipe.',
+      'O objeto permanece sob custódia enquanto sua procedência é investigada. A agressão ao funcionário e a retenção dos seguranças foram registradas. A múmia solicitou que eu acompanhasse seu depoimento.',
+      'Reféns libertados. Criatura sob custódia. Operação encerrada.',
+      '— Agente Bashir',
+    ],
+  }),
+  mission({
+    id: 'missao-rastro-cortado',
+    code: 'MIS-247',
+    title: 'Operação Rastro Cortado',
+    category: 'Busca, resgate e repressão à caça de criaturas',
+    status: 'Encerrada',
+    summary: 'Busca por um lobisomem desaparecido após receber uma proposta de trabalho em uma propriedade rural. Marcas de luta e relatos de ataques levaram à investigação de uma possível captura.',
+    profile: [
+      { label: 'Natureza', value: 'Busca, resgate e repressão à caça de criaturas' },
+      { label: 'Responsável', value: 'Zé Teixeira' },
+      { label: 'Local da ocorrência', value: 'Propriedade rural' },
+      { label: 'Resultado', value: 'Criatura resgatada · Três envolvidos detidos' },
+    ],
+    agentIds: ['agente-ze-teixeira'],
+    related: ['relatorio-rastro-cortado-inicial', 'relatorio-rastro-cortado-encerramento', 'agente-ze-teixeira', 'especie-lobisomem'],
+    sections: [
+      {
+        title: 'Resumo da ocorrência',
+        paragraphs: [
+          'Um lobisomem desapareceu depois de receber uma proposta de trabalho em uma propriedade rural. Familiares encontraram seus pertences próximos a uma estrada, junto a marcas de luta.',
+          'Relatos posteriores sobre ataques de um animal na região levantaram a possibilidade de que ele estivesse ferido e desorientado.',
+        ],
+      },
+      {
+        title: 'Determinação operacional',
+        paragraphs: [
+          'A G.M.S. deverá localizar o desaparecido e avaliar as circunstâncias dos supostos ataques.',
+        ],
+      },
+    ],
+  }),
+  fieldReport({
+    id: 'relatorio-rastro-cortado-inicial',
+    code: 'REL-247-001',
+    title: 'Rastro Cortado — relatório inicial',
+    category: 'Relatório inicial',
+    status: 'Registro inicial',
+    author: 'Agente Zé Teixeira',
+    summary: 'Vestígios de luta, contradições nos depoimentos e uma armadilha danificada indicam a possível captura do desaparecido.',
+    missionId: 'missao-rastro-cortado',
+    agentIds: ['agente-ze-teixeira'],
+    related: ['missao-rastro-cortado', 'relatorio-rastro-cortado-encerramento', 'agente-ze-teixeira'],
+    report: [
+      'Examinei o ponto onde os pertences foram encontrados. Há sinais de que alguém tentou apagar os rastros junto à estrada, mas consegui acompanhar parte do percurso até uma propriedade cercada.',
+      'As descrições dos ataques apresentam contradições. Duas testemunhas repetiram os mesmos detalhes, inclusive sobre acontecimentos que afirmam ter presenciado em noites diferentes.',
+      'Encontrei sangue e uma armadilha danificada perto da cerca. Vou solicitar apoio antes de entrar na propriedade. Considero provável que o desaparecido tenha sido capturado.',
+      '— Agente Zé Teixeira',
+    ],
+  }),
+  fieldReport({
+    id: 'relatorio-rastro-cortado-encerramento',
+    code: 'REL-247-002',
+    title: 'Rastro Cortado — relatório de encerramento',
+    category: 'Relatório de encerramento',
+    status: 'Encerrado',
+    author: 'Agente Zé Teixeira',
+    summary: 'Resgate do lobisomem mantido em um galpão, detenção dos responsáveis e apreensão dos registros de uma negociação para sua venda.',
+    missionId: 'missao-rastro-cortado',
+    agentIds: ['agente-ze-teixeira'],
+    related: ['missao-rastro-cortado', 'relatorio-rastro-cortado-inicial', 'agente-ze-teixeira'],
+    report: [
+      'Localizamos o desaparecido preso em um galpão. Estava ferido e apresentava sinais de privação de água e alimento. Os responsáveis pretendiam transportá-lo para um comprador e haviam espalhado os relatos de ataques para afastar moradores da propriedade.',
+      'Três envolvidos foram detidos durante a entrada da equipe. Recolhemos armadilhas, registros de pagamento e correspondências referentes à negociação.',
+      'O agente responsável pelo atendimento confirmou que o resgatado estava em condições de ser transportado. A família foi informada após sua chegada à unidade médica.',
+      'Criatura resgatada. Responsáveis detidos. Material encaminhado para apuração de outros compradores.',
+      '— Agente Zé Teixeira',
+    ],
+  }),
+  mission({
+    id: 'missao-olhar-fechado',
+    code: 'MIS-416',
+    title: 'Operação Olhar Fechado',
+    category: 'Investigação e captura',
+    status: 'Encerrada',
+    summary: 'Investigação das petrificações de três comerciantes que vinham recebendo cobranças e ameaças. Suzan Popov foi designada para identificar a autoria e impedir novos ataques.',
+    profile: [
+      { label: 'Natureza', value: 'Investigação e captura' },
+      { label: 'Responsável', value: 'Suzan Popov' },
+      { label: 'Local da ocorrência', value: 'Estabelecimentos comerciais de uma mesma região' },
+      { label: 'Resultado', value: 'Suspeita detida · Vítimas sob acompanhamento' },
+    ],
+    agentIds: ['agente-suzan-popov'],
+    related: ['relatorio-olhar-fechado-inicial', 'relatorio-olhar-fechado-encerramento', 'agente-suzan-popov', 'especie-gorgona'],
+    sections: [
+      {
+        title: 'Resumo da ocorrência',
+        paragraphs: [
+          'Três comerciantes de uma mesma região foram encontrados petrificados dentro de seus estabelecimentos. Familiares relataram que eles vinham recebendo cobranças acompanhadas de ameaças.',
+        ],
+      },
+      {
+        title: 'Determinação operacional',
+        paragraphs: [
+          'A G.M.S. deverá identificar a autoria das petrificações, impedir novos ataques e providenciar assistência às vítimas.',
+        ],
+      },
+    ],
+  }),
+  fieldReport({
+    id: 'relatorio-olhar-fechado-inicial',
+    code: 'REL-416-001',
+    title: 'Olhar Fechado — relatório inicial',
+    category: 'Relatório inicial',
+    status: 'Registro inicial',
+    author: 'Agente Suzan Popov',
+    summary: 'Análise dos locais das petrificações e identificação de um próximo alvo, com preparação de uma equipe para contenção visual.',
+    missionId: 'missao-olhar-fechado',
+    agentIds: ['agente-suzan-popov'],
+    related: ['missao-olhar-fechado', 'relatorio-olhar-fechado-encerramento', 'agente-suzan-popov'],
+    report: [
+      'Examinei os três locais e identifiquei características compatíveis entre as ocorrências. As vítimas foram surpreendidas em ambientes reservados, durante horários de pouco movimento.',
+      'Uma funcionária relatou ter recebido instruções para abandonar o estabelecimento antes da visita de uma mulher que realizava as cobranças. Conseguiu descrevê-la parcialmente e informou o endereço de outro comerciante que receberá uma visita esta noite.',
+      'Solicitei uma equipe preparada para contenção visual. Acompanharei a operação e a retirada de qualquer pessoa exposta ao risco de petrificação.',
+      '— Agente Suzan Popov',
+    ],
+  }),
+  fieldReport({
+    id: 'relatorio-olhar-fechado-encerramento',
+    code: 'REL-416-002',
+    title: 'Olhar Fechado — relatório de encerramento',
+    category: 'Relatório de encerramento',
+    status: 'Encerrado',
+    author: 'Agente Suzan Popov',
+    summary: 'Captura da górgona responsável pelas cobranças e petrificações, apreensão dos registros dos ataques e transferência das vítimas para atendimento especializado.',
+    missionId: 'missao-olhar-fechado',
+    agentIds: ['agente-suzan-popov'],
+    related: ['missao-olhar-fechado', 'relatorio-olhar-fechado-inicial', 'agente-suzan-popov'],
+    report: [
+      'A suspeita compareceu ao endereço indicado e exigiu um pagamento para interromper as ameaças. A equipe interveio quando ela tentou isolar o comerciante na parte dos fundos.',
+      'Durante a abordagem, confirmou-se que se tratava de uma górgona. Sua tentativa de utilizar o olhar foi contida pelas barreiras preparadas para a operação. A captura ocorreu sem novas petrificações.',
+      'Encontramos com ela uma relação de estabelecimentos, valores cobrados e anotações sobre os ataques anteriores. Os comerciantes ameaçados foram avisados. As três vítimas petrificadas foram transferidas para atendimento especializado da G.M.S.',
+      'Suspeita detida. Novos ataques interrompidos. Operação encerrada; recuperação das vítimas sob acompanhamento.',
+      '— Agente Suzan Popov',
+    ],
+  }),
 ];

@@ -232,7 +232,10 @@ export const agentRecords = [
       "especie-lobisomem",
       "agente-patrick",
       "agente-babdin",
-      "org-gms"
+      "org-gms",
+      "missao-rastro-cortado",
+      "relatorio-rastro-cortado-inicial",
+      "relatorio-rastro-cortado-encerramento"
     ]
   },
   {
@@ -344,7 +347,10 @@ export const agentRecords = [
     ],
     "related": [
       "especie-gorgona",
-      "org-gms"
+      "org-gms",
+      "missao-olhar-fechado",
+      "relatorio-olhar-fechado-inicial",
+      "relatorio-olhar-fechado-encerramento"
     ]
   },
   {
@@ -451,7 +457,10 @@ export const agentRecords = [
       "org-gms",
       "missao-sol-velado",
       "missao-ultimo-sinal",
-      "relatorio-bashir-sol-velado"
+      "relatorio-bashir-sol-velado",
+      "missao-repouso-violado",
+      "relatorio-repouso-violado-inicial",
+      "relatorio-repouso-violado-encerramento"
     ]
   },
   {

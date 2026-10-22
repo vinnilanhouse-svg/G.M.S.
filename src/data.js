@@ -568,7 +568,7 @@ export const records = [
     ],
     "quote": "A lua não nos controla; ela nos liberta. E quando a besta acorda, não há refúgio que te salve.",
     "abilities": speciesAbilities["especie-lobisomem"],
-    "notableMembers": ["agente-ze-teixeira"],
+    "notableMembers": ["agente-ze-teixeira", "agente-jorge"],
     "facts": [
       "Podem nascer assim ou ser transformados por maldição ou ataque.",
       "A aparência híbrida é mais frequente que a humana."

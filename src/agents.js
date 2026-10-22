@@ -450,5 +450,58 @@ export const agentRecords = [
       "especie-mumia",
       "org-gms"
     ]
+  },
+  {
+    "kind": "agente",
+    "demo": false,
+    "source": false,
+    "sourceNote": "Histórico de agente fornecido ao arquivo.",
+    "date": "2026-10-21",
+    "department": "Arquivo de Pessoal",
+    "author": "Secretaria de Registro · G.M.S.",
+    "access": "Restrito",
+    "status": "Cadastro registrado",
+    "id": "agente-jorge",
+    "image": agentImages["agente-jorge"],
+    "code": "AGT-009",
+    "title": "Jorge",
+    "category": "Arsenal",
+    "summary": "Responsável pelo Arsenal da G.M.S. Lobisomem e ex-militar, cuida do controle, da conservação e da distribuição dos equipamentos utilizados pelos agentes.",
+    "report": [
+      "Jorge é o responsável pelo arsenal da G.M.S., encarregado de controlar, conservar e distribuir os equipamentos utilizados pelos agentes. Conhece o conteúdo dos armários, acompanha cada retirada e costuma perceber uma peça fora do lugar antes mesmo de consultar seus registros. Para quem trabalha em campo, passar pelo seu balcão faz parte da preparação de uma missão — e frequentemente exige disposição para ouvir alguma reclamação.",
+      "Ex-militar, trouxe para a organização hábitos construídos durante anos de serviço. Gosta de horários cumpridos, instruções claras e equipamentos devolvidos nas condições certas. Sua experiência o tornou bastante exigente com tudo o que sai do arsenal. Um pedido feito às pressas recebe perguntas; uma devolução incompleta costuma render uma conversa longa, desagradável e perfeitamente audível do outro lado da porta.",
+      "Com idade entre cinquenta e sessenta anos, Jorge apresenta uma pelagem grisalha, especialmente clara ao redor do focinho, e uma expressão quase permanentemente contrariada. Um derrame deixou sequelas visíveis em metade de seu rosto, com assimetria e queda de um dos lados da boca. No lado oposto, uma cicatriz antiga atravessa a face, lembrança de seus anos de serviço. Costuma trabalhar de camisa xadrez, mangas dobradas e botas gastas, carregando as chaves do arsenal presas ao cinto.",
+      "Jorge fala de maneira direta e tem pouca paciência para conversa que considere desnecessária. Reclama de formulários preenchidos pela metade, de agentes que aparecem quando ele está fechando e de qualquer pessoa que coloque alguma coisa sobre seu livro de registros. Também não aprecia que tentem explicar como deveria fazer um trabalho que conhece tão bem. Quem chega disposto a discutir geralmente descobre que ele consegue permanecer atrás do balcão por muito mais tempo do que parece.",
+      "Sua atenção aos detalhes faz dele uma referência dentro da G.M.S. Antes de liberar um equipamento, procura entender quem vai utilizá-lo e em que tipo de operação. Às vezes, recusa um pedido e apresenta uma alternativa mais adequada, acompanhada de uma explicação impaciente. Os agentes mais experientes aprenderam a escutar até o fim: Jorge costuma se lembrar de problemas ocorridos em missões que os próprios envolvidos prefeririam esquecer.",
+      "O derrame exigiu mudanças em sua rotina, e Jorge estabeleceu sua própria maneira de continuar trabalhando. Prefere que perguntem diretamente quando alguma coisa não fica clara e se irrita quando alguém tenta responder por ele. Dentro do arsenal, continua esperando ser tratado como o profissional responsável por aquele espaço. Sua disposição para cobrar o cumprimento das regras permanece bastante evidente.",
+      "Há agentes que evitam procurá-lo sem necessidade, enquanto outros fazem questão de passar pelo arsenal antes de partir. Mesmo estes recebem algum comentário sobre o horário, a pressa ou a quantidade de equipamento solicitada. Jorge escuta as respostas, confere seus registros e separa o material. Quando tudo está pronto, empurra o formulário pelo balcão, aponta para a linha da assinatura e acrescenta, com a mesma cara fechada:",
+      "“E vê se volta pessoalmente pra devolver.”"
+    ],
+    "profile": [
+      {
+        "label": "Identificação",
+        "value": "Jorge"
+      },
+      {
+        "label": "Espécie",
+        "value": "Lobisomem"
+      },
+      {
+        "label": "Idade",
+        "value": "Entre 50 e 60 anos"
+      },
+      {
+        "label": "Cargo",
+        "value": "Responsável pelo Arsenal da G.M.S."
+      },
+      {
+        "label": "Histórico profissional",
+        "value": "Ex-militar"
+      }
+    ],
+    "related": [
+      "especie-lobisomem",
+      "org-gms"
+    ]
   }
 ];

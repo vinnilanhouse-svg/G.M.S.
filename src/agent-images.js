@@ -63,5 +63,12 @@ export const agentImages = {
     "width": 1024,
     "height": 1536,
     "caption": "Arquivo de Pessoal · G.M.S."
+  },
+  "agente-jorge": {
+    "src": "/agents/agente-jorge.webp",
+    "alt": "Retrato de Jorge",
+    "width": 1024,
+    "height": 1536,
+    "caption": "Arquivo de Pessoal · G.M.S."
   }
 };

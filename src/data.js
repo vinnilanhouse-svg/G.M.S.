@@ -32,7 +32,7 @@ export const records = [
     ],
     "quote": "Se os mares são o berço da vida, por que abandoná-los para viver na terra dos homens?",
     "abilities": speciesAbilities["especie-abissais"],
-    "notableMembers": [],
+    "notableMembers": ["agente-caio-lacerda"],
     "facts": [
       "Respiram na água e na superfície.",
       "A hidratação é essencial à sua condição física."
@@ -115,7 +115,7 @@ export const records = [
     ],
     "quote": "A floresta não precisa de heróis. Precisa de guardiões. E nós somos seus olhos, suas garras, sua ira.",
     "abilities": speciesAbilities["especie-caipora"],
-    "notableMembers": [],
+    "notableMembers": ["agente-lia-brandao"],
     "facts": [
       "Comunicam-se com animais.",
       "Conseguem estimular o crescimento de plantas."
@@ -196,7 +196,7 @@ export const records = [
     ],
     "quote": "Nossos cascos ecoam como trovões nas planícies, lembrando ao mundo que a liberdade não se conquista com palavras, mas com força e velocidade.",
     "abilities": speciesAbilities["especie-centauro"],
-    "notableMembers": ["agente-babdin"],
+    "notableMembers": ["agente-babdin", "agente-dalia-ferraz"],
     "facts": [
       "Sua constituição combina anatomia humana e equina.",
       "Mantêm uma tradição de cooperação com humanos."
@@ -237,7 +237,7 @@ export const records = [
     ],
     "quote": "Fomos criados para servir, mas quem disse que não podemos sonhar? Até mesmo uma máquina pode desejar ser mais do que engrenagens e metal.",
     "abilities": speciesAbilities["especie-constructo"],
-    "notableMembers": [],
+    "notableMembers": ["agente-nilo-varela", "agente-codex"],
     "facts": [
       "São fabricados e podem desenvolver personalidades próprias.",
       "Os materiais de construção determinam necessidades e capacidades distintas."

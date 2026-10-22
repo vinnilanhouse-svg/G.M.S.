@@ -1,4 +1,4 @@
-// Retratos enviados pelo autor da campanha, associados às respectivas fichas.
+// Retratos aprovados pelo autor da campanha, associados às respectivas fichas.
 // Enquadramento integral preservado; imagens locais em WebP.
 export const agentImages = {
   "agente-belias": {
@@ -67,6 +67,41 @@ export const agentImages = {
   "agente-jorge": {
     "src": "/agents/agente-jorge.webp",
     "alt": "Retrato de Jorge",
+    "width": 1024,
+    "height": 1536,
+    "caption": "Arquivo de Pessoal · G.M.S."
+  },
+  "agente-caio-lacerda": {
+    "src": "/agents/agente-caio-lacerda.webp",
+    "alt": "Retrato de Caio Lacerda",
+    "width": 1024,
+    "height": 1536,
+    "caption": "Arquivo de Pessoal · G.M.S."
+  },
+  "agente-dalia-ferraz": {
+    "src": "/agents/agente-dalia-ferraz.webp",
+    "alt": "Retrato de Dália Ferraz",
+    "width": 1024,
+    "height": 1536,
+    "caption": "Arquivo de Pessoal · G.M.S."
+  },
+  "agente-nilo-varela": {
+    "src": "/agents/agente-nilo-varela.webp",
+    "alt": "Retrato de Nilo Varela",
+    "width": 1024,
+    "height": 1536,
+    "caption": "Arquivo de Pessoal · G.M.S."
+  },
+  "agente-lia-brandao": {
+    "src": "/agents/agente-lia-brandao.webp",
+    "alt": "Retrato de Lia Brandão",
+    "width": 1024,
+    "height": 1536,
+    "caption": "Arquivo de Pessoal · G.M.S."
+  },
+  "agente-codex": {
+    "src": "/agents/agente-codex.webp",
+    "alt": "Retrato de Codex",
     "width": 1024,
     "height": 1536,
     "caption": "Arquivo de Pessoal · G.M.S."

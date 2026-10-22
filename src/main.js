@@ -1,3 +1,4 @@
+import { readAgentName, requestAgentIdentification } from './agent-identity.js';
 import { showEntryScreen } from './entry-screen.js';
 import gmsLogo from './assets/gms-logo.png';
 import '@fontsource/dm-sans/latin-400.css';
@@ -9,6 +10,7 @@ import '@fontsource/ibm-plex-mono/latin-500.css';
 import './style.css';
 import './species-typography.css';
 import './readability.css';
+import './agent-identity.css';
 import { records as allRecords, categories } from './data.js';
 import { credentials, accessStorageKey, findCredential, readActiveCredentials, visibleRecords, listedRecords } from './permissions.js';
 
@@ -45,6 +47,8 @@ const icon=(name, cls='')=>`<svg class="icon ${cls}" viewBox="0 0 24 24" fill="n
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const date=s=>new Date(`${s}T12:00:00`).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}).replaceAll('.','');
+let agentName='';
+try { agentName=readAgentName(localStorage); } catch {}
 let saved;
 try { saved = new Set(JSON.parse(localStorage.getItem('gms-saved')||'[]')); } catch { saved = new Set(); }
 let activeCredentials;
@@ -151,6 +155,7 @@ function dashboard() {
  const recent=[...catalog].sort((a,b)=>b.date.localeCompare(a.date)||(priority.indexOf(a.id)<0?99:priority.indexOf(a.id))-(priority.indexOf(b.id)<0?99:priority.indexOf(b.id))).slice(0,5);
  const count=kind=>catalog.filter(r=>r.kind===kind).length.toString().padStart(2,'0');
  shell(`${heading('SISTEMA INTERNO DE DOCUMENTAÇÃO','Arquivo central<span class="title-dot">.</span>','Conhecimento preservado. Ocorrências documentadas. Memória sob custódia.',`<div class="heading-stamp"><span>REGISTRO INSTITUCIONAL</span><b>GMS — AC / 001</b><span>CONSULTA AUTORIZADA</span></div>`)}
+ ${agentName?`<div class="agent-access-summary">${icon('users')}<p>Acesso de agente: <strong>${esc(agentName)}</strong></p></div>`:''}
  <section class="search-section" aria-label="Busca no arquivo"><div class="search-label"><span>O QUE VOCÊ PROCURA?</span><span>CONSULTE. RELACIONE. INVESTIGUE.</span></div>${searchForm()}</section>
  <section class="operations-strip" aria-label="Central de operações">${[['agentes','users','agente','Agentes','Equipe e histórico funcional'],['missoes','flag','missao','Missões','Ordens de missão e relatórios'],['alvos','target','alvo','Alvos de interesse','Indivíduos e grupos sob apuração']].map(([path,ic,kind,label,description])=>`<a href="#/${path}"><span class="operation-icon">${icon(ic)}</span><span><strong>${label}</strong><small>${description}</small></span><span class="operation-count">${count(kind)}</span>${icon('arrow')}</a>`).join('')}</section>
  <section class="category-section" aria-label="Seções principais"><a class="category-card" href="#/conhecimento"><div class="card-top">${icon('book')}<span>01 / CONHECIMENTO</span>${icon('arrow')}</div><h2>Base de conhecimento</h2><p>Espécies, suas origens e modos de existir.</p><div class="card-bottom"><span><b>${count('verbete')}</b> ENTRADAS · ${catalog.filter(r=>r.category==='Espécies').length} ESPÉCIES</span></div></a><a class="category-card" href="#/documentos"><div class="card-top">${icon('file')}<span>02 / DOCUMENTAÇÃO</span>${icon('arrow')}</div><h2>Documentos internos</h2><p>Memória, diretrizes e registros institucionais.</p><div class="card-bottom"><span><b>${count('documento')}</b> DOCUMENTOS ARQUIVADOS</span></div></a></section>
@@ -275,6 +280,12 @@ function render() {
  if(pendingNotice){showToast(pendingNotice);pendingNotice='';}
 }
 addEventListener('hashchange',render);
-addEventListener('keydown',e=>{if(e.key==='Escape'){mobileOpen=false;document.querySelector('.sidebar')?.classList.remove('is-open');document.querySelectorAll('.overlay').forEach(x=>x.remove());}if(e.key==='/'&&!document.querySelector('.entry-screen[open]')&&!document.querySelector('#record-image-viewer')?.open&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.querySelector('#global-search, #local-query')?.focus();}});
+addEventListener('keydown',e=>{if(e.key==='Escape'){mobileOpen=false;document.querySelector('.sidebar')?.classList.remove('is-open');document.querySelectorAll('.overlay').forEach(x=>x.remove());}if(e.key==='/'&&!document.querySelector('.agent-identification[open]')&&!document.querySelector('.entry-screen[open]')&&!document.querySelector('#record-image-viewer')?.open&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.querySelector('#global-search, #local-query')?.focus();}});
 render();
-showEntryScreen(gmsLogo);
+if(agentName)showEntryScreen(gmsLogo);
+else requestAgentIdentification(gmsLogo,({name,persisted})=>{
+ agentName=name;
+ render();
+ showEntryScreen(gmsLogo);
+ if(!persisted)showToast('Nome registrado nesta sessão. O navegador não permitiu salvar para a próxima visita.');
+});

@@ -6,7 +6,7 @@ const byteLength = text => new TextEncoder().encode(text).length;
 
 export function selectWorkFolderData(state, missionFilter = '') {
   const selected = { version: 1, missionId: missionFilter ? missionFilter === 'avulsas' ? '' : missionFilter : state.missionId };
-  for (const key of workFolderCollections) selected[key] = state[key].filter(entry => !missionFilter || (missionFilter === 'avulsas' ? !entry.missionId : entry.missionId === missionFilter));
+  for (const key of workFolderCollections) selected[key] = (state[key] || []).filter(entry => !missionFilter || (missionFilter === 'avulsas' ? !entry.missionId : entry.missionId === missionFilter));
   return { version: 1, ...validateWorkFolderData(selected) };
 }
 
@@ -26,7 +26,9 @@ export function parseWorkFolderBackup(text) {
 }
 
 export function workFolderCounts(data) {
-  return [['notes', 'anotação', 'anotações'], ['documents', 'documento', 'documentos'], ['people', 'pessoa de interesse', 'pessoas de interesse'], ['localities', 'localidade', 'localidades']].map(([key, one, many]) => `${data[key].length} ${data[key].length === 1 ? one : many}`).join(' · ');
+  const kinds = [['notes', 'anotação', 'anotações'], ['documents', 'documento', 'documentos'], ['people', 'pessoa de interesse', 'pessoas de interesse'], ['localities', 'localidade', 'localidades']];
+  if (data.progress?.length) kinds.push(['progress', 'acompanhamento', 'acompanhamentos']);
+  return kinds.map(([key, one, many]) => `${data[key].length} ${data[key].length === 1 ? one : many}`).join(' · ');
 }
 
 export function workFolderReadableText(state, records, { missionFilter = '', exportedAt = new Date().toISOString(), baseUrl = 'https://globalmonstersecurity.vercel.app/' } = {}) {
@@ -48,6 +50,10 @@ export function workFolderReadableText(state, records, { missionFilter = '', exp
       if (entry.recordId && recordLink(entry.recordId)) lines.push(`Consultar: ${recordLink(entry.recordId)}`);
       lines.push(`Criado em: ${new Date(entry.createdAt).toLocaleString('pt-BR')}`, `Atualizado em: ${new Date(entry.updatedAt).toLocaleString('pt-BR')}`, '', entry.body || 'Sem observações.', '', '—', '');
     }
+  }
+  if (data.progress.length) {
+    lines.push('ANDAMENTO PESSOAL', '=================');
+    for (const entry of data.progress) lines.push(`Missão: ${missionLabel(entry.missionId)}`, `Etapa pessoal: ${entry.stage}`, `Atualizado em: ${new Date(entry.updatedAt).toLocaleString('pt-BR')}`, '', 'OBJETIVOS', ...entry.objectives.map(item => `[${item.done ? 'x' : ' '}] ${item.text}`), '', 'PENDÊNCIAS', entry.pending || 'Nenhuma pendência registrada.', '', 'RELATÓRIO DE RETORNO — RASCUNHO PESSOAL', entry.returnReport || 'Nenhum rascunho registrado.', '', '—', '');
   }
   return lines.join('\n');
 }

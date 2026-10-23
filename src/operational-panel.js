@@ -1,6 +1,7 @@
 import { createWorkFolder, operationalMissions } from './work-folder.js';
 import { createWorkFolderSections, workFolderTabs, workFolderUrl as folderUrl } from './work-folder-sections.js';
 import { createWorkFolderTransfer } from './work-folder-transfer.js';
+import { createMissionProgress } from './mission-progress.js';
 
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const noteTitle = note => note.title.trim() || 'Anotação sem título';
@@ -17,6 +18,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
   const memoryNotice = () => folder.persisted ? 'Salvo neste navegador.' : 'Armazenamento indisponível. As alterações estão apenas nesta sessão; copie seus registros antes de sair.';
   function announce(message) { onNotice(folder.persisted ? message : memoryNotice()); }
   const folderTransfer = createWorkFolderTransfer({ folder, getRecords, icon, onNotice, onChange });
+  const missionProgress = createMissionProgress({ folder, getMissions: () => context().missions, icon, renderTransfer: folderTransfer.render, onChange, onNotice });
   const folderSections = createWorkFolderSections({ folder, getRecords, getMissions: () => context().missions, icon, onNotice, onChange, renderTransfer: folderTransfer.render });
 
   function missionAction(mission) {
@@ -37,19 +39,20 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
         const team = item.profile?.find(field => field.label === 'Equipe');
         return `<article class="op-mission ${item.status === 'Contato perdido' ? 'op-mission-alert' : ''}"><div class="op-card-meta"><span>${esc(item.code)}</span>${status(item)}</div><h3><a href="#/arquivo/${esc(item.id)}">${esc(item.title)}</a></h3>${team ? `<p class="op-team">Equipe ${esc(team.value)}</p>` : ''}<p>${esc(item.summary)}</p><div class="op-actions"><a class="op-link" href="#/arquivo/${esc(item.id)}">Consultar ordem ${icon('arrow')}</a>${missionAction(item)}</div></article>`;
       }).join('') : '<div class="op-empty"><h3>Nenhuma operação aberta</h3><p>As ordens anteriores continuam disponíveis no arquivo de missões.</p></div>'}</div>
-      <aside class="my-mission" aria-labelledby="my-mission-title"><span class="op-kicker">ACOMPANHAMENTO PESSOAL</span><h3 id="my-mission-title">Sua missão</h3>${mission ? `<div class="op-card-meta"><span>${esc(mission.code)}</span>${status(mission)}</div><h4><a href="#/arquivo/${esc(mission.id)}">${esc(mission.title)}</a></h4><p>${esc(mission.summary)}</p><div class="my-mission-links"><a href="#/arquivo/${esc(mission.id)}">${icon('flag')}Ordem de missão ${icon('arrow')}</a><a href="#/missoes/relatorios?missao=${encodeURIComponent(mission.id)}">${icon('clipboard')}Relatórios ${icon('arrow')}</a><a href="${folderUrl(mission.id)}">${icon('folder')}Anotações da missão <span>${missionNotes.length}</span></a></div>` : `<div class="my-mission-empty">${icon('flag')}<p>Nenhuma missão em acompanhamento.</p><p>Escolha a operação que está acompanhando para reunir seus documentos e anotações aqui.</p></div>`}<label for="personal-mission">${mission ? 'Trocar missão' : 'Selecionar missão'}</label><select id="personal-mission" data-personal-mission>${options(mission?.id || '')}</select>${mission ? '<button type="button" class="op-text-button" data-unfollow-mission>Remover do acompanhamento</button>' : ''}<p class="op-local-note">Sua seleção fica salva neste navegador.</p></aside></div>
+      <aside class="my-mission" aria-labelledby="my-mission-title"><span class="op-kicker">ACOMPANHAMENTO PESSOAL</span><h3 id="my-mission-title">Sua missão</h3>${mission ? `<div class="op-card-meta"><span>${esc(mission.code)}</span>${status(mission)}</div><h4><a href="#/arquivo/${esc(mission.id)}">${esc(mission.title)}</a></h4><p>${esc(mission.summary)}</p><div class="my-mission-links"><a href="#/arquivo/${esc(mission.id)}">${icon('flag')}Ordem de missão ${icon('arrow')}</a><a href="#/missoes/relatorios?missao=${encodeURIComponent(mission.id)}">${icon('clipboard')}Relatórios ${icon('arrow')}</a><a href="${folderUrl(mission.id)}">${icon('folder')}Anotações da missão <span>${missionNotes.length}</span></a></div>${missionProgress.summary(mission.id)}` : `<div class="my-mission-empty">${icon('flag')}<p>Nenhuma missão em acompanhamento.</p><p>Escolha a operação que está acompanhando para reunir seus documentos e anotações aqui.</p></div>`}<label for="personal-mission">${mission ? 'Trocar missão' : 'Selecionar missão'}</label><select id="personal-mission" data-personal-mission>${options(mission?.id || '')}</select>${mission ? '<button type="button" class="op-text-button" data-unfollow-mission>Remover do acompanhamento</button>' : ''}<p class="op-local-note">Sua seleção fica salva neste navegador.</p></aside></div>
     </section>
     <section class="work-folder-preview" aria-labelledby="folder-preview-title"><div class="op-section-heading"><div><span class="op-kicker">CADERNO PESSOAL</span><h2 id="folder-preview-title">Pasta de trabalho</h2></div><a class="op-link" href="${folderUrl()}">Abrir pasta ${icon('arrow')}</a></div><div class="folder-preview-content"><div><p>Observações de campo, pistas e perguntas para a próxima etapa.</p>${notes.length ? `<ul>${notes.slice(0, 3).map(note => `<li><a href="${folderUrl('', note.id)}">${icon('file')}<span>${esc(noteTitle(note))}</span>${icon('arrow')}</a></li>`).join('')}</ul>` : '<p class="op-local-note">Nenhuma anotação registrada. Seu caderno começa aqui.</p>'}</div><button type="button" class="op-button" data-new-work-note>${icon('file')}Nova anotação</button></div><p class="op-local-note">${folder.state.notes.length} ${folder.state.notes.length === 1 ? 'anotação' : 'anotações'} · Caderno pessoal salvo neste navegador.</p></section>`;
   }
 
   function missionTools(mission) {
-    return `<div class="mission-personal-tools"><div>${icon('folder')}<span>Seu acompanhamento</span></div><div class="op-actions">${missionAction(mission)}<a class="op-link" href="${folderUrl(mission.id)}">Anotações desta missão ${icon('arrow')}</a></div></div>`;
+    return `<div class="mission-personal-tools"><div>${icon('folder')}<span>Seu acompanhamento</span></div><div class="op-actions">${missionAction(mission)}<a class="op-link" href="${folderUrl(mission.id, '', 'andamento')}">Andamento pessoal ${icon('arrow')}</a><a class="op-link" href="${folderUrl(mission.id)}">Anotações desta missão ${icon('arrow')}</a></div></div>`;
   }
 
   function page(query) {
     folder.reload();
     const params = new URLSearchParams(query);
     const filter = params.get('missao') || '';
+    if (params.get('aba') === 'andamento') return missionProgress.page(query);
     const sectionPage = folderSections.page(params.get('aba'), filter);
     if (sectionPage) return sectionPage;
     const missions = context().missions;
@@ -68,6 +71,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
 
   function bind() {
     folderTransfer.bind();
+    missionProgress.bind();
     document.querySelectorAll('[data-follow-mission]').forEach(button => button.addEventListener('click', () => {
       if (!context().missions.some(mission => mission.id === button.dataset.followMission)) return;
       folder.selectMission(button.dataset.followMission); onChange(); announce('Missão adicionada ao seu acompanhamento.');

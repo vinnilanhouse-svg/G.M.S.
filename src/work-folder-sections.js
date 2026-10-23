@@ -12,7 +12,7 @@ export function workFolderUrl(missionId = '', noteId = '', tab = 'anotacoes') {
 
 export function workFolderTabs(state, filter, tab, icon) {
   const visible = entries => entries.filter(entry => !filter || (filter === 'avulsas' ? !entry.missionId : entry.missionId === filter)).length;
-  return `<nav class="work-folder-tabs" aria-label="Seções da pasta de trabalho">${[['anotacoes', 'Anotações', 'clipboard', 'notes'], ...Object.entries(sections).map(([id, section]) => [id, section.label, section.icon, section.key])].map(([id, label, symbol, key]) => `<a href="${workFolderUrl(filter, '', id)}" class="${tab === id ? 'selected' : ''}" ${tab === id ? 'aria-current="page"' : ''}>${icon(symbol)}<span>${label}</span><b>${visible(state[key])}</b></a>`).join('')}</nav>`;
+  return `<nav class="work-folder-tabs" aria-label="Seções da pasta de trabalho">${[['anotacoes', 'Anotações', 'clipboard', 'notes'], ['andamento', 'Andamento pessoal', 'flag', 'progress'], ...Object.entries(sections).map(([id, section]) => [id, section.label, section.icon, section.key])].map(([id, label, symbol, key]) => `<a href="${workFolderUrl(filter, '', id)}" class="${tab === id ? 'selected' : ''}" ${tab === id ? 'aria-current="page"' : ''}>${icon(symbol)}<span>${label}</span><b>${visible(state[key] || [])}</b></a>`).join('')}</nav>`;
 }
 
 export function createWorkFolderSections({ folder, getRecords, getMissions, icon, onNotice, onChange, renderTransfer }) {

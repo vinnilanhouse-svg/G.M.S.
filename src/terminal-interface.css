@@ -1,0 +1,34 @@
+.terminal-status-strip { position: relative; display: flex; align-items: center; gap: 18px; padding: 10px 42px; border-bottom: 1px solid var(--line); background: #1b231a; min-height: 42px; }
+.terminal-status-label { font: 10px/1.8 var(--mono); letter-spacing: .08em; color: var(--muted); }
+.terminal-status-message { color: var(--accent); font: 11px/1.8 var(--mono); min-width: 0; overflow-wrap: anywhere; }
+.terminal-status-strip button { border: 0; background: none; color: var(--reading-secondary); font: 11px/1.8 var(--mono); padding: 3px 0; margin-left: auto; flex-shrink: 0; text-decoration: underline; text-underline-offset: 4px; }
+.terminal-status-strip.is-loading::after { content: ''; position: absolute; height: 1px; bottom: -1px; left: 0; width: 100%; background: var(--accent); transform-origin: left; animation: terminal-query-line 220ms ease-out; }
+.terminal-page-opening { animation: terminal-page-open 180ms ease-out; }
+@keyframes terminal-query-line { from { transform: scaleX(.04); opacity: .4; } to { transform: scaleX(1); opacity: 1; } }
+@keyframes terminal-page-open { from { opacity: .9; transform: translateY(2px); } to { opacity: 1; transform: translateY(0); } }
+.archive-trace .archive-trace-register { display: flex; flex-wrap: wrap; align-items: center; gap: 20px 35px; padding: 20px; border: 1px solid #4c5e3e; background: #23301f; margin: 25px 0; }
+.archive-trace-register > div { display: grid; gap: 8px; }
+.archive-trace-register > div > span { color: var(--muted); font: 10px/1.8 var(--mono); letter-spacing: .06em; }
+.archive-trace-register strong { font: 14px/1.6 var(--mono); color: var(--accent); }
+.archive-trace-stamp { margin-left: auto; padding: 8px 13px; border: 1px solid #81936c; color: #d0dfba; font: 10px/1.8 var(--mono); letter-spacing: .1em; text-align: center; transform: rotate(-3deg); }
+.archive-trace-entries { list-style: none; margin: 25px 0; padding: 0; }
+.archive-trace-entries li { display: flex; gap: 18px; padding: 19px 0; border-bottom: 1px solid var(--line); }
+.archive-trace-number { font: 11px/1.9 var(--mono); color: var(--muted); padding-top: 2px; }
+.archive-trace-entries h3 { font-weight: 500; font-size: 16px; line-height: 1.7; margin: 0 0 7px; }
+.archive-trace-entries p { font-size: 15px; line-height: 1.85; margin: 0; color: var(--reading-secondary); overflow-wrap: anywhere; }
+.archive-trace-entries small { display: block; color: var(--muted); font-size: 12px; line-height: 1.85; margin-top: 5px; overflow-wrap: anywhere; }
+.archive-trace-signature { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 25px; margin-top: 27px; }
+.archive-trace-signature > span { color: var(--accent); font: 22px/1.5 var(--mono); letter-spacing: .1em; }
+.archive-trace-signature small { color: var(--muted); font: 10px/1.9 var(--mono); letter-spacing: .05em; }
+@media (min-width: 1500px) { .terminal-status-strip { padding-left: 54px; padding-right: 54px; } }
+@media (max-width: 1190px) { .terminal-status-strip { padding-left: 28px; padding-right: 28px; } }
+@media (max-width: 600px) {
+  .terminal-status-strip { padding: 10px 18px; gap: 13px; }
+  .terminal-status-label { display: none; }
+  .terminal-status-message, .terminal-status-strip button { font-size: 10px; }
+  .archive-trace .archive-trace-register { padding: 17px; gap: 18px; }
+  .archive-trace-stamp { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .terminal-page-opening, .terminal-status-strip.is-loading::after { animation: none; }
+}

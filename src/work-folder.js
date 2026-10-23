@@ -1,6 +1,7 @@
 export const workFolderKey = 'gms-work-folder-v1';
-export const workFolderCollections = ['notes', 'documents', 'people', 'localities'];
-const emptyFolder = () => ({ missionId: '', notes: [], documents: [], people: [], localities: [] });
+export const workFolderCollections = ['notes', 'documents', 'people', 'localities', 'progress'];
+export const personalMissionStages = ['Preparação', 'Em campo', 'Aguardando apoio', 'Em retirada', 'Retorno concluído'];
+const emptyFolder = () => ({ missionId: '', notes: [], documents: [], people: [], localities: [], progress: [] });
 const validId = value => typeof value === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(value);
 const validDate = value => typeof value === 'string' && Number.isFinite(Date.parse(value));
 const optionalId = value => value === '' || validId(value);
@@ -19,6 +20,17 @@ function readEntries(value, kind) {
   }).map(({ id, recordId, missionId, body, name, role, reference, createdAt, updatedAt }) => ({ id, recordId, missionId, body, ...(kind === 'people' ? { name, role } : kind === 'localities' ? { name, reference } : {}), createdAt, updatedAt }));
 }
 
+function readProgress(value) {
+  const seen = new Set();
+  return (Array.isArray(value) ? value : []).filter(entry => {
+    if (!entry || !validId(entry.id) || seen.has(entry.id) || !validId(entry.missionId) || !personalMissionStages.includes(entry.stage) ||
+      !validText(entry.pending, 10000) || !validText(entry.returnReport, 20000) || !validDate(entry.createdAt) || !validDate(entry.updatedAt) ||
+      !Array.isArray(entry.objectives) || entry.objectives.length > 100 || new Set(entry.objectives.map(item => item?.id)).size !== entry.objectives.length ||
+      !entry.objectives.every(item => item && validId(item.id) && validText(item.text, 2000) && item.text.trim() && typeof item.done === 'boolean')) return false;
+    seen.add(entry.id); return true;
+  }).map(({ id, missionId, stage, pending, returnReport, objectives, createdAt, updatedAt }) => ({ id, missionId, stage, pending, returnReport, objectives: objectives.map(({ id, text, done }) => ({ id, text, done })), createdAt, updatedAt }));
+}
+
 export function readWorkFolder(storage) {
   try {
     const value = JSON.parse(storage.getItem(workFolderKey));
@@ -31,13 +43,14 @@ export function readWorkFolder(storage) {
       seen.add(note.id);
       return true;
     }).map(({ id, title, body, missionId, createdAt, updatedAt }) => ({ id, title, body, missionId, createdAt, updatedAt }));
-    return { missionId: validId(value.missionId) ? value.missionId : '', notes, documents: readEntries(value.documents, 'documents'), people: readEntries(value.people, 'people'), localities: readEntries(value.localities, 'localities') };
+    return { missionId: validId(value.missionId) ? value.missionId : '', notes, documents: readEntries(value.documents, 'documents'), people: readEntries(value.people, 'people'), localities: readEntries(value.localities, 'localities'), progress: readProgress(value.progress) };
   } catch { return emptyFolder(); }
 }
 
 // A importação rejeita o arquivo inteiro se algum registro for inválido.
 // A leitura cotidiana continua tolerante a dados antigos do navegador.
 export function validateWorkFolderData(value) {
+  if (value && value.progress === undefined) value = { ...value, progress: [] };
   if (!value || value.version !== 1 || !optionalId(value.missionId) || workFolderCollections.some(key => !Array.isArray(value[key]))) throw new Error('A cópia da pasta está incompleta ou usa uma versão incompatível.');
   const clean = readWorkFolder({ getItem: () => JSON.stringify(value) });
   if (workFolderCollections.some(key => clean[key].length !== value[key].length)) throw new Error('A cópia contém registros inválidos ou repetidos. Nenhum registro foi importado.');
@@ -64,6 +77,12 @@ export function createWorkFolder(storage) {
     return change(current => {
       if (!current[kind].some(entry => entry.id === id)) throw new Error('Este registro foi removido em outra aba. Copie suas observações antes de atualizar a pasta.');
       return { ...current, [kind]: current[kind].map(entry => entry.id === id ? { ...entry, [field]: value, updatedAt: new Date().toISOString() } : entry) };
+    });
+  }
+  function changeProgress(id, update) {
+    return change(current => {
+      if (!current.progress.some(entry => entry.id === id)) throw new Error('Este acompanhamento não está mais disponível. Copie seu texto antes de atualizar a pasta.');
+      return { ...current, progress: current.progress.map(entry => entry.id === id ? { ...update(entry), updatedAt: new Date().toISOString() } : entry) };
     });
   }
   return {
@@ -122,6 +141,36 @@ export function createWorkFolder(storage) {
     removeDocument(id) { return change(current => ({ ...current, documents: current.documents.filter(entry => entry.id !== id) })); },
     removePerson(id) { return change(current => ({ ...current, people: current.people.filter(entry => entry.id !== id) })); },
     removeLocality(id) { return change(current => ({ ...current, localities: current.localities.filter(entry => entry.id !== id) })); },
+    startProgress(missionId, objectives = []) {
+      if (!validId(missionId) || !Array.isArray(objectives) || objectives.length > 100 || !objectives.every(text => validText(text, 2000) && text.trim())) throw new Error('Confira a missão e os objetivos do acompanhamento.');
+      let id = newId();
+      const now = new Date().toISOString();
+      change(current => {
+        const existing = current.progress.find(entry => entry.missionId === missionId);
+        if (existing) { id = existing.id; return current; }
+        return { ...current, progress: [{ id, missionId, stage: 'Preparação', pending: '', returnReport: '', objectives: objectives.map((text, index) => ({ id: `objetivo-${index + 1}`, text, done: false })), createdAt: now, updatedAt: now }, ...current.progress] };
+      });
+      return id;
+    },
+    updateProgress(id, field, value) {
+      if (!['stage', 'pending', 'returnReport'].includes(field) || typeof value !== 'string' || (field === 'stage' ? !personalMissionStages.includes(value) : value.length > (field === 'pending' ? 10000 : 20000))) throw new Error('Confira os campos do andamento pessoal.');
+      return changeProgress(id, entry => ({ ...entry, [field]: value }));
+    },
+    toggleObjective(id, objectiveId, done) {
+      if (typeof done !== 'boolean') throw new Error('Objetivo inválido.');
+      return changeProgress(id, entry => {
+        if (!entry.objectives.some(item => item.id === objectiveId)) throw new Error('Este objetivo foi removido em outra aba.');
+        return { ...entry, objectives: entry.objectives.map(item => item.id === objectiveId ? { ...item, done } : item) };
+      });
+    },
+    addObjective(id, text) {
+      if (!validText(text, 2000) || !text.trim()) throw new Error('Escreva um objetivo com até 2.000 caracteres.');
+      return changeProgress(id, entry => {
+        if (entry.objectives.length >= 100) throw new Error('Este acompanhamento já tem 100 objetivos.');
+        return { ...entry, objectives: [...entry.objectives, { id: newId(), text: text.trim(), done: false }] };
+      });
+    },
+    removeObjective(id, objectiveId) { return changeProgress(id, entry => ({ ...entry, objectives: entry.objectives.filter(item => item.id !== objectiveId) })); },
     importData(data) {
       const incoming = validateWorkFolderData({ ...data, version: 1 });
       const counts = { added: 0, copied: 0, skipped: 0 };

@@ -60,7 +60,7 @@ test('armazenamento bloqueado mantém o rascunho na sessão e informa a falha', 
 test('dados corrompidos e campos indevidos não entram no caderno', () => {
   const disk = storage();
   disk.setItem(workFolderKey, '{quebrado');
-  assert.deepEqual(readWorkFolder(disk), { missionId: '', notes: [], documents: [], people: [], localities: [] });
+  assert.deepEqual(readWorkFolder(disk), { missionId: '', notes: [], documents: [], people: [], localities: [], progress: [] });
   const folder = createWorkFolder(disk);
   const id = folder.addNote();
   assert.throws(() => folder.updateNote(id, 'access', 'Público'), /inválida/);

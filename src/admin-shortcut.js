@@ -1,7 +1,7 @@
 // Sequência solicitada para abrir a administração no painel inicial.
 const SEQUENCE = ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowRight', 'ArrowLeft'];
 
-export function createDebugShortcut({isEnabled, onMatch}) {
+export function createAdminShortcut({isEnabled, onMatch}) {
   let matched = 0;
   function reset() { matched = 0; }
   function handleKeydown(event) {

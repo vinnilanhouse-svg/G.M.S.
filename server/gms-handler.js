@@ -1,9 +1,6 @@
 import {validateRecordPatch} from '../src/content-editing.js';
-import {normalizeAgentName} from '../src/agent-identity.js';
 import {hash,newToken,passwordMatches,readSessionToken,sameOrigin,sessionCookie,SESSION_SECONDS} from './auth.js';
 
-export const ONLINE_MS=75000;
-export const RETENTION_SECONDS=90*24*60*60;
 export const CONTENT_KEY='gms:content:v1';
 export const contentScript=`
 local raw=redis.call('GET',KEYS[1])
@@ -15,7 +12,6 @@ doc.updatedAt=ARGV[5]
 redis.call('SET',KEYS[1],cjson.encode(doc))
 return {1,cjson.encode(doc)}
 `;
-const uuid=value=>typeof value==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 const parse=(value,fallback)=>{try{return typeof value==='string'?JSON.parse(value):value||fallback;}catch{return fallback;}};
 const fault=(status,message)=>Object.assign(new Error(message),{status});
 
@@ -47,21 +43,6 @@ export function createGmsHandler({records,store,password,now=Date.now}) {
     if(count>limit)throw fault(429,'Muitas tentativas. Aguarde alguns minutos e tente novamente.');
   }
   async function content() {return parse(await store.command('GET',CONTENT_KEY),{revision:0,overrides:{}});}
-  async function visitors() {
-    const timestamp=now();
-    const results=await store.pipeline([
-      ['ZREMRANGEBYSCORE','gms:online','-inf',timestamp-ONLINE_MS],
-      ['ZREMRANGEBYSCORE','gms:visitors','-inf',timestamp-RETENTION_SECONDS*1000],
-      ['ZRANGE','gms:online',0,-1],
-      ['ZREVRANGE','gms:visitors',0,499],
-      ['ZCARD','gms:visitors'],
-    ]);
-    const online=new Set(results[2].map(session=>session.split(':')[0]));
-    const ids=[...new Set([...online,...results[3]])].slice(0,1000);
-    const values=ids.length?await store.command('MGET',...ids.map(id=>`gms:visitor:${id}`)):[];
-    const list=values.map(value=>parse(value,null)).filter(Boolean).map(visitor=>({...visitor,online:online.has(visitor.id)})).sort((a,b)=>Number(b.online)-Number(a.online)||b.lastSeen-a.lastSeen);
-    return {visitors:list,onlineCount:online.size,knownCount:results[4],onlineWindowSeconds:ONLINE_MS/1000,retentionDays:RETENTION_SECONDS/86400,serverTime:timestamp};
-  }
   return async function handler(req,res) {
     try {
       if(req.method==='GET') {
@@ -69,12 +50,11 @@ export function createGmsHandler({records,store,password,now=Date.now}) {
         if(scope==='session')return send(res,200,{configured,authenticated:await authenticated(req),setup:{storage:Boolean(store),password:Boolean(password?.length>=16)}});
         if(scope==='admin') {
           await requireAdmin(req);
-          const [document,presence]=await Promise.all([content(),visitors()]);
-          return send(res,200,{configured:true,authenticated:true,...presence,...document});
+          return send(res,200,{configured:true,authenticated:true,...await content()});
         }
         if(scope!=='content')throw fault(404,'Consulta não encontrada.');
         const document=store?await content():{revision:0,overrides:{}};
-        return send(res,200,{...document,configured,presenceEnabled:configured});
+        return send(res,200,{...document,configured});
       }
       if(!['POST','PUT','DELETE'].includes(req.method)){res.setHeader('Allow','GET, POST, PUT, DELETE');throw fault(405,'Método não permitido.');}
       if(!sameOrigin(req))throw fault(403,'A solicitação precisa partir deste site.');
@@ -94,29 +74,6 @@ export function createGmsHandler({records,store,password,now=Date.now}) {
         if(token)await store.command('DEL',`gms:admin:${hash(token)}`);
         res.setHeader('Set-Cookie',sessionCookie(req,'',0));
         return send(res,200,{authenticated:false});
-      }
-      if(req.method==='POST'&&['presence','leave'].includes(body.action)) {
-        if(!uuid(body.visitorId)||!uuid(body.sessionId))throw fault(400,'Identificação de sessão inválida.');
-        await rateLimit(req,'presence',300,60);
-        const member=`${body.visitorId}:${body.sessionId}`;
-        if(body.action==='leave') {
-          await store.command('ZREM','gms:online',member);
-          return send(res,200,{ok:true});
-        }
-        const name=normalizeAgentName(body.name);
-        if(!name)throw fault(400,'Informe o nome de agente.');
-        const timestamp=now();
-        const key=`gms:visitor:${body.visitorId}`;
-        const previous=parse(await store.command('GET',key),{});
-        const names=[...new Set([...(Array.isArray(previous.names)?previous.names:[]),name])].slice(-10);
-        const page=typeof body.page==='string'&&body.page.startsWith('#/')?body.page.split('?')[0].slice(0,200):'#/inicio';
-        await store.pipeline([
-          ['SET',key,JSON.stringify({id:body.visitorId,name,names,firstSeen:previous.firstSeen||timestamp,lastSeen:timestamp,page}),'EX',RETENTION_SECONDS],
-          ['ZADD','gms:online',timestamp,member],
-          ['ZADD','gms:visitors',timestamp,body.visitorId],
-          ['ZREMRANGEBYSCORE','gms:online','-inf',timestamp-ONLINE_MS],
-        ]);
-        return send(res,200,{ok:true});
       }
       await requireAdmin(req);
       if(!['PUT','DELETE'].includes(req.method))throw fault(400,'Ação não encontrada.');

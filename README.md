@@ -1,6 +1,6 @@
 # Arquivo GMS
 
-Arquivo institucional navegável da **Global Monster Security**, em português brasileiro. Interface responsiva em JavaScript e CSS, com Vite. A administração compartilhada usa uma função no Vercel e Upstash Redis; o arquivo continua navegável quando esse serviço não está configurado.
+Arquivo institucional navegável da **Global Monster Security**, em português brasileiro. Interface responsiva em JavaScript e CSS, com Vite. O editor permite salvar textos neste navegador sem banco de dados. Para publicar as mudanças para todos, a administração compartilhada usa uma função no Vercel e Upstash Redis.
 
 ## Executar
 
@@ -57,7 +57,7 @@ As categorias da wiki estão no array `categories`. Contagens, resultados e vín
 - Navegação por URL com hash permite recarregar e compartilhar registros sem configurar rotas no servidor.
 - Fontes locais: não dependem de requisições ao Google Fonts durante a navegação.
 - As classificações e credenciais narrativas são demonstrativas e controlam a exibição pela interface. O login administrativo é separado e validado no servidor.
-- O painel administrativo permite publicar edições dos documentos pela interface quando o serviço está configurado. Favoritos continuam locais ao navegador.
+- O painel administrativo edita os documentos e salva cópias neste navegador. A publicação para todos depende do serviço compartilhado. Favoritos continuam locais ao navegador.
 - O projeto está publicado no Vercel em `https://globalmonstersecurity.vercel.app`.
 
 ## Validação
@@ -169,38 +169,42 @@ Caio Lacerda (`AGT-205`), Dália Ferraz (`AGT-467`), Nilo Varela (`AGT-852`) e L
 
 Na primeira visita, a identificação pede o nome do agente antes da vinheta de validação. O nome é guardado na chave `gms-agent-name-v1` do `localStorage` e aparece no painel em “Acesso de agente”. A lógica fica em `src/agent-identity.js`, com estilos em `src/agent-identity.css`. O nome não concede credenciais, não altera o acesso à ficha de Morrow e é lembrado apenas neste navegador; ao limpar os dados do site ou usar outro navegador, o pedido reaparece.
 
-No painel inicial, a sequência de teclas **↑ ↓ → → ←** abre a **Depuração e administração**. Ela é ignorada em outras páginas, durante a digitação e enquanto houver um diálogo aberto. A detecção fica em `src/debug-shortcut.js`. A troca de nome continua disponível pela credencial **NOME_ERRO**.
+No painel inicial, a sequência de teclas **↑ ↓ → → ←** abre a **Administração dos textos**. Ela é ignorada em outras páginas, durante a digitação e enquanto houver um diálogo aberto. A detecção fica em `src/admin-shortcut.js`. A troca de nome continua disponível pela credencial **NOME_ERRO**.
 
-A credencial **NOME_ERRO**, exatamente em maiúsculas e com dois Rs, também reabre a identificação, a partir do campo de credenciais em qualquer seção. O nome atual aparece preenchido; confirmar atualiza o nome local e cancelar preserva o anterior. O código não é guardado entre as autorizações ativas e não libera nenhum arquivo.
+A credencial **NOME_ERRO**, exatamente em maiúsculas e com dois Rs, reabre a identificação, a partir do campo de credenciais em qualquer seção. O nome atual aparece preenchido; confirmar atualiza o nome local e cancelar preserva o anterior. O código não é guardado entre as autorizações ativas e não libera nenhum arquivo.
 
-## Ativar a administração no Vercel
+## Administração dos textos
+
+No painel inicial, faça **↑ ↓ → → ←** para abrir diretamente o editor. No celular, use `#/administracao` e toque em **Abrir painel administrativo**. O painel contém somente a edição dos documentos; não há depuração, acompanhamento de visitantes ou coleta de nomes e presença.
+
+### Salvar neste navegador
+
+Sem o serviço compartilhado configurado, o editor funciona imediatamente em modo local. **Salvar neste navegador** atualiza a consulta do documento e guarda a edição em `gms-local-edits-v1` no `localStorage`. A mudança permanece ao recarregar a página e aparece em outras abas do mesmo navegador; outros navegadores e visitantes continuam vendo a versão publicada. Uma indicação de **Prévia local** permanece visível enquanto houver cópias locais salvas. **Restaurar versão do site** remove a cópia local daquele documento.
+
+As edições locais respeitam as condições de acesso: fichas reservadas não aparecem no editor sem a credencial narrativa correspondente. Para editar uma delas localmente, abra a ficha pelo código e use **Editar esta página** na barra de edição. Sair da ficha volta a exigir o código, inclusive quando há uma cópia local. O nome de identificação, as credenciais e os favoritos não são alterados pelo editor.
+
+Se o navegador bloquear o armazenamento ou ficar sem espaço, o painel informa que não salvou e mantém o texto no formulário. Limpar os dados do site apaga as cópias locais. Uma revisão local detecta alterações feitas por outra aba para evitar sobrescrever um texto mais recente.
+
+### Publicar para todos pelo Vercel
 
 1. No projeto da GMS no Vercel, abra **Storage / Marketplace**, adicione **Upstash Redis** e conecte o banco ao projeto.
 2. Confira as variáveis criadas pela integração: `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN`. As variantes `KV_REST_API_URL` e `KV_REST_API_TOKEN` também são aceitas.
-3. Em **Settings → Environment Variables**, adicione `GMS_ADMIN_PASSWORD` com uma senha exclusiva de **pelo menos 16 caracteres**. Use o ambiente **Production**; configure Preview também se quiser testar os deploys de prévia.
-4. Faça **Redeploy** para que a função receba as variáveis. Abra o painel pelas setas na tela inicial ou por `#/depuracao` (útil no celular) e entre com a senha administrativa.
+3. Em **Settings → Environment Variables**, adicione `GMS_ADMIN_PASSWORD` com uma senha exclusiva de **pelo menos 16 caracteres**. Use **Production**; configure Preview também se quiser testar deploys de prévia.
+4. Faça **Redeploy**. Abra a administração e entre com a senha para usar **Publicar alterações**.
 
-A senha e o token são usados somente no servidor. Não são incluídos no JavaScript público nem guardados no `localStorage`. A sequência de setas e as credenciais narrativas não concedem permissão administrativa. A sessão administrativa usa cookie `HttpOnly`, `SameSite=Strict`, com duração de 8 horas; sair revoga a sessão. A API confere a origem das alterações, limita tentativas de login e valida os campos publicados. Alterar a senha no servidor invalida as sessões existentes.
+A senha e o token são usados somente no servidor, sem serem incluídos no JavaScript público ou guardados no `localStorage`. A sequência de setas permite editar uma cópia local; publicar no site exige uma sessão administrativa própria. A sessão usa cookie `HttpOnly`, `SameSite=Strict`, com duração de 8 horas; sair a revoga. A API confere a origem das alterações, limita tentativas de login e valida os campos publicados. Alterar a senha no servidor invalida as sessões existentes.
 
-Enquanto as variáveis não estiverem configuradas, o painel informa a conexão pendente e a navegação do arquivo funciona normalmente. Não há contagem fictícia de usuários nem publicação local apresentada como uma mudança para todos. A prévia HTML independente continua disponível para consulta offline; ela não inclui a função de servidor ou o banco e não permite administrar o site publicado.
+**Publicar alterações** grava os textos no Redis. Outros visitantes recebem a atualização na próxima sincronização (até 25 segundos, com a página visível) ou ao recarregar. Cópias locais têm prioridade apenas em seu navegador. Ao publicar um documento, a cópia local dele é substituída pela versão publicada, preservando as edições locais dos outros documentos. Publicações concorrentes usam uma revisão: um editor desatualizado recebe um conflito e mantém seu rascunho.
 
-### Visitantes e presença
+As edições publicadas têm prioridade sobre os textos dos arquivos do GitHub e persistem entre deploys. **Restaurar texto original**, no modo compartilhado, remove a edição do banco e volta à versão atual dos arquivos do projeto. Nenhum commit é criado ao publicar pelo painel. Mantenha backups do banco para preservar as edições compartilhadas.
 
-A área **Visitantes** mostra os nomes informados na identificação, situação online/offline, primeiro e último acesso e a rota atual (sem termos de busca). Um identificador aleatório por navegador permite contar várias abas como um visitante. Outro navegador, dispositivo ou limpeza de dados pode gerar outra identificação; esses números representam navegadores, não pessoas verificadas.
+### Campos disponíveis
 
-O navegador envia um sinal a cada 25 segundos enquanto a página está visível. Fechar ou ocultar uma aba informa a saída daquela sessão; outra aba aberta mantém o visitante online. Sem sinal por **75 segundos**, a sessão expira. O painel consulta os dados a cada **10 segundos**. O histórico permanece por **90 dias**; a lista apresenta os 500 acessos mais recentes, além das sessões online, até 1.000 registros por consulta. O registro começa após a ativação do serviço, sem recuperar visitas anteriores.
+Procure uma ficha, espécie, missão, relatório ou documento pelo nome, código ou seção. Edite título, resumo, situação, autoria, departamento, data, anotação e parágrafos. Os campos adicionais permitem editar capacidades e seus desdobramentos, dados funcionais, cronologia, pessoas, locais e evidências. Grupos de capacidades, imagens, códigos, IDs, vínculos e condições de acesso são preservados. A barra de edição oferece **Editar esta página** para abrir diretamente o documento atual.
 
-Os dados de visitantes só são retornados pela API para uma sessão administrativa autenticada. IPs não integram a lista de visitantes; um hash é usado temporariamente apenas para limitar tentativas e abuso da API.
+Os textos fixos da navegação e do painel inicial continuam em `src/main.js`; o editor atua nos documentos do acervo. A prévia HTML independente permite consulta offline e edição local quando o navegador permite armazenamento, sem administrar o site publicado.
 
-### Editar os documentos no painel
-
-Em **Conteúdo**, procure uma ficha, espécie, missão, relatório ou documento. Edite título, resumo, situação, autoria, departamento, data, anotação e parágrafos. Os campos adicionais permitem editar capacidades e seus desdobramentos, dados funcionais, cronologia, pessoas, locais e evidências. Grupos de capacidades, imagens, códigos, IDs, vínculos e condições de acesso são preservados. As fichas reservadas também aparecem no editor autenticado, mantendo as restrições de consulta pública.
-
-**Publicar alterações** grava os textos no Redis. O próprio navegador recebe a atualização imediatamente; outros visitantes recebem na próxima sincronização (até 25 segundos) ou ao recarregar. Depois de entrar na administração, a barra superior oferece **Editar esta página** para abrir diretamente o documento atual. Publicações simultâneas usam uma revisão: um editor desatualizado recebe um conflito, mantém seu rascunho e precisa recarregar os dados antes de publicar.
-
-As edições do painel têm prioridade sobre os textos dos arquivos do GitHub e persistem entre deploys. **Restaurar texto original** remove a edição daquele documento e volta à versão atual dos arquivos do projeto. Nenhum commit é criado ao publicar pelo painel. Use um banco persistente e mantenha backups desse banco para preservar as edições. Os textos institucionais fixos da navegação e do painel inicial continuam em `src/main.js`; o editor atua nos documentos do acervo.
-
-A implementação fica em `src/admin-panel.js`, `src/admin-panel.css`, `src/content-editing.js`, `src/site-service.js`, `api/gms.js` e `server/`. `vite.config.js` disponibiliza a mesma API em desenvolvimento e na prévia servida por Vite. Os testes cobrem autenticação, presença, revisões concorrentes, restauração e preservação das condições de acesso.
+A implementação fica em `src/admin-panel.js`, `src/admin-panel.css`, `src/local-edits.js`, `src/content-editing.js`, `src/site-service.js`, `api/gms.js` e `server/`. `vite.config.js` disponibiliza a mesma API em desenvolvimento e na prévia servida por Vite. Os testes cobrem armazenamento local, autenticação da publicação, conflitos de revisão, restauração e preservação das condições de acesso.
 
 ## Tela de recuperação do C.O.D.E.X
 

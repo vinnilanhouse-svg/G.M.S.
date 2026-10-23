@@ -1,4 +1,5 @@
-import { createDebugShortcut } from './debug-shortcut.js';
+import { createAdminShortcut } from './admin-shortcut.js';
+import { localEditsKey } from './local-edits.js';
 import { createAdminPanel } from './admin-panel.js';
 import { createSiteService } from './site-service.js';
 import { applyContentOverrides } from './content-editing.js';
@@ -25,7 +26,7 @@ import { records as originalRecords, categories } from './data.js';
 let allRecords=originalRecords;
 import { credentials, accessStorageKey, findCredential, readActiveCredentials, visibleRecords, listedRecords } from './permissions.js';
 
-const paths = { inicio: 'Painel inicial', conhecimento: 'Base de conhecimento', documentos: 'Documentos internos', favoritos: 'Arquivos salvos', busca: 'Busca no arquivo', agentes: 'Agentes', missoes: 'Missões', 'missoes/relatorios': 'Relatórios de missão', alvos: 'Alvos de interesse', credenciais: 'Credenciais de acesso', reservado: 'Arquivo reservado', depuracao: 'Administração' };
+const paths = { inicio: 'Painel inicial', conhecimento: 'Base de conhecimento', documentos: 'Documentos internos', favoritos: 'Arquivos salvos', busca: 'Busca no arquivo', agentes: 'Agentes', missoes: 'Missões', 'missoes/relatorios': 'Relatórios de missão', alvos: 'Alvos de interesse', credenciais: 'Credenciais de acesso', reservado: 'Arquivo reservado', administracao: 'Administração' };
 const kinds = { verbete: 'Base de conhecimento', documento: 'Documento interno', agente: 'Agente', missao: 'Missão', relatorio: 'Relatório de missão', alvo: 'Alvo de interesse' };
 const recordIcons = { verbete:'book', documento:'file', agente:'users', missao:'flag', relatorio:'clipboard', alvo:'target' };
 const recordSections = { verbete:'conhecimento', documento:'documentos', agente:'agentes', missao:'missoes', relatorio:'missoes/relatorios', alvo:'alvos' };
@@ -322,6 +323,7 @@ function render() {
  catch(error){console.error('Não foi possível abrir esta página.',error);lostPage();}
 }
 function renderPage() {
+ if(/^#\/depuracao(?:$|\?)/.test(location.hash))history.replaceState(null,'',location.hash.replace('#/depuracao','#/administracao'));
  clearAccessEffect?.();
  clearAccessEffect=null;
  document.querySelectorAll('body > .overlay').forEach(x=>x.remove());
@@ -341,7 +343,7 @@ function renderPage() {
  if(pageKey()==='missoes/relatorios')filters.missionId=new URLSearchParams(qs).get('missao')||'';
  if(current.page==='busca')filters.q=new URLSearchParams(qs).get('q')||'';
  document.title=`${paths[pageKey()]||'Consulta'} — Arquivo GMS`;
- if(current.page==='inicio')dashboard();else if(current.page==='depuracao')shell(`<section class="admin-launch"><div class="eyebrow">CONTROLE DO ARQUIVO</div><h1>Administração</h1><p>Abra o painel para consultar os acessos e editar os documentos. A administração exige uma senha própria.</p><button type="button" data-open-admin>Abrir painel administrativo</button></section>`);else if(current.page==='credenciais')credentialPage();else if(current.page==='reservado'&&!activeCredentials.has('arquivo-reservado'))credentialRequired();else if(current.page==='arquivo')detail(current.id);else if(Object.hasOwn(paths,pageKey()))listPage();else lostPage();
+ if(current.page==='inicio')dashboard();else if(current.page==='administracao')shell(`<section class="admin-launch"><div class="eyebrow">CONTROLE DO ARQUIVO</div><h1>Administração</h1><p>Abra o editor para alterar os textos do arquivo. Sem conexão com o banco, as edições ficam salvas apenas neste navegador.</p><button type="button" data-open-admin>Abrir painel administrativo</button></section>`);else if(current.page==='credenciais')credentialPage();else if(current.page==='reservado'&&!activeCredentials.has('arquivo-reservado'))credentialRequired();else if(current.page==='arquivo')detail(current.id);else if(Object.hasOwn(paths,pageKey()))listPage();else lostPage();
  scrollTo(0,0);
  if(pendingNotice){showToast(pendingNotice);pendingNotice='';}
 }
@@ -349,7 +351,6 @@ function changeAgentName() {
  if(document.querySelector('.agent-identification[open]'))return;
  requestAgentIdentification(gmsLogo,({name,persisted})=>{
   agentName=name;
-  void siteService.heartbeat();
   render();
   showToast(persisted?'Identificação de agente atualizada.':'Nome atualizado nesta sessão. O navegador não permitiu salvar para a próxima visita.');
  },{initialName:agentName,canCancel:true});
@@ -361,32 +362,20 @@ function openAdministration() {
  adminPanel.open();
 }
 const siteService=createSiteService({
- getName:()=>agentName,
- getPage:()=>location.hash||'#/inicio',
  onContent:overrides=>{allRecords=applyContentOverrides(originalRecords,overrides);render();},
 });
 const adminPanel=createAdminPanel({
  service:siteService,
- getRecords:()=>allRecords,
- getCurrentRecord:()=>current.page==='arquivo'?allRecords.find(record=>record.id===current.id):null,
- getDiagnostics:()=>({
-  'Página atual':location.hash||'#/inicio',
-  'Nome neste navegador':agentName||'Não informado',
-  'Registros no acervo':allRecords.length,
-  'Registros nas listas':catalog.length,
-  'Credenciais narrativas ativas':activeCredentials.size,
-  'Tamanho da janela':`${innerWidth} × ${innerHeight}`,
-  'Tempo nesta visita':`${Math.floor(performance.now()/1000)} s`,
-  'Conexão do navegador':navigator.onLine?'Online':'Offline',
- }),
+ getRecords:includeReserved=>includeReserved?allRecords:records,
+ getCurrentRecord:includeReserved=>current.page==='arquivo'?(includeReserved?allRecords:records).find(record=>record.id===current.id):null,
 });
-const debugShortcut=createDebugShortcut({
+const adminShortcut=createAdminShortcut({
  isEnabled:()=>current.page==='inicio'&&Boolean(agentName)&&!mobileOpen&&!document.querySelector('dialog[open]'),
  onMatch:openAdministration,
 });
-addEventListener('hashchange',()=>{debugShortcut.reset();render();});
-addEventListener('blur',debugShortcut.reset);
-addEventListener('keydown',debugShortcut.handleKeydown);
+addEventListener('hashchange',()=>{adminShortcut.reset();render();});
+addEventListener('blur',adminShortcut.reset);
+addEventListener('keydown',adminShortcut.handleKeydown);
 addEventListener('error',event=>{if(event.error)lostPage();});
 addEventListener('unhandledrejection',()=>lostPage());
 addEventListener('keydown',e=>{if(e.key==='Escape'){mobileOpen=false;document.querySelector('.sidebar')?.classList.remove('is-open');document.querySelectorAll('.overlay').forEach(x=>x.remove());}if(e.key==='/'&&!document.querySelector('dialog[open]')&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.querySelector('#global-search, #local-query')?.focus();}});
@@ -395,7 +384,6 @@ render();
 if(agentName)showEntryScreen(gmsLogo);
 else requestAgentIdentification(gmsLogo,({name,persisted})=>{
  agentName=name;
- void siteService.heartbeat();
  render();
  showEntryScreen(gmsLogo);
  if(!persisted)showToast('Nome registrado nesta sessão. O navegador não permitiu salvar para a próxima visita.');
@@ -403,4 +391,4 @@ else requestAgentIdentification(gmsLogo,({name,persisted})=>{
 
 siteService.start();
 void adminPanel.init();
-addEventListener('storage',event=>{if(event.key==='gms-agent-name-v1'){try{agentName=readAgentName(localStorage);}catch{}void siteService.heartbeat();if(current.page==='inicio')render();}});
+addEventListener('storage',event=>{if(event.key===localEditsKey)siteService.reloadLocal();if(event.key==='gms-agent-name-v1'){try{agentName=readAgentName(localStorage);}catch{}if(current.page==='inicio')render();}});

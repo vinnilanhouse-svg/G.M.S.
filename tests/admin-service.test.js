@@ -1,11 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {records} from '../src/data.js';
-import {createGmsHandler,CONTENT_KEY,ONLINE_MS} from '../server/gms-handler.js';
+import {createGmsHandler,CONTENT_KEY} from '../server/gms-handler.js';
 import {createRedis} from '../server/redis.js';
 
 class MemoryRedis {
-  values=new Map(); sorted=new Map();
+  values=new Map();
   async pipeline(commands){const results=[];for(const command of commands)results.push(await this.command(...command));return results;}
   async command(command,...args){
     if(command==='GET')return this.values.get(args[0])??null;
@@ -22,26 +22,10 @@ class MemoryRedis {
       document.revision++;document.updatedAt=date;this.values.set(key,JSON.stringify(document));
       return [1,JSON.stringify(document)];
     }
-    const [key]=args;const set=this.sorted.get(key)||new Map();this.sorted.set(key,set);
-    if(command==='ZADD'){set.set(args[2],Number(args[1]));return 1;}
-    if(command==='ZREM')return Number(set.delete(args[1]));
-    if(command==='ZCARD')return set.size;
-    if(command==='ZREMRANGEBYSCORE'){
-      const min=args[1]==='-inf'?-Infinity:Number(args[1]);const max=args[2]==='+inf'?Infinity:Number(args[2]);let removed=0;
-      for(const [member,score] of set)if(score>=min&&score<=max){set.delete(member);removed++;}return removed;
-    }
-    if(command==='ZRANGE'||command==='ZREVRANGE'){
-      const rows=[...set].sort((a,b)=>a[1]-b[1]);if(command==='ZREVRANGE')rows.reverse();
-      return rows.slice(Number(args[1]),Number(args[2])===-1?undefined:Number(args[2])+1).map(([member])=>member);
-    }
     throw new Error(`Comando desconhecido: ${command}`);
   }
 }
 const password='senha-administrativa-de-teste';
-const id1='11111111-1111-4111-8111-111111111111';
-const id2='22222222-2222-4222-8222-222222222222';
-const tab1='33333333-3333-4333-8333-333333333333';
-const tab2='44444444-4444-4444-8444-444444444444';
 function fixture(options={}){
   const store=options.store===undefined?new MemoryRedis():options.store;
   let clock=1_800_000_000_000;
@@ -56,10 +40,10 @@ function fixture(options={}){
   return {store,request,login,advance:ms=>clock+=ms};
 }
 
-test('sem banco configurado não há números de presença inventados nem publicação local apresentada como global',async()=>{
+test('sem banco configurado a API não autoriza publicação compartilhada',async()=>{
   const {request}=fixture({store:null});
   const result=await request();
-  assert.equal(result.body.configured,false);assert.equal(result.body.presenceEnabled,false);
+  assert.equal(result.body.configured,false);assert.equal(result.body.presenceEnabled,undefined);
   assert.equal(result.body.onlineCount,undefined);
   assert.equal((await request({method:'PUT',body:{}})).status,503);
 });
@@ -85,22 +69,12 @@ test('a API recusa alterações sem sessão ou de outra origem e limita tentativ
   assert.equal((await request({method:'POST',ip:'127.0.0.2',body:{action:'login',password}})).status,429);
 });
 
-test('a presença conta navegadores distintos, mantém online outra aba aberta e expira sessões sem sinal',async()=>{
-  const {request,login,advance}=fixture();const cookie=await login();
-  const presence=(visitorId,sessionId,name)=>request({method:'POST',body:{action:'presence',visitorId,sessionId,name,page:'#/agentes?dados=descartados'}});
-  await presence(id1,tab1,'Agente Um');await presence(id1,tab2,'Agente Um');await presence(id2,tab1,'Agente Dois');
-  let result=await request({scope:'admin',cookie});
-  assert.equal(result.body.onlineCount,2);assert.equal(result.body.knownCount,2);
-  assert.ok(result.body.visitors.every(visitor=>visitor.page==='#/agentes'));
-  assert.ok(!JSON.stringify((await request()).body).includes('Agente Um'));
-  await request({method:'POST',body:{action:'leave',visitorId:id1,sessionId:tab1}});
-  assert.equal((await request({scope:'admin',cookie})).body.onlineCount,2);
-  advance(ONLINE_MS+1);
-  await presence(id1,tab2,'Agente Aurora');
-  result=await request({scope:'admin',cookie});
-  assert.equal(result.body.onlineCount,1);assert.equal(result.body.knownCount,2);
-  assert.deepEqual(result.body.visitors.find(visitor=>visitor.id===id1).names,['Agente Um','Agente Aurora']);
-  assert.equal(result.body.visitors.find(visitor=>visitor.id===id2).online,false);
+test('a API administrativa oferece apenas conteúdo e não registra nem lista visitantes',async()=>{
+  const {request,login,store}=fixture();const cookie=await login();
+  const result=await request({scope:'admin',cookie});
+  assert.equal(result.status,200);assert.equal(result.body.visitors,undefined);assert.equal(result.body.onlineCount,undefined);
+  assert.equal((await request({method:'POST',cookie,body:{action:'presence',name:'Agente'}})).status,400);
+  assert.ok([...store.values.keys()].every(key=>!key.startsWith('gms:visitor')));
 });
 
 test('publicações são compartilhadas, não alteram permissões e uma revisão antiga não sobrescreve outra edição',async()=>{

@@ -1,0 +1,26 @@
+.folder-transfer-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 22px; margin: 0 0 20px; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.folder-transfer-toolbar > span { color: var(--muted); font-size: 12px; line-height: 1.8; margin-left: auto; }
+.folder-transfer-dialog { width: min(580px, calc(100vw - 36px)); max-height: calc(100dvh - 36px); overflow-y: auto; padding: 28px; border: 1px solid #7e906b; background: #222d1e; color: var(--text); }
+.folder-transfer-dialog::backdrop { background: #091006db; }
+.folder-transfer-dialog h2 { margin: 0; font-size: 24px; line-height: 1.5; font-weight: 500; }
+.folder-transfer-dialog > p { color: var(--reading-secondary); font-size: 15px; line-height: 1.85; margin: 18px 0; }
+.folder-transfer-dialog label { display: block; color: var(--reading-secondary); font-size: 13px; line-height: 1.7; margin: 22px 0 9px; }
+.folder-transfer-dialog :is(select,input) { display: block; width: 100%; min-width: 0; padding: 11px 12px; border: 1px solid #637651; border-radius: 0; background: #172016; color: var(--text); font: 16px/1.7 var(--sans); }
+.folder-transfer-dialog :is(select,input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.folder-transfer-dialog input[hidden] { display: none; }
+.folder-file-picker { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px; border: 1px solid #637651; background: #172016; }
+.folder-file-picker > span { min-width: 0; flex: 1; font-size: 13px; line-height: 1.8; color: var(--reading-secondary); overflow-wrap: anywhere; }
+.folder-transfer-dialog > .folder-transfer-counts { font: 12px/1.9 var(--mono); color: var(--accent); padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.folder-transfer-counts:empty, .folder-transfer-feedback:empty { display: none; }
+.folder-export-options { display: grid; justify-items: start; margin-top: 20px; }
+.folder-export-options p { color: var(--muted); font-size: 13px; line-height: 1.8; margin: 8px 0 22px; }
+.folder-transfer-dialog .folder-transfer-feedback { color: var(--accent); font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
+.folder-transfer-dialog .folder-transfer-feedback.is-error { color: #efd09b; }
+.folder-transfer-dialog .op-button:disabled { color: var(--muted); background: transparent; border-color: var(--line); cursor: default; }
+@media (max-width: 650px) {
+  .folder-transfer-toolbar > span { width: 100%; margin-left: 0; }
+  .folder-transfer-dialog { padding: 23px 18px; }
+  .folder-transfer-dialog h2 { font-size: 22px; }
+  .folder-transfer-dialog .op-button { max-width: 100%; white-space: normal; text-align: left; }
+  .folder-transfer-dialog input[type="file"] { font-size: 13px; padding: 9px; }
+}

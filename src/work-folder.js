@@ -1,4 +1,5 @@
 export const workFolderKey = 'gms-work-folder-v1';
+export const workFolderCollections = ['notes', 'documents', 'people', 'localities'];
 const emptyFolder = () => ({ missionId: '', notes: [], documents: [], people: [], localities: [] });
 const validId = value => typeof value === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(value);
 const validDate = value => typeof value === 'string' && Number.isFinite(Date.parse(value));
@@ -32,6 +33,15 @@ export function readWorkFolder(storage) {
     }).map(({ id, title, body, missionId, createdAt, updatedAt }) => ({ id, title, body, missionId, createdAt, updatedAt }));
     return { missionId: validId(value.missionId) ? value.missionId : '', notes, documents: readEntries(value.documents, 'documents'), people: readEntries(value.people, 'people'), localities: readEntries(value.localities, 'localities') };
   } catch { return emptyFolder(); }
+}
+
+// A importação rejeita o arquivo inteiro se algum registro for inválido.
+// A leitura cotidiana continua tolerante a dados antigos do navegador.
+export function validateWorkFolderData(value) {
+  if (!value || value.version !== 1 || !optionalId(value.missionId) || workFolderCollections.some(key => !Array.isArray(value[key]))) throw new Error('A cópia da pasta está incompleta ou usa uma versão incompatível.');
+  const clean = readWorkFolder({ getItem: () => JSON.stringify(value) });
+  if (workFolderCollections.some(key => clean[key].length !== value[key].length)) throw new Error('A cópia contém registros inválidos ou repetidos. Nenhum registro foi importado.');
+  return clean;
 }
 
 // Releitura antes de cada alteração preserva as outras anotações de abas abertas.
@@ -112,6 +122,29 @@ export function createWorkFolder(storage) {
     removeDocument(id) { return change(current => ({ ...current, documents: current.documents.filter(entry => entry.id !== id) })); },
     removePerson(id) { return change(current => ({ ...current, people: current.people.filter(entry => entry.id !== id) })); },
     removeLocality(id) { return change(current => ({ ...current, localities: current.localities.filter(entry => entry.id !== id) })); },
+    importData(data) {
+      const incoming = validateWorkFolderData({ ...data, version: 1 });
+      const counts = { added: 0, copied: 0, skipped: 0 };
+      const result = change(current => {
+        const next = { ...current, missionId: current.missionId || incoming.missionId };
+        for (const key of workFolderCollections) {
+          const content = entry => JSON.stringify(Object.keys(entry).filter(field => field !== 'id').sort().map(field => [field, entry[field]]));
+          const knownContent = new Set(current[key].map(content));
+          const ids = new Set(current[key].map(entry => entry.id));
+          const added = [];
+          for (const entry of incoming[key]) {
+            const signature = content(entry);
+            if (knownContent.has(signature)) { counts.skipped++; continue; }
+            let id = entry.id;
+            if (ids.has(id)) { do { id = newId(); } while (ids.has(id)); counts.copied++; }
+            added.push({ ...entry, id }); ids.add(id); knownContent.add(signature); counts.added++;
+          }
+          next[key] = [...added, ...current[key]];
+        }
+        return next;
+      });
+      return { ...result, ...counts };
+    },
   };
 }
 

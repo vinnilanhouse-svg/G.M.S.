@@ -407,7 +407,7 @@ addEventListener('storage',event=>{
  if(event.key===localEditsKey)siteService.reloadLocal();
  if(event.key===workFolderKey){
   operationalPanel.reload();
-  if(current.page==='inicio'||(current.page==='pasta-de-trabalho'&&!document.activeElement?.closest('.note-editor'))){const y=scrollY;render();scrollTo(0,y);}
+  if(current.page==='inicio'||(current.page==='pasta-de-trabalho'&&!document.activeElement?.closest('.note-editor,.folder-entry-editor,.folder-add-form,dialog[open]'))){const y=scrollY;render();scrollTo(0,y);}
  }
  if(event.key==='gms-agent-name-v1'){
   try{agentName=readAgentName(localStorage);}catch{}

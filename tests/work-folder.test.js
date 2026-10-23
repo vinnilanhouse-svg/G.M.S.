@@ -60,7 +60,7 @@ test('armazenamento bloqueado mantém o rascunho na sessão e informa a falha', 
 test('dados corrompidos e campos indevidos não entram no caderno', () => {
   const disk = storage();
   disk.setItem(workFolderKey, '{quebrado');
-  assert.deepEqual(readWorkFolder(disk), { missionId: '', notes: [] });
+  assert.deepEqual(readWorkFolder(disk), { missionId: '', notes: [], documents: [], people: [], localities: [] });
   const folder = createWorkFolder(disk);
   const id = folder.addNote();
   assert.throws(() => folder.updateNote(id, 'access', 'Público'), /inválida/);
@@ -74,6 +74,72 @@ test('dados corrompidos e campos indevidos não entram no caderno', () => {
   assert.equal(recovered.notes.length, 1);
   assert.equal(recovered.missionId, '');
   assert.equal(recovered.notes[0].access, undefined);
+});
+
+test('a pasta anterior ganha as novas coleções sem perder suas notas e sua missão', () => {
+  const disk = storage();
+  const original = createWorkFolder(disk);
+  original.selectMission('missao-ultimo-sinal');
+  const id = original.addNote('missao-ultimo-sinal');
+  original.updateNote(id, 'body', 'Preservar o caderno antigo.');
+  const old = JSON.parse(disk.getItem(workFolderKey));
+  delete old.documents; delete old.people; delete old.localities;
+  disk.setItem(workFolderKey, JSON.stringify(old));
+  const restored = createWorkFolder(disk);
+  assert.equal(restored.state.missionId, 'missao-ultimo-sinal');
+  assert.equal(restored.state.notes[0].body, 'Preservar o caderno antigo.');
+  assert.deepEqual(restored.state.documents, []);
+  assert.deepEqual(restored.state.people, []);
+  assert.deepEqual(restored.state.localities, []);
+  restored.addDocument('relatorio-bashir-sol-velado');
+  assert.equal(readWorkFolder(disk).notes[0].id, id);
+});
+
+test('documentos, pessoas e localidades persistem por missão e preservam as demais coleções', () => {
+  const disk = storage();
+  const folder = createWorkFolder(disk);
+  const note = folder.addNote();
+  const document = folder.addDocument('relatorio-bashir-sol-velado', 'missao-ultimo-sinal');
+  folder.updateDocument(document, 'body', 'Conferir as últimas coordenadas.');
+  assert.equal(folder.addDocument('relatorio-bashir-sol-velado', 'missao-ultimo-sinal'), document, 'não duplica o mesmo vínculo na mesma missão');
+  const person = folder.addPerson({ name: 'Contato do porto', role: 'Testemunha', missionId: 'missao-ultimo-sinal' });
+  folder.updatePerson(person, 'body', 'Confirmar quando a equipe partiu.');
+  const locality = folder.addLocality({ name: 'Ilha da Queimada Grande', reference: '24°29′10″S, 46°40′30″W', missionId: 'missao-ultimo-sinal' });
+  folder.updateLocality(locality, 'body', 'Última localização registrada.');
+  const restored = createWorkFolder(disk);
+  assert.equal(restored.state.documents[0].body, 'Conferir as últimas coordenadas.');
+  assert.equal(restored.state.people[0].role, 'Testemunha');
+  assert.equal(restored.state.localities[0].reference, '24°29′10″S, 46°40′30″W');
+  restored.removePerson(person);
+  restored.removeDocument(document);
+  restored.removeLocality(locality);
+  assert.equal(readWorkFolder(disk).notes[0].id, note);
+  assert.equal(readWorkFolder(disk).documents.length, 0);
+  assert.equal(readWorkFolder(disk).people.length, 0);
+  assert.equal(readWorkFolder(disk).localities.length, 0);
+});
+
+test('novas coleções validam campos, respeitam outras abas e preservam rascunhos sem armazenamento', () => {
+  const disk = storage();
+  const first = createWorkFolder(disk);
+  const person = first.addPerson({ name: 'Agente Bashir', recordId: 'agente-bashir' });
+  const second = createWorkFolder(disk);
+  const document = second.addDocument('relatorio-bashir-sol-velado');
+  first.updatePerson(person, 'body', 'Estabelecer contato.');
+  assert.equal(readWorkFolder(disk).documents[0].id, document);
+  assert.throws(() => first.updatePerson(person, 'name', 'a'.repeat(121)), /Confira/);
+  assert.throws(() => first.updatePerson(person, 'access', 'Público'), /Confira/);
+  first.updatePerson(person, 'name', '');
+  assert.equal(readWorkFolder(disk).people[0].id, person, 'limpar um campo ao digitar não apaga o registro');
+  second.removePerson(person);
+  assert.throws(() => first.updatePerson(person, 'body', 'Aba antiga'), /removido em outra aba/);
+  assert.throws(() => first.addLocality({ name: ' ', reference: '' }), /nome da localidade/);
+  const blocked = createWorkFolder();
+  const locality = blocked.addLocality({ name: 'Ponto de encontro' });
+  blocked.updateLocality(locality, 'body', 'Rascunho pessoal.');
+  blocked.reload();
+  assert.equal(blocked.persisted, false);
+  assert.equal(blocked.state.localities[0].body, 'Rascunho pessoal.');
 });
 
 test('notas podem mudar de missão e a exclusão não apaga as demais', () => {

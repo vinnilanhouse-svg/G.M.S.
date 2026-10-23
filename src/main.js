@@ -1,4 +1,7 @@
-import { createAgentRenameShortcut } from './agent-rename-shortcut.js';
+import { createDebugShortcut } from './debug-shortcut.js';
+import { createAdminPanel } from './admin-panel.js';
+import { createSiteService } from './site-service.js';
+import { applyContentOverrides } from './content-editing.js';
 import { readAgentName, requestAgentIdentification } from './agent-identity.js';
 import { showEntryScreen } from './entry-screen.js';
 import { showAccessDeniedEffect } from './access-denied.js';
@@ -17,10 +20,12 @@ import './readability.css';
 import './agent-identity.css';
 import './access-denied.css';
 import './lost-page.css';
-import { records as allRecords, categories } from './data.js';
+import './admin-panel.css';
+import { records as originalRecords, categories } from './data.js';
+let allRecords=originalRecords;
 import { credentials, accessStorageKey, findCredential, readActiveCredentials, visibleRecords, listedRecords } from './permissions.js';
 
-const paths = { inicio: 'Painel inicial', conhecimento: 'Base de conhecimento', documentos: 'Documentos internos', favoritos: 'Arquivos salvos', busca: 'Busca no arquivo', agentes: 'Agentes', missoes: 'Missões', 'missoes/relatorios': 'Relatórios de missão', alvos: 'Alvos de interesse', credenciais: 'Credenciais de acesso', reservado: 'Arquivo reservado' };
+const paths = { inicio: 'Painel inicial', conhecimento: 'Base de conhecimento', documentos: 'Documentos internos', favoritos: 'Arquivos salvos', busca: 'Busca no arquivo', agentes: 'Agentes', missoes: 'Missões', 'missoes/relatorios': 'Relatórios de missão', alvos: 'Alvos de interesse', credenciais: 'Credenciais de acesso', reservado: 'Arquivo reservado', depuracao: 'Administração' };
 const kinds = { verbete: 'Base de conhecimento', documento: 'Documento interno', agente: 'Agente', missao: 'Missão', relatorio: 'Relatório de missão', alvo: 'Alvo de interesse' };
 const recordIcons = { verbete:'book', documento:'file', agente:'users', missao:'flag', relatorio:'clipboard', alvo:'target' };
 const recordSections = { verbete:'conhecimento', documento:'documentos', agente:'agentes', missao:'missoes', relatorio:'missoes/relatorios', alvo:'alvos' };
@@ -165,6 +170,7 @@ function shell(content) {
  document.body.classList.remove('image-viewer-open');
  document.querySelector('#app').innerHTML=`${mobileOpen?'<div class="overlay" data-close-menu></div>':''}${nav()}<div class="workspace"><header class="topbar"><div class="breadcrumb"><button class="icon-button mobile-menu" aria-label="Abrir navegação" data-menu>${icon('menu')}</button><span>GMS</span><span class="slash">/</span><span>${esc(paths[pageKey()]||'Consulta de arquivo')}</span></div><div class="topbar-right"><span class="system-online"><i></i>SISTEMA OPERACIONAL</span><span class="topbar-divider"></span><span class="mono topbar-code">TERMINAL 001</span></div></header><main id="main-content">${content}</main><footer class="footer"><span>GMS <span class="footer-slash">/</span> DEPARTAMENTO DE DOCUMENTAÇÃO E MEMÓRIA</span><span><a href="#/credenciais" class="footer-credentials">${icon('key')}Credenciais de acesso</a><i></i> EDIÇÃO 1.7 <i></i> ACESSOS DEMONSTRATIVOS</span></footer></div><div id="toast" role="status"></div><dialog id="record-image-viewer" class="image-viewer" aria-labelledby="image-viewer-title"><div class="image-viewer-bar"><h2 id="image-viewer-title"></h2><button type="button" class="icon-button" data-close-image-viewer aria-label="Fechar imagem">${icon('close')}</button></div><div class="image-viewer-body"></div><p class="image-viewer-caption">REGISTRO VISUAL · DOCUMENTO DE REFERÊNCIA GMS · EDIÇÃO 1.7</p></dialog>`;
  bind();
+ adminPanel?.updateBar();
 }
 function heading(kicker,title,description,extra='') {return `<div class="page-heading"><div><div class="eyebrow"><span></span>${kicker}</div><h1>${title}</h1><p>${description}</p></div>${extra}</div>`;}
 function searchForm(value='',compact=false) {return `<form class="search-form ${compact?'compact':''}" role="search" data-search><label class="sr-only" for="global-search">Buscar em todo o arquivo</label>${icon('search')}<input id="global-search" name="q" type="search" placeholder="Busque por uma espécie, agente ou arquivo..." value="${esc(value)}" autocomplete="off"><button type="submit">Buscar no arquivo ${icon('arrow')}</button></form>`;}
@@ -219,7 +225,7 @@ function listPage() {
 function updateResults() {
  const emptyMessages={documentos:'Ainda não há documentos internos neste acervo.',missoes:'Ainda não há missões cadastradas neste acervo.','missoes/relatorios':'Ainda não há relatórios de missão neste acervo.',alvos:'Ainda não há alvos de interesse cadastrados neste acervo.'};
  const list=current.all.filter(r=>(!filters.status||r.status===filters.status)&&(!filters.category||r.category===filters.category)&&(!filters.access||r.access===filters.access)&&(!filters.missionId||r.missionId===filters.missionId)&&(!filters.q||norm([r.code,r.title,r.summary,r.category,...r.report,...(r.abilities||[]).map(a=>[a.title,a.text,a.variant,...(a.details||[]).map(d=>d.title+' '+d.text)].join(' '))].join(' ')).includes(norm(filters.q))));
- document.querySelector('#list-results').innerHTML=`<div class="results-meta"><span>${list.length} ${list.length===1?'registro encontrado':'registros encontrados'}</span><button class="text-button" data-reset>Limpar filtros ${icon('close')}</button></div>${list.length?(current.page==='conhecimento'?`<div class="wiki-grid">${list.map(r=>`<a class="wiki-card" href="#/arquivo/${r.id}">${r.icon?`<div class="wiki-card-visual wiki-card-symbol"><img src="${esc(r.icon.src)}" alt="Símbolo da espécie: ${esc(r.title)}" width="${r.icon.width}" height="${r.icon.height}" loading="lazy" decoding="async"></div>`:''}<div class="wiki-card-top"><span>${r.code} / ${r.category}</span>${icon('arrow')}</div><h2${r.category==='Espécies'?` class="species-title" data-species="${esc(r.id)}"`:""}>${esc(r.title)}</h2><p>${r.summary}</p><div class="wiki-card-bottom">${accessBadge(r.access)}</div></a>`).join('')}</div>`:recentTable(list,['agentes','missoes','alvos'].includes(current.page))):`<div class="empty-state">${icon('search')}<h2>Nenhum registro encontrado</h2><p>${!current.all.length&&emptyMessages[pageKey()]?emptyMessages[pageKey()]:current.page==='favoritos'&&!saved.size?'Abra um arquivo e selecione “Salvar arquivo” para adicioná-lo aqui.':'Tente outro termo ou remova os filtros para ampliar a consulta.'}</p></div>`}<div class="table-foot"><i></i>FIM DOS RESULTADOS<span>GMS / CONSULTA INTEGRADA</span></div>`;
+ document.querySelector('#list-results').innerHTML=`<div class="results-meta"><span>${list.length} ${list.length===1?'registro encontrado':'registros encontrados'}</span><button class="text-button" data-reset>Limpar filtros ${icon('close')}</button></div>${list.length?(current.page==='conhecimento'?`<div class="wiki-grid">${list.map(r=>`<a class="wiki-card" href="#/arquivo/${r.id}">${r.icon?`<div class="wiki-card-visual wiki-card-symbol"><img src="${esc(r.icon.src)}" alt="Símbolo da espécie: ${esc(r.title)}" width="${r.icon.width}" height="${r.icon.height}" loading="lazy" decoding="async"></div>`:''}<div class="wiki-card-top"><span>${r.code} / ${r.category}</span>${icon('arrow')}</div><h2${r.category==='Espécies'?` class="species-title" data-species="${esc(r.id)}"`:""}>${esc(r.title)}</h2><p>${esc(r.summary)}</p><div class="wiki-card-bottom">${accessBadge(r.access)}</div></a>`).join('')}</div>`:recentTable(list,['agentes','missoes','alvos'].includes(current.page))):`<div class="empty-state">${icon('search')}<h2>Nenhum registro encontrado</h2><p>${!current.all.length&&emptyMessages[pageKey()]?emptyMessages[pageKey()]:current.page==='favoritos'&&!saved.size?'Abra um arquivo e selecione “Salvar arquivo” para adicioná-lo aqui.':'Tente outro termo ou remova os filtros para ampliar a consulta.'}</p></div>`}<div class="table-foot"><i></i>FIM DOS RESULTADOS<span>GMS / CONSULTA INTEGRADA</span></div>`;
  document.querySelector('[data-reset]').onclick=()=>{filters={q:'',status:'',category:'',access:'',missionId:''};listPage();};
 }
 function speciesAbilityGroups(abilities) {
@@ -253,16 +259,17 @@ function detail(id) {
  const notableMembers=(r.notableMembers||[]).map(id=>records.find(record=>record.id===id)).filter(Boolean);
  const reportTitle={verbete:'Descrição e observações',agente:'Registro do agente',missao:'Ordem de missão',relatorio:'Relatório de missão',alvo:'Síntese de inteligência'}[r.kind]||(r.category==='Depoimentos'?'Transcrição do depoimento':'Relatório');
  const missionReports=records.filter(x=>x.kind==='relatorio'&&x.missionId===r.id);
- shell(`<div class="detail-top"><a class="back-link" href="#/${parent}">${icon('arrow')} ${paths[parent]}</a>${!r.unlisted?`<button class="save-button ${saved.has(r.id)?'is-saved':''}" data-save="${r.id}">${icon('bookmark')}<span>${saved.has(r.id)?'Arquivo salvo':'Salvar arquivo'}</span></button>`:''}</div><article class="dossier ${r.image?'dossier-with-image':''} ${r.image&&r.kind==='agente'?'dossier-with-portrait':''}"><header class="dossier-header">${r.demo?'<div class="demo-banner">REGISTRO ILUSTRATIVO · NÃO CANÔNICO — exemplo de navegação, sem vínculo com acontecimentos da lore.</div>':''}<div class="dossier-meta"><span>${r.code} <span class="separator">/</span> ${kinds[r.kind].toUpperCase()}</span>${accessBadge(r.access)}</div><h1${r.category==='Espécies'?` class="species-title" data-species="${esc(r.id)}"`:""}>${esc(r.title)}</h1><p class="dossier-summary">${r.summary}</p><div class="dossier-info"><div><span>AUTORIA</span><strong>${r.author}</strong></div><div><span>DEPARTAMENTO</span><strong>${r.department}</strong></div><div><span>ATUALIZAÇÃO</span><strong>${date(r.date)}</strong></div><div${r.kind==='agente'&&r.status==='Desaparecido'?' class="dossier-situation-highlight"':''}><span>SITUAÇÃO</span>${statusBadge(r.status)}</div></div></header>
- <div class="dossier-layout"><div class="dossier-body"><nav class="document-index" aria-label="Seções deste arquivo"><a href="#relatorio" data-section="relatorio">01 / ${r.kind==='verbete'?'Descrição':r.kind==='agente'?'Perfil':r.kind==='missao'?'Ordem de missão':r.kind==='alvo'?'Síntese':'Relatório'}</a>${r.abilities?'<a href="#capacidades" data-section="capacidades">02 / Capacidades naturais</a>':''}${r.timeline?`<a href="#cronologia" data-section="cronologia">${r.abilities?'03':'02'} / Cronologia</a>`:''}${isSpecies?'<a href="#membros-notaveis" data-section="membros-notaveis">03 / Membros notáveis</a>':'<a href="#relacionados" data-section="relacionados">↗ / Vínculos</a>'}</nav><section id="relatorio" class="document-section"><div class="eyebrow">01 / ${r.kind==='verbete'?'REGISTRO DESCRITIVO':'DOCUMENTO INTEGRAL'}</div><h2>${reportTitle}</h2>${reportContent(r)}${r.note?`<aside class="employee-note"><span>ANOTAÇÃO DE ARQUIVO</span><p>${r.note}</p></aside>`:''}</section>
+ shell(`<div class="detail-top"><a class="back-link" href="#/${parent}">${icon('arrow')} ${paths[parent]}</a>${!r.unlisted?`<button class="save-button ${saved.has(r.id)?'is-saved':''}" data-save="${r.id}">${icon('bookmark')}<span>${saved.has(r.id)?'Arquivo salvo':'Salvar arquivo'}</span></button>`:''}</div><article class="dossier ${r.image?'dossier-with-image':''} ${r.image&&r.kind==='agente'?'dossier-with-portrait':''}"><header class="dossier-header">${r.demo?'<div class="demo-banner">REGISTRO ILUSTRATIVO · NÃO CANÔNICO — exemplo de navegação, sem vínculo com acontecimentos da lore.</div>':''}<div class="dossier-meta"><span>${r.code} <span class="separator">/</span> ${kinds[r.kind].toUpperCase()}</span>${accessBadge(r.access)}</div><h1${r.category==='Espécies'?` class="species-title" data-species="${esc(r.id)}"`:""}>${esc(r.title)}</h1><p class="dossier-summary">${esc(r.summary)}</p><div class="dossier-info"><div><span>AUTORIA</span><strong>${esc(r.author)}</strong></div><div><span>DEPARTAMENTO</span><strong>${esc(r.department)}</strong></div><div><span>ATUALIZAÇÃO</span><strong>${date(r.date)}</strong></div><div${r.kind==='agente'&&r.status==='Desaparecido'?' class="dossier-situation-highlight"':''}><span>SITUAÇÃO</span>${statusBadge(r.status)}</div></div></header>
+ <div class="dossier-layout"><div class="dossier-body"><nav class="document-index" aria-label="Seções deste arquivo"><a href="#relatorio" data-section="relatorio">01 / ${r.kind==='verbete'?'Descrição':r.kind==='agente'?'Perfil':r.kind==='missao'?'Ordem de missão':r.kind==='alvo'?'Síntese':'Relatório'}</a>${r.abilities?'<a href="#capacidades" data-section="capacidades">02 / Capacidades naturais</a>':''}${r.timeline?`<a href="#cronologia" data-section="cronologia">${r.abilities?'03':'02'} / Cronologia</a>`:''}${isSpecies?'<a href="#membros-notaveis" data-section="membros-notaveis">03 / Membros notáveis</a>':'<a href="#relacionados" data-section="relacionados">↗ / Vínculos</a>'}</nav><section id="relatorio" class="document-section"><div class="eyebrow">01 / ${r.kind==='verbete'?'REGISTRO DESCRITIVO':'DOCUMENTO INTEGRAL'}</div><h2>${reportTitle}</h2>${reportContent(r)}${r.note?`<aside class="employee-note"><span>ANOTAÇÃO DE ARQUIVO</span><p>${esc(r.note)}</p></aside>`:''}</section>
  ${r.abilities?`<section id="capacidades" class="document-section"><div class="eyebrow">NATUREZA DA ESPÉCIE</div><h2>Capacidades e particularidades</h2><p class="section-intro">Manifestações próprias da espécie, suas condições e seus limites.</p>${speciesAbilityGroups(r.abilities)}</section>`:''}
 
- ${r.timeline?`<section id="cronologia" class="document-section"><div class="eyebrow">${r.abilities?'03':'02'} / SEQUÊNCIA DE EVENTOS</div><h2>Cronologia</h2><ol class="timeline">${r.timeline.map(t=>`<li><time>${t.date}</time><p>${t.text}</p></li>`).join('')}</ol></section>`:''}
+ ${r.timeline?`<section id="cronologia" class="document-section"><div class="eyebrow">${r.abilities?'03':'02'} / SEQUÊNCIA DE EVENTOS</div><h2>Cronologia</h2><ol class="timeline">${r.timeline.map(t=>`<li><time>${esc(t.date)}</time><p>${esc(t.text)}</p></li>`).join('')}</ol></section>`:''}
  ${r.kind==='missao'?`<section class="document-section mission-reports"><div class="section-heading"><h2>${icon('clipboard')}Relatórios desta missão</h2><a href="#/missoes/relatorios?missao=${encodeURIComponent(r.id)}">Consultar relatórios ${icon('arrow')}</a></div>${missionReports.length?`<div class="related-list">${missionReports.map(x=>`<a href="#/arquivo/${x.id}"><div>${icon('clipboard')}<span><small>${esc(x.code)} · ${esc(x.status)}</small><strong>${esc(x.title)}</strong></span></div>${icon('arrow')}</a>`).join('')}</div>`:'<p>Nenhum relatório vinculado a esta missão.</p>'}</section>`:''}
- ${isSpecies?`<section id="membros-notaveis" class="document-section"><div class="eyebrow">03 / REGISTROS INDIVIDUAIS</div><h2>Membros notáveis</h2>${notableMembers.length?`<div class="notable-members-list">${notableMembers.map(member=>`<p>${recordLink(member.id)}</p>`).join('')}</div>`:'<p>Ainda não é de conhecimento nenhum membro notável dessa espécie.</p>'}</section>`:`<section id="relacionados" class="document-section"><div class="eyebrow">VÍNCULOS DOCUMENTAIS</div><h2>Arquivos relacionados</h2><div class="related-list">${r.related.map(id=>{const x=records.find(v=>v.id===id);return x?`<a href="#/arquivo/${x.id}"><div>${icon(recordIcons[x.kind])}<span><small>${x.code} · ${kinds[x.kind]}</small><strong>${x.title}</strong></span></div>${icon('arrow')}</a>`:'';}).join('')}</div></section>`}${r.source?`<div class="source-reference"><span>REFERÊNCIA DOCUMENTAL</span><p>Manual de referência · edição 1.7 / ${esc(r.sourceSection)}</p><a href="${esc(r.sourceUrl)}" target="_blank" rel="noopener noreferrer">Consultar documento de origem ${icon('external')}</a><small>Descrição adaptada para consulta narrativa. Códigos, departamentos e classificações de circulação são editoriais.</small></div>`:''}<div class="document-end">FIM DO REGISTRO <span>${r.code} / GMS</span></div></div>
+ ${isSpecies?`<section id="membros-notaveis" class="document-section"><div class="eyebrow">03 / REGISTROS INDIVIDUAIS</div><h2>Membros notáveis</h2>${notableMembers.length?`<div class="notable-members-list">${notableMembers.map(member=>`<p>${recordLink(member.id)}</p>`).join('')}</div>`:'<p>Ainda não é de conhecimento nenhum membro notável dessa espécie.</p>'}</section>`:`<section id="relacionados" class="document-section"><div class="eyebrow">VÍNCULOS DOCUMENTAIS</div><h2>Arquivos relacionados</h2><div class="related-list">${r.related.map(id=>{const x=records.find(v=>v.id===id);return x?`<a href="#/arquivo/${x.id}"><div>${icon(recordIcons[x.kind])}<span><small>${x.code} · ${kinds[x.kind]}</small><strong>${esc(x.title)}</strong></span></div>${icon('arrow')}</a>`:'';}).join('')}</div></section>`}${r.source?`<div class="source-reference"><span>REFERÊNCIA DOCUMENTAL</span><p>Manual de referência · edição 1.7 / ${esc(r.sourceSection)}</p><a href="${esc(r.sourceUrl)}" target="_blank" rel="noopener noreferrer">Consultar documento de origem ${icon('external')}</a><small>Descrição adaptada para consulta narrativa. Códigos, departamentos e classificações de circulação são editoriais.</small></div>`:''}<div class="document-end">FIM DO REGISTRO <span>${r.code} / GMS</span></div></div>
  <aside class="dossier-aside">${r.image?recordFigure(r):`<div class="file-stamp"><img src="${gmsLogo}" class="gms-mark stamp-logo" alt="Emblema da Global Monster Security" width="138" height="138"><span>ARQUIVO CENTRAL</span><b>${r.code}</b><small>CÓPIA DE CONSULTA</small></div>`}<div class="aside-block"><h3>IDENTIFICAÇÃO</h3><dl><dt>Categoria</dt><dd>${r.category}</dd><dt>Classificação</dt><dd>${r.access}</dd><dt>Registro</dt><dd class="mono">${r.code}</dd></dl></div>${r.profile?`<div class="aside-block"><h3>${r.kind==='alvo'?'DADOS DE APURAÇÃO':r.kind==='missao'?'DADOS OPERACIONAIS':'DADOS FUNCIONAIS'}</h3><dl>${r.profile.map(f=>`<dt>${esc(f.label)}</dt><dd>${esc(f.value)}</dd>`).join('')}</dl></div>`:''}${r.missionId?`<div class="aside-block"><h3>MISSÃO VINCULADA</h3><p>${recordLink(r.missionId)}</p></div>`:''}${r.agentIds?.length?`<div class="aside-block"><h3>EQUIPE DESIGNADA</h3>${r.agentIds.map(id=>`<p>${recordLink(id)}</p>`).join('')}</div>`:''}${r.targetIds?.length?`<div class="aside-block"><h3>ALVOS DE INTERESSE</h3>${r.targetIds.map(id=>`<p>${recordLink(id)}</p>`).join('')}</div>`:''}${r.people?`<div class="aside-block"><h3>PESSOAS ENVOLVIDAS</h3>${r.people.map(p=>`<p>${esc(p)}</p>`).join('')}</div>`:''}${r.locations?`<div class="aside-block"><h3>LOCAIS</h3>${r.locations.map(p=>`<p>${esc(p)}</p>`).join('')}</div>`:''}${r.evidence?`<div class="aside-block"><h3>EVIDÊNCIAS</h3>${r.evidence.map(p=>`<p>${esc(p)}</p>`).join('')}</div>`:''}<div class="aside-disclaimer">${icon('lock')}<p>Classificação demonstrativa.<br>${r.demo?'Exemplo não canônico.':esc(r.sourceNote||'Referência narrativa · edição 1.7.')}</p></div></aside></div></article>`);
 }
 function bind() {
+ document.querySelector('[data-open-admin]')?.addEventListener('click',openAdministration);
  const imageViewer=document.querySelector('#record-image-viewer');
  document.querySelectorAll('[data-view-image]').forEach(button=>button.addEventListener('click',()=>{
   const record=records.find(r=>r.id===button.dataset.viewImage);
@@ -334,7 +341,7 @@ function renderPage() {
  if(pageKey()==='missoes/relatorios')filters.missionId=new URLSearchParams(qs).get('missao')||'';
  if(current.page==='busca')filters.q=new URLSearchParams(qs).get('q')||'';
  document.title=`${paths[pageKey()]||'Consulta'} — Arquivo GMS`;
- if(current.page==='inicio')dashboard();else if(current.page==='credenciais')credentialPage();else if(current.page==='reservado'&&!activeCredentials.has('arquivo-reservado'))credentialRequired();else if(current.page==='arquivo')detail(current.id);else if(Object.hasOwn(paths,pageKey()))listPage();else lostPage();
+ if(current.page==='inicio')dashboard();else if(current.page==='depuracao')shell(`<section class="admin-launch"><div class="eyebrow">CONTROLE DO ARQUIVO</div><h1>Administração</h1><p>Abra o painel para consultar os acessos e editar os documentos. A administração exige uma senha própria.</p><button type="button" data-open-admin>Abrir painel administrativo</button></section>`);else if(current.page==='credenciais')credentialPage();else if(current.page==='reservado'&&!activeCredentials.has('arquivo-reservado'))credentialRequired();else if(current.page==='arquivo')detail(current.id);else if(Object.hasOwn(paths,pageKey()))listPage();else lostPage();
  scrollTo(0,0);
  if(pendingNotice){showToast(pendingNotice);pendingNotice='';}
 }
@@ -342,26 +349,58 @@ function changeAgentName() {
  if(document.querySelector('.agent-identification[open]'))return;
  requestAgentIdentification(gmsLogo,({name,persisted})=>{
   agentName=name;
+  void siteService.heartbeat();
   render();
   showToast(persisted?'Identificação de agente atualizada.':'Nome atualizado nesta sessão. O navegador não permitiu salvar para a próxima visita.');
  },{initialName:agentName,canCancel:true});
 }
-const agentRenameShortcut=createAgentRenameShortcut({
- isEnabled:()=>current.page==='inicio'&&Boolean(agentName)&&!mobileOpen&&!document.querySelector('dialog[open]'),
- onMatch:changeAgentName,
+function openAdministration() {
+ mobileOpen=false;
+ document.querySelector('.sidebar')?.classList.remove('is-open');
+ document.querySelectorAll('body > .overlay').forEach(overlay=>overlay.remove());
+ adminPanel.open();
+}
+const siteService=createSiteService({
+ getName:()=>agentName,
+ getPage:()=>location.hash||'#/inicio',
+ onContent:overrides=>{allRecords=applyContentOverrides(originalRecords,overrides);render();},
 });
-addEventListener('hashchange',()=>{agentRenameShortcut.reset();render();});
-addEventListener('blur',agentRenameShortcut.reset);
-addEventListener('keydown',agentRenameShortcut.handleKeydown);
+const adminPanel=createAdminPanel({
+ service:siteService,
+ getRecords:()=>allRecords,
+ getCurrentRecord:()=>current.page==='arquivo'?allRecords.find(record=>record.id===current.id):null,
+ getDiagnostics:()=>({
+  'Página atual':location.hash||'#/inicio',
+  'Nome neste navegador':agentName||'Não informado',
+  'Registros no acervo':allRecords.length,
+  'Registros nas listas':catalog.length,
+  'Credenciais narrativas ativas':activeCredentials.size,
+  'Tamanho da janela':`${innerWidth} × ${innerHeight}`,
+  'Tempo nesta visita':`${Math.floor(performance.now()/1000)} s`,
+  'Conexão do navegador':navigator.onLine?'Online':'Offline',
+ }),
+});
+const debugShortcut=createDebugShortcut({
+ isEnabled:()=>current.page==='inicio'&&Boolean(agentName)&&!mobileOpen&&!document.querySelector('dialog[open]'),
+ onMatch:openAdministration,
+});
+addEventListener('hashchange',()=>{debugShortcut.reset();render();});
+addEventListener('blur',debugShortcut.reset);
+addEventListener('keydown',debugShortcut.handleKeydown);
 addEventListener('error',event=>{if(event.error)lostPage();});
 addEventListener('unhandledrejection',()=>lostPage());
-addEventListener('keydown',e=>{if(e.key==='Escape'){mobileOpen=false;document.querySelector('.sidebar')?.classList.remove('is-open');document.querySelectorAll('.overlay').forEach(x=>x.remove());}if(e.key==='/'&&!document.querySelector('.access-denied-screen[open]')&&!document.querySelector('.agent-identification[open]')&&!document.querySelector('.entry-screen[open]')&&!document.querySelector('#record-image-viewer')?.open&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.querySelector('#global-search, #local-query')?.focus();}});
+addEventListener('keydown',e=>{if(e.key==='Escape'){mobileOpen=false;document.querySelector('.sidebar')?.classList.remove('is-open');document.querySelectorAll('.overlay').forEach(x=>x.remove());}if(e.key==='/'&&!document.querySelector('dialog[open]')&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.querySelector('#global-search, #local-query')?.focus();}});
 if(shouldShowEntryDetour())history.replaceState(null,'','#/perdido');
 render();
 if(agentName)showEntryScreen(gmsLogo);
 else requestAgentIdentification(gmsLogo,({name,persisted})=>{
  agentName=name;
+ void siteService.heartbeat();
  render();
  showEntryScreen(gmsLogo);
  if(!persisted)showToast('Nome registrado nesta sessão. O navegador não permitiu salvar para a próxima visita.');
 });
+
+siteService.start();
+void adminPanel.init();
+addEventListener('storage',event=>{if(event.key==='gms-agent-name-v1'){try{agentName=readAgentName(localStorage);}catch{}void siteService.heartbeat();if(current.page==='inicio')render();}});

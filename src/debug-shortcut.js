@@ -1,7 +1,7 @@
-// Sequência solicitada para reabrir a identificação no painel inicial.
+// Sequência solicitada para abrir a administração no painel inicial.
 const SEQUENCE = ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowRight', 'ArrowLeft'];
 
-export function createAgentRenameShortcut({isEnabled, onMatch}) {
+export function createDebugShortcut({isEnabled, onMatch}) {
   let matched = 0;
   function reset() { matched = 0; }
   function handleKeydown(event) {

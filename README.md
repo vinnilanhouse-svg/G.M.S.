@@ -1,6 +1,6 @@
 # Arquivo GMS
 
-Arquivo institucional navegável da **Global Monster Security**, em português brasileiro. Interface responsiva em JavaScript e CSS, com Vite; sem banco de dados ou servidor de aplicação.
+Arquivo institucional navegável da **Global Monster Security**, em português brasileiro. Interface responsiva em JavaScript e CSS, com Vite. A administração compartilhada usa uma função no Vercel e Upstash Redis; o arquivo continua navegável quando esse serviço não está configurado.
 
 ## Executar
 
@@ -11,7 +11,7 @@ npm ci --cache /tmp/gms-npm-cache
 npm run dev
 ```
 
-Para gerar a versão estática: `npm run build`. Para conferir essa versão: `npm run preview`.
+Para gerar a versão estática: `npm run build`. Para conferir essa versão: `npm run preview`. Para testar a administração, copie `.env.example` para `.env.local`, preencha as variáveis do servidor e use `npm run dev` ou `npm run preview`. Nunca coloque essas variáveis em campos com prefixo `VITE_`.
 
 ## Conteúdo
 
@@ -56,9 +56,9 @@ As categorias da wiki estão no array `categories`. Contagens, resultados e vín
 - Arquivos salvos persistem no `localStorage` deste navegador.
 - Navegação por URL com hash permite recarregar e compartilhar registros sem configurar rotas no servidor.
 - Fontes locais: não dependem de requisições ao Google Fonts durante a navegação.
-- As classificações e credenciais são demonstrativas: não há login nem autorização em servidor; o conteúdo adicional é ocultado ou exibido pela interface.
-- Esta versão não permite edição pela interface e não sincroniza favoritos entre dispositivos.
-- Nenhuma hospedagem ou publicação foi configurada.
+- As classificações e credenciais narrativas são demonstrativas e controlam a exibição pela interface. O login administrativo é separado e validado no servidor.
+- O painel administrativo permite publicar edições dos documentos pela interface quando o serviço está configurado. Favoritos continuam locais ao navegador.
+- O projeto está publicado no Vercel em `https://globalmonstersecurity.vercel.app`.
 
 ## Validação
 
@@ -123,7 +123,7 @@ A navegação, as contagens, os resultados de busca, os favoritos e os vínculos
 
 Importe o repositório `vinnilanhouse-svg/G.M.S.` e selecione a branch `main`. Mantenha a pasta raiz em `./`. O arquivo `vercel.json` já configura o framework Vite, o comando `npm run build` e a saída `dist`.
 
-A instalação usa o `package-lock.json`. Não é necessário configurar variáveis de ambiente nesta versão. As rotas usam hash (`#/...`). O fallback de SPA em `vercel.json` permite que endereços inexistentes fora do hash também abram a tela de recuperação do C.O.D.E.X. A pasta `preview/` contém apenas exportações locais e não é necessária para a publicação.
+A instalação usa o `package-lock.json`. A navegação do arquivo dispensa variáveis de ambiente; a administração usa as variáveis descritas abaixo. As rotas usam hash (`#/...`). O fallback de SPA em `vercel.json` permite que endereços inexistentes fora do hash também abram a tela de recuperação do C.O.D.E.X, preservando os caminhos `/api/`. A pasta `preview/` contém apenas exportações locais e não é necessária para a publicação.
 
 ## Imagens das espécies
 
@@ -169,9 +169,38 @@ Caio Lacerda (`AGT-205`), Dália Ferraz (`AGT-467`), Nilo Varela (`AGT-852`) e L
 
 Na primeira visita, a identificação pede o nome do agente antes da vinheta de validação. O nome é guardado na chave `gms-agent-name-v1` do `localStorage` e aparece no painel em “Acesso de agente”. A lógica fica em `src/agent-identity.js`, com estilos em `src/agent-identity.css`. O nome não concede credenciais, não altera o acesso à ficha de Morrow e é lembrado apenas neste navegador; ao limpar os dados do site ou usar outro navegador, o pedido reaparece.
 
-No painel inicial, a sequência de teclas **↑ ↓ → → ←** reabre a identificação para alterar o nome salvo neste navegador. A sequência é ignorada em outras páginas, durante a digitação e enquanto houver um diálogo aberto. A detecção fica em `src/agent-rename-shortcut.js`; a troca não altera as credenciais de acesso.
+No painel inicial, a sequência de teclas **↑ ↓ → → ←** abre a **Depuração e administração**. Ela é ignorada em outras páginas, durante a digitação e enquanto houver um diálogo aberto. A detecção fica em `src/debug-shortcut.js`. A troca de nome continua disponível pela credencial **NOME_ERRO**.
 
 A credencial **NOME_ERRO**, exatamente em maiúsculas e com dois Rs, também reabre a identificação, a partir do campo de credenciais em qualquer seção. O nome atual aparece preenchido; confirmar atualiza o nome local e cancelar preserva o anterior. O código não é guardado entre as autorizações ativas e não libera nenhum arquivo.
+
+## Ativar a administração no Vercel
+
+1. No projeto da GMS no Vercel, abra **Storage / Marketplace**, adicione **Upstash Redis** e conecte o banco ao projeto.
+2. Confira as variáveis criadas pela integração: `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN`. As variantes `KV_REST_API_URL` e `KV_REST_API_TOKEN` também são aceitas.
+3. Em **Settings → Environment Variables**, adicione `GMS_ADMIN_PASSWORD` com uma senha exclusiva de **pelo menos 16 caracteres**. Use o ambiente **Production**; configure Preview também se quiser testar os deploys de prévia.
+4. Faça **Redeploy** para que a função receba as variáveis. Abra o painel pelas setas na tela inicial ou por `#/depuracao` (útil no celular) e entre com a senha administrativa.
+
+A senha e o token são usados somente no servidor. Não são incluídos no JavaScript público nem guardados no `localStorage`. A sequência de setas e as credenciais narrativas não concedem permissão administrativa. A sessão administrativa usa cookie `HttpOnly`, `SameSite=Strict`, com duração de 8 horas; sair revoga a sessão. A API confere a origem das alterações, limita tentativas de login e valida os campos publicados. Alterar a senha no servidor invalida as sessões existentes.
+
+Enquanto as variáveis não estiverem configuradas, o painel informa a conexão pendente e a navegação do arquivo funciona normalmente. Não há contagem fictícia de usuários nem publicação local apresentada como uma mudança para todos. A prévia HTML independente continua disponível para consulta offline; ela não inclui a função de servidor ou o banco e não permite administrar o site publicado.
+
+### Visitantes e presença
+
+A área **Visitantes** mostra os nomes informados na identificação, situação online/offline, primeiro e último acesso e a rota atual (sem termos de busca). Um identificador aleatório por navegador permite contar várias abas como um visitante. Outro navegador, dispositivo ou limpeza de dados pode gerar outra identificação; esses números representam navegadores, não pessoas verificadas.
+
+O navegador envia um sinal a cada 25 segundos enquanto a página está visível. Fechar ou ocultar uma aba informa a saída daquela sessão; outra aba aberta mantém o visitante online. Sem sinal por **75 segundos**, a sessão expira. O painel consulta os dados a cada **10 segundos**. O histórico permanece por **90 dias**; a lista apresenta os 500 acessos mais recentes, além das sessões online, até 1.000 registros por consulta. O registro começa após a ativação do serviço, sem recuperar visitas anteriores.
+
+Os dados de visitantes só são retornados pela API para uma sessão administrativa autenticada. IPs não integram a lista de visitantes; um hash é usado temporariamente apenas para limitar tentativas e abuso da API.
+
+### Editar os documentos no painel
+
+Em **Conteúdo**, procure uma ficha, espécie, missão, relatório ou documento. Edite título, resumo, situação, autoria, departamento, data, anotação e parágrafos. Os campos adicionais permitem editar capacidades e seus desdobramentos, dados funcionais, cronologia, pessoas, locais e evidências. Grupos de capacidades, imagens, códigos, IDs, vínculos e condições de acesso são preservados. As fichas reservadas também aparecem no editor autenticado, mantendo as restrições de consulta pública.
+
+**Publicar alterações** grava os textos no Redis. O próprio navegador recebe a atualização imediatamente; outros visitantes recebem na próxima sincronização (até 25 segundos) ou ao recarregar. Depois de entrar na administração, a barra superior oferece **Editar esta página** para abrir diretamente o documento atual. Publicações simultâneas usam uma revisão: um editor desatualizado recebe um conflito, mantém seu rascunho e precisa recarregar os dados antes de publicar.
+
+As edições do painel têm prioridade sobre os textos dos arquivos do GitHub e persistem entre deploys. **Restaurar texto original** remove a edição daquele documento e volta à versão atual dos arquivos do projeto. Nenhum commit é criado ao publicar pelo painel. Use um banco persistente e mantenha backups desse banco para preservar as edições. Os textos institucionais fixos da navegação e do painel inicial continuam em `src/main.js`; o editor atua nos documentos do acervo.
+
+A implementação fica em `src/admin-panel.js`, `src/admin-panel.css`, `src/content-editing.js`, `src/site-service.js`, `api/gms.js` e `server/`. `vite.config.js` disponibiliza a mesma API em desenvolvimento e na prévia servida por Vite. Os testes cobrem autenticação, presença, revisões concorrentes, restauração e preservação das condições de acesso.
 
 ## Tela de recuperação do C.O.D.E.X
 

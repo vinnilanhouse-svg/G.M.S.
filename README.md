@@ -73,6 +73,14 @@ A identidade visual usa o arquivo original da logo em `src/assets/gms-logo.png`,
 
 ## Agentes, missões e alvos de interesse
 
+### Painel operacional e pasta de trabalho
+
+O painel inicial destaca as operações abertas, separa as missões encerradas e mostra a situação dos registros existentes. A área **Sua missão** permite acompanhar uma operação; a escolha também pode ser feita na própria ordem de missão. Ela reúne atalhos para a ordem, os relatórios e as anotações daquela operação. O acompanhamento é pessoal e não altera a equipe designada nem o andamento oficial da missão.
+
+A **Pasta de trabalho** (`#/pasta-de-trabalho`) está disponível na navegação e no painel inicial. Crie anotações com título e texto, vincule-as a uma missão ou mantenha-as avulsas, filtre o caderno por missão, baixe cópias em `.txt` e exclua notas com confirmação. A digitação é salva automaticamente. A remoção de uma missão do acompanhamento preserva todas as anotações.
+
+A seleção e as anotações usam `gms-work-folder-v1` no `localStorage`, sem banco ou envio para o servidor. Ficam apenas neste navegador e são removidas ao limpar os dados do site; mudar o nome do agente mantém o mesmo caderno do terminal. Se o armazenamento falhar, o site informa que o rascunho existe apenas na sessão e permite baixá-lo. A lógica de persistência fica em `src/work-folder.js`; os componentes em `src/operational-panel.js` e `src/operational-panel.css`. O painel usa os registros disponíveis para consulta e preserva a ocultação das fichas reservadas.
+
 Os cadastros operacionais ficam em `src/operations.js`, incorporados automaticamente ao acervo e à busca global. O acervo inclui **Operação Sol Velado** (`MIS-561`), **Operação Último Sinal** (`MIS-568`) e **Sol Velado — relatório de Bashir** (`REL-561-001`), com vínculos entre os documentos e a ficha do agente. O relatório pertence à Operação Sol Velado e preserva o momento da narrativa: a missão já estava em andamento e a equipe encerra o registro a caminho da ilha. A situação atual de Sol Velado é “Contato perdido”; a busca pertence a Último Sinal.
 
 O histórico também inclui três missões encerradas: **Repouso Violado** (`MIS-083`), **Rastro Cortado** (`MIS-247`) e **Olhar Fechado** (`MIS-416`). Cada missão tem relatórios inicial e de encerramento, com os códigos `REL-083-001`/`REL-083-002`, `REL-247-001`/`REL-247-002` e `REL-416-001`/`REL-416-002`. As missões, os relatórios e as fichas dos responsáveis mantêm vínculos clicáveis entre si. Esses registros são anteriores à operação atual na narrativa; suas datas no site indicam apenas a incorporação ao arquivo.

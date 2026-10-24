@@ -53,7 +53,7 @@ export function createTerminalInterface({ storage } = {}) {
     if (!strip) return;
     const message = strip.querySelector('[data-terminal-message]');
     const changed = route !== lastRoute; lastRoute = route;
-    const ready = locked ? 'Aguardando autorização de consulta.' : record ? `Registro ${record.code} carregado.` : page === 'pasta-de-trabalho' ? 'Pasta de trabalho disponível.' : page === 'credenciais' ? 'Central de credenciais disponível.' : 'Índice disponível para consulta.';
+    const ready = locked ? 'Aguardando autorização de consulta.' : record ? `Registro ${record.code} carregado.` : page === 'minha-ficha' ? 'Ficha de agente disponível.' : page === 'pasta-de-trabalho' ? 'Pasta de trabalho disponível.' : page === 'credenciais' ? 'Central de credenciais disponível.' : 'Índice disponível para consulta.';
     updateButton();
     strip.querySelector('[data-terminal-sound]').addEventListener('click', () => {
       soundEnabled = !soundEnabled;

@@ -73,6 +73,16 @@ A identidade visual usa o arquivo original da logo em `src/assets/gms-logo.png`,
 
 ## Agentes, missões e alvos de interesse
 
+### Minha ficha de agente
+
+A aba **Minha ficha de agente** (`#/minha-ficha`) reproduz os **215 campos editáveis**, os **63 cálculos** e os gráficos das três páginas de `Ficha_Monstrao_Automatica_Editavel.pdf`. A definição tem 28 perícias, 11 linhas de habilidades, 11 de ataques e 26 de inventário. O preenchimento é pessoal, salvo automaticamente em `gms-agent-sheet-v1` no navegador; integra uma ficha própria, sem criar um registro no diretório de agentes.
+
+As fórmulas, as opções e a validação foram extraídas do AcroForm. Vida máxima é `20 + 2 × Corpo + Nível`; Essência máxima é `2 × Alma + Nível`; para Constructo de Metal, o recurso é Energia, com máximo `2 × Nível + Coração`. A base de Sorte é editável e Leprechaun recebe bônus automático de 5. A curva de P.E. é a do arquivo, incluindo o valor 0 nos níveis 1 e 20. Atributos aceitam valores de 0 a 20, inclusive decimais; nível aceita inteiros de 1 a 20. Recursos atuais continuam sob preenchimento manual. Peso máximo usa `2 × Corpo`, e o peso total soma as 26 linhas com o arredondamento original. Habilidades, ataques e especialidades preservam o preenchimento previsto no PDF.
+
+**Exportar PDF** preenche o próprio PDF original, mantendo as três páginas, a arte, os campos editáveis, as opções, as validações, os scripts e os estados gráficos. O modelo de 27 MB só é carregado ao exportar; o processamento ocorre no navegador. **Importar ficha** lê os campos do PDF editável ou de um backup JSON, mostra a identificação para conferência e substitui a ficha após a confirmação no diálogo. PDFs sem os campos do formulário, como arquivos convertidos em imagens, são recusados. Os totais são recalculados pelos campos de entrada. O limite da importação de PDF é 64 MB; JSON, 20 MB. **Backup JSON** guarda os campos para recuperação. Os dados do personagem não são enviados ao servidor.
+
+A interface fica em `src/agent-sheet.js` e `src/agent-sheet.css`; as regras e a persistência, em `src/agent-sheet-model.js`; o preenchimento e a leitura de PDF, em `src/agent-sheet-pdf.js`, carregado sob demanda. O modelo original fica em `public/agent-sheet/`, junto da fonte de apoio para caracteres Unicode e sua licença. O SHA-256 do modelo é registrado em `src/agent-sheet-schema.js`. Para atualizar a referência, execute `python3 scripts/extract-agent-sheet.py CAMINHO_DO_PDF` (requer `pypdf` para esta regeneração). Os testes comparam os resultados do site aos scripts originais do PDF e verificam o ciclo PDF → site → PDF, a preservação das páginas e das aparências gráficas.
+
 ### Painel operacional e pasta de trabalho
 
 O painel inicial destaca as operações abertas, separa as missões encerradas e mostra a situação dos registros existentes. A área **Sua missão** permite acompanhar uma operação; a escolha também pode ser feita na própria ordem de missão. Ela reúne atalhos para a ordem, os relatórios e as anotações daquela operação. O acompanhamento é pessoal e não altera a equipe designada nem o andamento oficial da missão.

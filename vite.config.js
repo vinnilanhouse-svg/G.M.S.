@@ -11,6 +11,7 @@ export default defineConfig(({mode})=>{
     });
   }
   return {
+    build:{modulePreload:false},
     plugins:[{
       name:'gms-server',
       configureServer:install,

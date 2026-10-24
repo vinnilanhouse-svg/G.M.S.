@@ -11,6 +11,7 @@
     "preview:export": "npm run build && node scripts/export-preview.mjs"
   },
   "devDependencies": {
+    "esbuild": "^0.28.2",
     "vite": "^6.4.0"
   },
   "dependencies": {
@@ -35,6 +36,8 @@
     "@fontsource/nosifer": "^5.3.0",
     "@fontsource/pirata-one": "^5.3.0",
     "@fontsource/roboto-mono": "^5.3.0",
-    "@fontsource/uncial-antiqua": "^5.3.0"
+    "@fontsource/uncial-antiqua": "^5.3.0",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "pdf-lib": "^1.17.1"
   }
 }

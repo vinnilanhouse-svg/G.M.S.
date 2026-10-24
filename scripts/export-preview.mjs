@@ -1,5 +1,6 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { resolve, basename } from 'node:path';
+import { build } from 'esbuild';
 
 // Exporta o build como um único HTML que funciona sem servidor e sem internet.
 const root = resolve(import.meta.dirname, '..');
@@ -8,7 +9,9 @@ let html = await readFile(resolve(dist, 'index.html'), 'utf8');
 const script = html.match(/<script\b[^>]*src="([^"]+)"[^>]*><\/script>/);
 const stylesheet = html.match(/<link\b[^>]*href="([^"]+\.css)"[^>]*>/);
 if (!script || !stylesheet) throw new Error('Execute npm run build antes de exportar.');
-let js = await readFile(resolve(dist, 'assets', basename(script[1])), 'utf8');
+// Incorpora também o leitor de PDF, carregado sob demanda no site publicado.
+const bundled = await build({ entryPoints: [resolve(dist, 'assets', basename(script[1]))], bundle: true, write: false, format: 'esm', platform: 'browser', target: 'es2022', minify: true });
+let js = bundled.outputFiles[0].text;
 let css = await readFile(resolve(dist, 'assets', basename(stylesheet[1])), 'utf8');
 const urls = [...new Set([...css.matchAll(/url\(([^)]+)\)/g)].map(m => m[1].replace(/["']/g, '')))];
 for (const url of urls) {
@@ -22,6 +25,11 @@ const jsAssets = [...new Set([...js.matchAll(/["'](\/(?:assets|species|species-i
 for (const url of jsAssets) {
   const bytes = await readFile(resolve(dist, url.slice(1)));
   const mime = url.endsWith('.svg') ? 'image/svg+xml' : url.endsWith('.webp') ? 'image/webp' : url.endsWith('.jpg') ? 'image/jpeg' : 'image/png';
+  js = js.replaceAll(url, `data:${mime};base64,${bytes.toString('base64')}`);
+}
+// O modelo original e a fonte de apoio ficam disponíveis também na prévia offline.
+for (const [url, mime] of [['/agent-sheet/Ficha_Monstrao_Automatica_Editavel.pdf', 'application/pdf'], ['/agent-sheet/DejaVuSerif.ttf', 'font/ttf']]) {
+  const bytes = await readFile(resolve(dist, url.slice(1)));
   js = js.replaceAll(url, `data:${mime};base64,${bytes.toString('base64')}`);
 }
 const favicon = await readFile(resolve(root, 'public/favicon.svg'));

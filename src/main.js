@@ -3,6 +3,8 @@ import { localEditsKey } from './local-edits.js';
 import { createAdminPanel } from './admin-panel.js';
 import { createSiteService } from './site-service.js';
 import { createOperationalPanel } from './operational-panel.js';
+import { createAgentSheet } from './agent-sheet.js';
+import { agentSheetKey } from './agent-sheet-model.js';
 import { createTerminalInterface } from './terminal-interface.js';
 import { archiveTrace } from './archive-trace.js';
 import { workFolderKey } from './work-folder.js';
@@ -29,11 +31,12 @@ import './admin-panel.css';
 import './operational-panel.css';
 import './mission-progress.css';
 import './terminal-interface.css';
+import './agent-sheet.css';
 import { records as originalRecords, categories } from './data.js';
 let allRecords=originalRecords;
 import { credentials, accessStorageKey, findCredential, readActiveCredentials, visibleRecords, listedRecords } from './permissions.js';
 
-const paths = { inicio: 'Painel inicial', conhecimento: 'Base de conhecimento', documentos: 'Documentos internos', favoritos: 'Arquivos salvos', 'pasta-de-trabalho': 'Pasta de trabalho', busca: 'Busca no arquivo', agentes: 'Agentes', missoes: 'Missões', 'missoes/relatorios': 'Relatórios de missão', alvos: 'Alvos de interesse', credenciais: 'Credenciais de acesso', reservado: 'Arquivo reservado', administracao: 'Administração' };
+const paths = { inicio: 'Painel inicial', conhecimento: 'Base de conhecimento', documentos: 'Documentos internos', favoritos: 'Arquivos salvos', 'minha-ficha': 'Minha ficha de agente', 'pasta-de-trabalho': 'Pasta de trabalho', busca: 'Busca no arquivo', agentes: 'Agentes', missoes: 'Missões', 'missoes/relatorios': 'Relatórios de missão', alvos: 'Alvos de interesse', credenciais: 'Credenciais de acesso', reservado: 'Arquivo reservado', administracao: 'Administração' };
 const kinds = { verbete: 'Base de conhecimento', documento: 'Documento interno', agente: 'Agente', missao: 'Missão', relatorio: 'Relatório de missão', alvo: 'Alvo de interesse' };
 const recordIcons = { verbete:'book', documento:'file', agente:'users', missao:'flag', relatorio:'clipboard', alvo:'target' };
 const recordSections = { verbete:'conhecimento', documento:'documentos', agente:'agentes', missao:'missoes', relatorio:'missoes/relatorios', alvo:'alvos' };
@@ -171,7 +174,7 @@ function nav() {
  <a href="#/inicio" class="brand" aria-label="Arquivo GMS, painel inicial"><img src="${gmsLogo}" class="gms-mark brand-logo" alt="" width="138" height="138"><div>ARQUIVO <b>GMS</b><small>SISTEMA DE DOCUMENTAÇÃO</small></div></a>
  <div class="sidebar-rule"></div><span class="nav-caption">ESPAÇO DE CONSULTA</span>
  <nav>${links.map(([path,ic,label])=>`<a href="#/${path}" class="nav-link ${selected(path)?'selected':''}" ${selected(path)?'aria-current="page"':''}>${icon(ic)}<span>${label}</span>${selected(path)?'<span class="nav-indicator"></span>':''}</a>${path==='missoes'&&selected(path)?`<a href="#/missoes/relatorios" class="nav-sublink ${activePath==='missoes/relatorios'?'selected':''}" ${activePath==='missoes/relatorios'?'aria-current="page"':''}>${icon('clipboard')}Relatórios</a>`:''}`).join('')}</nav>
- <div class="sidebar-rule short"></div><nav><a href="#/pasta-de-trabalho" class="nav-link ${current.page==='pasta-de-trabalho'?'selected':''}" ${current.page==='pasta-de-trabalho'?'aria-current="page"':''}>${icon('folder')}<span>Pasta de trabalho</span></a><a href="#/favoritos" class="nav-link ${current.page==='favoritos'?'selected':''}">${icon('bookmark')}<span>Arquivos salvos</span><span class="count">${catalog.filter(r=>saved.has(r.id)).length.toString().padStart(2,'0')}</span></a></nav>
+ <div class="sidebar-rule short"></div><nav><a href="#/minha-ficha" class="nav-link ${current.page==='minha-ficha'?'selected':''}" ${current.page==='minha-ficha'?'aria-current="page"':''}>${icon('users')}<span>Minha ficha de agente</span></a><a href="#/pasta-de-trabalho" class="nav-link ${current.page==='pasta-de-trabalho'?'selected':''}" ${current.page==='pasta-de-trabalho'?'aria-current="page"':''}>${icon('folder')}<span>Pasta de trabalho</span></a><a href="#/favoritos" class="nav-link ${current.page==='favoritos'?'selected':''}">${icon('bookmark')}<span>Arquivos salvos</span><span class="count">${catalog.filter(r=>saved.has(r.id)).length.toString().padStart(2,'0')}</span></a></nav>
  <div class="sidebar-bottom">${credentialForm('sidebar')}<div class="security-mark">${icon('lock')}<span>CONEXÃO INSTITUCIONAL<br><b>Ambiente de consulta</b></span><i></i></div><div class="profile"><div class="avatar">CO</div><div>Consulta de arquivos<small>PERFIL · OBSERVADOR</small></div>${icon('chevron')}</div><div class="sidebar-version"><span>GMS / ARQUIVO CENTRAL</span><span>v.01</span></div></div></aside>`;
 }
 function shell(content) {
@@ -281,6 +284,7 @@ function detail(id) {
  <aside class="dossier-aside">${r.image?recordFigure(r):`<div class="file-stamp"><img src="${gmsLogo}" class="gms-mark stamp-logo" alt="Emblema da Global Monster Security" width="138" height="138"><span>ARQUIVO CENTRAL</span><b>${r.code}</b><small>CÓPIA DE CONSULTA</small></div>`}<div class="aside-block"><h3>IDENTIFICAÇÃO</h3><dl><dt>Categoria</dt><dd>${r.category}</dd><dt>Classificação</dt><dd>${r.access}</dd><dt>Registro</dt><dd class="mono">${r.code}</dd></dl></div>${r.profile?`<div class="aside-block"><h3>${r.kind==='alvo'?'DADOS DE APURAÇÃO':r.kind==='missao'?'DADOS OPERACIONAIS':'DADOS FUNCIONAIS'}</h3><dl>${r.profile.map(f=>`<dt>${esc(f.label)}</dt><dd>${esc(f.value)}</dd>`).join('')}</dl></div>`:''}${r.missionId?`<div class="aside-block"><h3>MISSÃO VINCULADA</h3><p>${recordLink(r.missionId)}</p></div>`:''}${r.agentIds?.length?`<div class="aside-block"><h3>EQUIPE DESIGNADA</h3>${r.agentIds.map(id=>`<p>${recordLink(id)}</p>`).join('')}</div>`:''}${r.targetIds?.length?`<div class="aside-block"><h3>ALVOS DE INTERESSE</h3>${r.targetIds.map(id=>`<p>${recordLink(id)}</p>`).join('')}</div>`:''}${r.people?`<div class="aside-block"><h3>PESSOAS ENVOLVIDAS</h3>${r.people.map(p=>`<p>${esc(p)}</p>`).join('')}</div>`:''}${r.locations?`<div class="aside-block"><h3>LOCAIS</h3>${r.locations.map(p=>`<p>${esc(p)}</p>`).join('')}</div>`:''}${r.evidence?`<div class="aside-block"><h3>EVIDÊNCIAS</h3>${r.evidence.map(p=>`<p>${esc(p)}</p>`).join('')}</div>`:''}<div class="aside-disclaimer">${icon('lock')}<p>Classificação demonstrativa.<br>${r.demo?'Exemplo não canônico.':esc(r.sourceNote||'Referência narrativa · edição 1.7.')}</p></div></aside></div></article>`);
 }
 function bind() {
+ agentSheet.bind();
  operationalPanel.bind();
  document.querySelector('[data-open-admin]')?.addEventListener('click',openAdministration);
  const imageViewer=document.querySelector('#record-image-viewer');
@@ -356,7 +360,7 @@ function renderPage() {
  if(pageKey()==='missoes/relatorios')filters.missionId=new URLSearchParams(qs).get('missao')||'';
  if(current.page==='busca')filters.q=new URLSearchParams(qs).get('q')||'';
  document.title=`${paths[pageKey()]||'Consulta'} — Arquivo GMS`;
- if(current.page==='inicio')dashboard();else if(current.page==='pasta-de-trabalho')shell(operationalPanel.page(qs));else if(current.page==='administracao')shell(`<section class="admin-launch"><div class="eyebrow">CONTROLE DO ARQUIVO</div><h1>Administração</h1><p>Abra o editor para alterar os textos do arquivo. Sem conexão com o banco, as edições ficam salvas apenas neste navegador.</p><button type="button" data-open-admin>Abrir painel administrativo</button></section>`);else if(current.page==='credenciais')credentialPage();else if(current.page==='reservado'&&!activeCredentials.has('arquivo-reservado'))credentialRequired();else if(current.page==='arquivo')detail(current.id);else if(Object.hasOwn(paths,pageKey()))listPage();else lostPage();
+ if(current.page==='inicio')dashboard();else if(current.page==='minha-ficha')shell(agentSheet.page(qs));else if(current.page==='pasta-de-trabalho')shell(operationalPanel.page(qs));else if(current.page==='administracao')shell(`<section class="admin-launch"><div class="eyebrow">CONTROLE DO ARQUIVO</div><h1>Administração</h1><p>Abra o editor para alterar os textos do arquivo. Sem conexão com o banco, as edições ficam salvas apenas neste navegador.</p><button type="button" data-open-admin>Abrir painel administrativo</button></section>`);else if(current.page==='credenciais')credentialPage();else if(current.page==='reservado'&&!activeCredentials.has('arquivo-reservado'))credentialRequired();else if(current.page==='arquivo')detail(current.id);else if(Object.hasOwn(paths,pageKey()))listPage();else lostPage();
  scrollTo(0,0);
  if(pendingNotice){showToast(pendingNotice);pendingNotice='';}
 }
@@ -393,6 +397,11 @@ const operationalPanel=createOperationalPanel({
  onNotice:showToast,
  onChange:()=>{const y=scrollY;render();scrollTo(0,y);},
 });
+const agentSheet=createAgentSheet({
+ icon,
+ onNotice:showToast,
+ onChange:()=>{const y=scrollY;render();scrollTo(0,y);},
+});
 addEventListener('hashchange',()=>{adminShortcut.reset();render();});
 addEventListener('blur',adminShortcut.reset);
 addEventListener('keydown',adminShortcut.handleKeydown);
@@ -412,6 +421,7 @@ else requestAgentIdentification(gmsLogo,({name,persisted})=>{
 siteService.start();
 void adminPanel.init();
 addEventListener('storage',event=>{
+ if(event.key===agentSheetKey)agentSheet.reload();
  if(event.key===localEditsKey)siteService.reloadLocal();
  if(event.key===workFolderKey){
   operationalPanel.reload();

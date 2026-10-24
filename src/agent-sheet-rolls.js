@@ -1,5 +1,8 @@
+import { describeAgentCheck, resolveAgentCheck } from './agent-sheet-checks.js';
+
 export const agentDice = Object.freeze([4, 6, 8, 10, 12, 20, 100]);
 const randomRange = 2 ** 32;
+const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 
 export function rollAgentDie(sides, source = globalThis.crypto) {
   if (!agentDice.includes(sides)) throw new Error('Selecione um dos dados disponíveis.');
@@ -23,15 +26,24 @@ const outlines = {
 const dieIcon = sides => `<svg class="sheet-die-icon" viewBox="0 0 48 50" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${outlines[sides]}</svg>`;
 const timeLabel = value => new Date(value).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-export function createAgentSheetRolls() {
+export function createAgentSheetRolls({ getFields } = {}) {
   let rolls = [];
   let sequence = 0;
   const latest = () => rolls[0];
-  const resultMarkup = () => latest() ? `<span class="sheet-roll-kicker">RESULTADO / D${latest().sides}</span><strong data-roll-value>${latest().result}</strong><span>de ${latest().sides} faces</span>` : '<span class="sheet-roll-kicker">AGUARDANDO ROLAGEM</span><strong data-roll-value>—</strong><span>Selecione um dado para começar.</span>';
-  const historyMarkup = () => rolls.length ? `<ol>${rolls.map(roll => `<li><span class="sheet-roll-sequence">${String(roll.id).padStart(2, '0')}</span><span class="sheet-history-die">d${roll.sides}</span><strong>${roll.result}</strong><time datetime="${new Date(roll.at).toISOString()}">${timeLabel(roll.at)}</time></li>`).join('')}</ol>` : '<p class="sheet-roll-empty">Nenhuma rolagem registrada nesta sessão.</p>';
+  const repeatLabel = () => latest()?.check ? `Repetir teste de ${latest().check.label}` : latest() ? `Rolar d${latest().sides} novamente` : 'Rolar novamente';
+  const resultMarkup = () => latest() ? `<span class="sheet-roll-kicker">${latest().check ? `TESTE / ${esc(latest().check.label)}` : `RESULTADO / D${latest().sides}`}</span><strong data-roll-value>${latest().result}</strong>${latest().check ? `<b class="sheet-check-verdict" data-check-outcome="${latest().evaluation.outcome}">${latest().evaluation.verdict}</b><span>Valor do teste: ${latest().check.target}</span>` : `<span>de ${latest().sides} faces</span>`}` : '<span class="sheet-roll-kicker">AGUARDANDO ROLAGEM</span><strong data-roll-value>—</strong><span>Selecione um dado para começar.</span>';
+  const historyMarkup = () => rolls.length ? `<ol>${rolls.map(roll => `<li><span class="sheet-roll-sequence">${String(roll.id).padStart(2, '0')}</span><span class="sheet-history-die">d${roll.sides}</span><div class="sheet-history-result"><strong>${roll.result}</strong>${roll.check ? `<span>${esc(roll.check.label)} · valor ${roll.check.target}</span><b data-check-outcome="${roll.evaluation.outcome}">${roll.evaluation.verdict}</b>` : ''}</div><time datetime="${new Date(roll.at).toISOString()}">${timeLabel(roll.at)}</time></li>`).join('')}</ol>` : '<p class="sheet-roll-empty">Nenhuma rolagem registrada nesta sessão.</p>';
+
+  function trigger(id, label) {
+    return `<button type="button" class="sheet-check-trigger" data-sheet-check="${esc(id)}" aria-label="Testar ${esc(label.replace(/^\*/, ''))} com d20" aria-haspopup="dialog"><span>${esc(label)}</span>${dieIcon(20)}</button>`;
+  }
+
+  function dialog() {
+    return `<dialog class="sheet-check-dialog" aria-labelledby="sheet-check-title" aria-describedby="sheet-check-description"><header><div><span class="sheet-roll-kicker" data-check-kind>TESTE DE ATRIBUTO</span><h2 id="sheet-check-title">Teste do agente</h2></div><button type="button" class="op-text-button" data-close-agent-check autofocus>Fechar</button></header><div class="sheet-check-dialog-result" data-check-dialog-result role="status" aria-live="polite" aria-atomic="true"></div><p id="sheet-check-description" data-check-description></p><div class="sheet-check-dialog-actions"><button type="button" class="op-button" data-repeat-agent-check>Rolar novamente</button><button type="button" class="op-text-button" data-view-check-history>Ver histórico</button></div></dialog>`;
+  }
 
   function page(hidden) {
-    return `<section class="sheet-roll-panel" data-sheet-page="rolagens" aria-labelledby="sheet-roll-title" ${hidden ? 'hidden' : ''}><header class="sheet-paper-heading"><div><span>04 / APOIO AO AGENTE</span><h2 id="sheet-roll-title">Central de rolagens</h2></div><small>GMS / DADOS</small></header><p class="sheet-roll-help">Escolha seu dado. Cada clique faz uma nova rolagem, com a mesma chance para todas as faces.</p><div class="sheet-roll-layout"><div class="sheet-dice-grid" role="group" aria-label="Dados disponíveis">${agentDice.map(sides => `<button type="button" class="sheet-die" data-roll-die="${sides}" aria-label="Rolar d${sides}">${dieIcon(sides)}<strong>d${sides}</strong><span>${sides} faces</span></button>`).join('')}</div><section class="sheet-roll-result" aria-label="Último resultado"><div class="sheet-roll-readout" data-roll-readout>${resultMarkup()}</div><button type="button" class="op-button" data-repeat-roll ${latest() ? '' : 'disabled'}>${latest() ? `Rolar d${latest().sides} novamente` : 'Rolar novamente'}</button><p class="sheet-roll-feedback" data-roll-feedback role="status" aria-live="polite" aria-atomic="true"></p></section></div><section class="sheet-roll-history" aria-labelledby="sheet-roll-history-title"><div><div><h3 id="sheet-roll-history-title">Histórico de rolagens</h3><p>Últimas 20 rolagens · disponível até recarregar ou fechar esta página.</p></div><button type="button" class="op-text-button" data-clear-rolls ${rolls.length ? '' : 'disabled'}>Limpar histórico</button></div><div data-roll-history>${historyMarkup()}</div></section></section>`;
+    return `<section class="sheet-roll-panel" data-sheet-page="rolagens" aria-labelledby="sheet-roll-title" ${hidden ? 'hidden' : ''}><header class="sheet-paper-heading"><div><span>04 / APOIO AO AGENTE</span><h2 id="sheet-roll-title">Central de rolagens</h2></div><small>GMS / DADOS</small></header><p class="sheet-roll-help">Escolha seu dado. Cada clique faz uma nova rolagem, com a mesma chance para todas as faces. Para fazer um teste, clique no nome de um atributo ou de uma perícia na aba Ficha.</p><div class="sheet-roll-layout"><div class="sheet-dice-grid" role="group" aria-label="Dados disponíveis">${agentDice.map(sides => `<button type="button" class="sheet-die" data-roll-die="${sides}" aria-label="Rolar d${sides}">${dieIcon(sides)}<strong>d${sides}</strong><span>${sides} faces</span></button>`).join('')}</div><section class="sheet-roll-result" aria-label="Último resultado"><div class="sheet-roll-readout" data-roll-readout>${resultMarkup()}</div><button type="button" class="op-button" data-repeat-roll ${latest() ? '' : 'disabled'}>${esc(repeatLabel())}</button><p class="sheet-roll-feedback" data-roll-feedback role="status" aria-live="polite" aria-atomic="true"></p></section></div><section class="sheet-roll-history" aria-labelledby="sheet-roll-history-title"><div><div><h3 id="sheet-roll-history-title">Histórico de rolagens</h3><p>Últimas 20 rolagens · disponível até recarregar ou fechar esta página.</p></div><button type="button" class="op-text-button" data-clear-rolls ${rolls.length ? '' : 'disabled'}>Limpar histórico</button></div><div data-roll-history>${historyMarkup()}</div></section></section>`;
   }
 
   function bind(root) {
@@ -40,24 +52,62 @@ export function createAgentSheetRolls() {
     const feedback = panel.querySelector('[data-roll-feedback]');
     const repeat = panel.querySelector('[data-repeat-roll]');
     const clear = panel.querySelector('[data-clear-rolls]');
+    const checkDialog = root.querySelector('.sheet-check-dialog');
+    let activeCheck = null;
     function refresh() {
       panel.querySelector('[data-roll-readout]').innerHTML = resultMarkup();
       panel.querySelector('[data-roll-history]').innerHTML = historyMarkup();
       repeat.disabled = !latest(); clear.disabled = !rolls.length;
-      repeat.textContent = latest() ? `Rolar d${latest().sides} novamente` : 'Rolar novamente';
+      repeat.textContent = repeatLabel();
+    }
+    function record(roll) {
+      rolls.unshift({ ...roll, id: ++sequence, at: Date.now() }); rolls = rolls.slice(0, 20); refresh();
     }
     function roll(sides) {
       try {
         const result = rollAgentDie(sides);
-        rolls.unshift({ id: ++sequence, sides, result, at: Date.now() });
-        rolls = rolls.slice(0, 20); refresh();
+        record({ sides, result });
         feedback.classList.remove('sheet-roll-error');
         feedback.textContent = `Rolagem ${sequence}: d${sides}, resultado ${result}.`;
       } catch (error) { feedback.classList.add('sheet-roll-error'); feedback.textContent = error.message; }
     }
+    function runCheck(id) {
+      if (!checkDialog) return;
+      activeCheck = id;
+      const output = checkDialog.querySelector('[data-check-dialog-result]');
+      const description = checkDialog.querySelector('[data-check-description]');
+      const reroll = checkDialog.querySelector('[data-repeat-agent-check]');
+      checkDialog.querySelector('#sheet-check-title').textContent = 'Teste do agente';
+      try {
+        const check = describeAgentCheck(getFields(), id);
+        checkDialog.querySelector('#sheet-check-title').textContent = `Teste de ${check.label}`;
+        checkDialog.querySelector('[data-check-kind]').textContent = check.kind === 'attribute' ? 'TESTE DE ATRIBUTO / 1D20' : check.combat ? 'TESTE DE ATAQUE / 1D20' : 'TESTE DE PERÍCIA / 1D20';
+        reroll.disabled = Boolean(check.blocked);
+        if (check.blocked) {
+          output.innerHTML = '<strong class="sheet-check-blocked">Treinamento necessário</strong>';
+          description.textContent = check.blocked;
+        } else {
+          const result = rollAgentDie(20);
+          const evaluation = resolveAgentCheck(check, result);
+          record({ sides: 20, result, check, evaluation });
+          output.innerHTML = `<span class="sheet-roll-kicker">ROLAGEM ${sequence} · VALOR DO TESTE: ${check.target}</span><strong class="sheet-check-number" data-check-result>${result}</strong><b class="sheet-check-verdict" data-check-outcome="${evaluation.outcome}">${evaluation.verdict}</b><p>${esc(evaluation.comparison)}</p>`;
+          description.textContent = `${check.breakdown}. Menor que o valor: sucesso; igual: sucesso crítico; maior: falha.${check.combat ? ' Em ataques, 20 natural é falha crítica.' : ''}`;
+          feedback.classList.remove('sheet-roll-error');
+          feedback.textContent = `Rolagem ${sequence}: ${check.label}, d20 ${result}, ${evaluation.verdict.toLowerCase()}.`;
+        }
+      } catch (error) {
+        output.innerHTML = '<strong class="sheet-check-blocked">Teste não realizado</strong>';
+        description.textContent = error.message; reroll.disabled = false;
+      }
+      if (!checkDialog.open) checkDialog.showModal();
+    }
     panel.querySelectorAll('[data-roll-die]').forEach(button => button.addEventListener('click', () => roll(Number(button.dataset.rollDie))));
-    repeat.addEventListener('click', () => { if (latest()) roll(latest().sides); });
+    repeat.addEventListener('click', () => { if (latest()?.check) runCheck(latest().check.id); else if (latest()) roll(latest().sides); });
     clear.addEventListener('click', () => { rolls = []; sequence = 0; refresh(); feedback.classList.remove('sheet-roll-error'); feedback.textContent = 'Histórico limpo. Selecione um dado para começar.'; });
+    root.querySelectorAll('[data-sheet-check]').forEach(button => button.addEventListener('click', () => runCheck(button.dataset.sheetCheck)));
+    checkDialog?.querySelector('[data-close-agent-check]').addEventListener('click', () => checkDialog.close());
+    checkDialog?.querySelector('[data-repeat-agent-check]').addEventListener('click', () => { if (activeCheck) runCheck(activeCheck); });
+    checkDialog?.querySelector('[data-view-check-history]').addEventListener('click', () => { checkDialog.close(); location.hash = '#/minha-ficha?aba=rolagens'; });
   }
-  return { page, bind };
+  return { page, bind, trigger, dialog };
 }

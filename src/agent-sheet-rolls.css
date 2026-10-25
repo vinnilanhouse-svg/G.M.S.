@@ -95,10 +95,10 @@
 .cyber-roll-summary > p { color: var(--reading-secondary); font-size: 13px; line-height: 1.8; margin: 0; }
 .cyber-roll-footer { display: flex; justify-content: space-between; gap: 14px; padding: 10px 16px; border-top: 1px solid #5f75464d; background: #6b864317; color: #b3c69d; font: 8px/1.7 var(--mono); letter-spacing: .07em; }
 .cyber-roll-scan { display: none; position: absolute; width: 210px; height: 1px; background: linear-gradient(90deg, transparent, #d3edac, transparent); box-shadow: 0 0 16px #b6d38770; }
-.cyber-roll.is-rolling .cyber-roll-orbit { animation: cyber-orbit-turn 920ms cubic-bezier(.15,.5,.35,1) both; }
-.cyber-roll.is-rolling .cyber-roll-wire { opacity: .85; animation: cyber-die-turn 920ms cubic-bezier(.15,.6,.4,1) both; }
-.cyber-roll.is-rolling .cyber-roll-scan { display: block; animation: cyber-die-scan 920ms ease-in-out both; }
-.cyber-roll.is-rolling .cyber-roll-meter > i { animation: cyber-meter-fill 920ms linear both; }
+.cyber-roll.is-rolling .cyber-roll-orbit { animation: cyber-orbit-turn var(--roll-duration, 5000ms) cubic-bezier(.15,.5,.35,1) both; }
+.cyber-roll.is-rolling .cyber-roll-wire { opacity: .85; animation: cyber-die-turn var(--roll-duration, 5000ms) cubic-bezier(.15,.6,.4,1) both; }
+.cyber-roll.is-rolling .cyber-roll-scan { display: block; animation: cyber-die-scan var(--roll-duration, 5000ms) ease-in-out both; }
+.cyber-roll.is-rolling .cyber-roll-meter > i { animation: cyber-meter-fill var(--roll-duration, 5000ms) linear both; }
 .cyber-roll.is-rolling .cyber-roll-number { color: #bbd09f; }
 .cyber-roll.is-revealed .cyber-roll-center, .cyber-roll.is-revealed .cyber-roll-summary { animation: cyber-result-reveal 240ms ease-out both; }
 @keyframes cyber-orbit-turn { from { transform: rotate(-100deg); opacity: .4; } to { transform: rotate(260deg); opacity: .85; } }

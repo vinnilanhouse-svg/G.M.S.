@@ -4,14 +4,18 @@ export const agentDice = Object.freeze([4, 6, 8, 10, 12, 20, 100]);
 const randomRange = 2 ** 32;
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 
-export function rollAgentDie(sides, source = globalThis.crypto) {
-  if (!agentDice.includes(sides)) throw new Error('Selecione um dos dados disponíveis.');
+function randomBelow(range, source = globalThis.crypto) {
   if (typeof source?.getRandomValues !== 'function') throw new Error('Este navegador não disponibilizou o gerador seguro de dados. Tente em um navegador atualizado.');
   // Rejeitar o restante da divisão evita favorecer algumas faces com o módulo.
-  const limit = randomRange - randomRange % sides;
+  const limit = randomRange - randomRange % range;
   const sample = new Uint32Array(1);
   do { source.getRandomValues(sample); } while (sample[0] >= limit);
-  return sample[0] % sides + 1;
+  return sample[0] % range;
+}
+
+export function rollAgentDie(sides, source = globalThis.crypto) {
+  if (!agentDice.includes(sides)) throw new Error('Selecione um dos dados disponíveis.');
+  return randomBelow(sides, source) + 1;
 }
 
 const outlines = {
@@ -77,7 +81,8 @@ export function createAgentSheetRolls({ getFields } = {}) {
       const entry = { ...roll, id: ++sequence, at: Date.now() };
       rolls.unshift(entry); rolls = rolls.slice(0, 20); return entry;
     }
-    function present(entry, output, check = false) {
+    const animationDuration = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches || document.hidden ? 0 : 5000 + randomBelow(5001);
+    function present(entry, output, check, duration) {
       const motion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
       const controls = [...root.querySelectorAll('[data-roll-die],[data-repeat-roll],[data-clear-rolls],[data-sheet-check],[data-repeat-agent-check]')].map(button => [button, button.disabled]);
       const timers = [];
@@ -101,15 +106,16 @@ export function createAgentSheetRolls({ getFields } = {}) {
       function onVisibilityChange() { if (document.hidden) complete(); }
       finishAnimation = complete;
       animationOutput = output;
-      if (motion?.matches || document.hidden) { complete(); return; }
+      if (!duration || motion?.matches || document.hidden) { complete(); return; }
       rolling = true; controls.forEach(([button]) => { button.disabled = true; });
       feedback.classList.remove('sheet-roll-error'); feedback.textContent = 'Rolagem em curso…';
       output.setAttribute('aria-busy', 'true');
       output.innerHTML = rollVisual(entry, { check, pending: true });
+      output.querySelector('.cyber-roll').style.setProperty('--roll-duration', `${duration}ms`);
       const phase = output.querySelector('[data-roll-phase]');
-      timers.push(setTimeout(() => { if (output.isConnected) phase.textContent = 'Lendo o dado…'; }, 280));
-      timers.push(setTimeout(() => { if (output.isConnected) phase.textContent = 'Concluindo a rolagem…'; }, 620));
-      timers.push(setTimeout(complete, 920));
+      timers.push(setTimeout(() => { if (output.isConnected) phase.textContent = 'Lendo o dado…'; }, Math.round(duration * .3)));
+      timers.push(setTimeout(() => { if (output.isConnected) phase.textContent = 'Concluindo a rolagem…'; }, Math.round(duration * .7)));
+      timers.push(setTimeout(complete, duration));
       motion?.addEventListener('change', onMotionChange);
       document.addEventListener('visibilitychange', onVisibilityChange);
     }
@@ -117,8 +123,9 @@ export function createAgentSheetRolls({ getFields } = {}) {
       if (rolling) return;
       try {
         const result = rollAgentDie(sides);
+        const duration = animationDuration();
         const entry = record({ sides, result });
-        present(entry, panel.querySelector('[data-roll-readout]'));
+        present(entry, panel.querySelector('[data-roll-readout]'), false, duration);
       } catch (error) { feedback.classList.add('sheet-roll-error'); feedback.textContent = error.message; }
     }
     function runCheck(id) {
@@ -139,8 +146,9 @@ export function createAgentSheetRolls({ getFields } = {}) {
         } else {
           const result = rollAgentDie(20);
           const evaluation = resolveAgentCheck(check, result);
+          const duration = animationDuration();
           const entry = record({ sides: 20, result, check, evaluation });
-          present(entry, output, true);
+          present(entry, output, true, duration);
           description.textContent = `${check.breakdown}. Menor que o valor: sucesso; igual: sucesso crítico; maior: falha.${check.combat ? ' Em ataques, 20 natural é falha crítica.' : ''}`;
         }
       } catch (error) {

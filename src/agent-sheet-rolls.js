@@ -25,13 +25,22 @@ const outlines = {
 };
 const dieIcon = sides => `<svg class="sheet-die-icon" viewBox="0 0 48 50" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${outlines[sides]}</svg>`;
 const timeLabel = value => new Date(value).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+const orbit = `<svg class="cyber-roll-orbit" viewBox="0 0 300 300" fill="none" aria-hidden="true"><circle cx="150" cy="150" r="140"/><circle class="cyber-orbit-track" cx="150" cy="150" r="124"/><circle class="cyber-orbit-arc" cx="150" cy="150" r="133" stroke-dasharray="92 34 8 34 92 158 18 80 60 160"/>${Array.from({ length: 40 }, (_, index) => `<path d="M150 ${index % 5 ? 12 : 7}v${index % 5 ? 5 : 13}" transform="rotate(${index * 9} 150 150)"/>`).join('')}<path class="cyber-orbit-crosshair" d="M150 0v24m0 252v24M0 150h24m252 0h24"/></svg>`;
+
+function rollVisual(roll, { check = false, pending = false } = {}) {
+  const sides = roll?.sides || 20;
+  const evaluation = roll?.evaluation;
+  const status = pending ? 'ROLAGEM EM CURSO' : roll ? 'RESULTADO CONFIRMADO' : 'TERMINAL EM ESPERA';
+  return `<div class="cyber-roll ${pending ? 'is-rolling' : roll ? 'is-revealed' : 'is-idle'}"><div class="cyber-roll-telemetry" aria-hidden="true"><span>${roll ? `SEQ. ${String(roll.id).padStart(3, '0')}` : 'GMS / DADOS'}</span><span><i></i>${pending ? 'EM CURSO' : roll ? 'CONCLUÍDO' : 'PRONTO'}</span></div><div class="cyber-roll-stage"><span class="cyber-roll-coordinate cyber-coordinate-left" aria-hidden="true">X / 01</span><span class="cyber-roll-coordinate cyber-coordinate-right" aria-hidden="true">Y / ${sides}</span><div class="cyber-roll-hologram" aria-hidden="true">${orbit}<div class="cyber-roll-wire">${dieIcon(sides)}</div><i class="cyber-roll-scan"></i></div><div class="cyber-roll-center"><span class="cyber-roll-die-label">${roll || pending ? `D${sides}` : 'DADOS'}</span><strong class="cyber-roll-number" ${!pending ? check ? 'data-check-result' : 'data-roll-value' : ''}>${pending ? '<span aria-hidden="true">··</span><span class="sr-only">Rolando o dado.</span>' : roll?.result ?? '—'}</strong><span class="cyber-roll-center-label" aria-hidden="true">${pending ? 'VARREDURA' : roll ? 'RESULTADO' : 'AGUARDANDO'}</span></div></div><div class="cyber-roll-meter" aria-hidden="true"><i></i></div><div class="cyber-roll-summary">${pending ? '<b class="cyber-roll-phase" data-roll-phase aria-hidden="true">Iniciando rolagem…</b><span class="sr-only">Aguarde o resultado da rolagem.</span>' : evaluation ? `<b class="sheet-check-verdict" data-check-outcome="${evaluation.outcome}">${evaluation.verdict}</b><p>${esc(evaluation.comparison)}</p>` : `<b class="cyber-roll-phase">${roll ? 'Rolagem concluída' : 'Selecione um dado'}</b><p>${roll ? `Resultado de um dado de ${sides} faces.` : 'O próximo movimento começa aqui.'}</p>`}</div><div class="cyber-roll-footer"><span>${pending ? 'LEITURA EM ANDAMENTO' : status}</span><span>${roll?.check ? `VALOR / ${roll.check.target}` : `FACES / ${roll ? sides : '—'}`}</span></div></div>`;
+}
 
 export function createAgentSheetRolls({ getFields } = {}) {
   let rolls = [];
   let sequence = 0;
+  let finishAnimation = null;
   const latest = () => rolls[0];
   const repeatLabel = () => latest()?.check ? `Repetir teste de ${latest().check.label}` : latest() ? `Rolar d${latest().sides} novamente` : 'Rolar novamente';
-  const resultMarkup = () => latest() ? `<span class="sheet-roll-kicker">${latest().check ? `TESTE / ${esc(latest().check.label)}` : `RESULTADO / D${latest().sides}`}</span><strong data-roll-value>${latest().result}</strong>${latest().check ? `<b class="sheet-check-verdict" data-check-outcome="${latest().evaluation.outcome}">${latest().evaluation.verdict}</b><span>Valor do teste: ${latest().check.target}</span>` : `<span>de ${latest().sides} faces</span>`}` : '<span class="sheet-roll-kicker">AGUARDANDO ROLAGEM</span><strong data-roll-value>—</strong><span>Selecione um dado para começar.</span>';
+  const resultMarkup = () => rollVisual(latest());
   const historyMarkup = () => rolls.length ? `<ol>${rolls.map(roll => `<li><span class="sheet-roll-sequence">${String(roll.id).padStart(2, '0')}</span><span class="sheet-history-die">d${roll.sides}</span><div class="sheet-history-result"><strong>${roll.result}</strong>${roll.check ? `<span>${esc(roll.check.label)} · valor ${roll.check.target}</span><b data-check-outcome="${roll.evaluation.outcome}">${roll.evaluation.verdict}</b>` : ''}</div><time datetime="${new Date(roll.at).toISOString()}">${timeLabel(roll.at)}</time></li>`).join('')}</ol>` : '<p class="sheet-roll-empty">Nenhuma rolagem registrada nesta sessão.</p>';
 
   function trigger(id, label) {
@@ -39,14 +48,16 @@ export function createAgentSheetRolls({ getFields } = {}) {
   }
 
   function dialog() {
-    return `<dialog class="sheet-check-dialog" aria-labelledby="sheet-check-title" aria-describedby="sheet-check-description"><header><div><span class="sheet-roll-kicker" data-check-kind>TESTE DE ATRIBUTO</span><h2 id="sheet-check-title">Teste do agente</h2></div><button type="button" class="op-text-button" data-close-agent-check autofocus>Fechar</button></header><div class="sheet-check-dialog-result" data-check-dialog-result role="status" aria-live="polite" aria-atomic="true"></div><p id="sheet-check-description" data-check-description></p><div class="sheet-check-dialog-actions"><button type="button" class="op-button" data-repeat-agent-check>Rolar novamente</button><button type="button" class="op-text-button" data-view-check-history>Ver histórico</button></div></dialog>`;
+    return `<dialog class="sheet-check-dialog" aria-labelledby="sheet-check-title" aria-describedby="sheet-check-description"><div class="sheet-roll-terminal-bar" aria-hidden="true"><span>G.M.S. / CENTRAL DE ROLAGENS</span><span>● CANAL LOCAL</span></div><header><div><span class="sheet-roll-kicker" data-check-kind>TESTE DE ATRIBUTO</span><h2 id="sheet-check-title">Teste do agente</h2></div><button type="button" class="op-text-button" data-close-agent-check autofocus>Fechar <span aria-hidden="true">×</span></button></header><div class="sheet-check-dialog-result" data-check-dialog-result role="status" aria-live="polite" aria-atomic="true"></div><p id="sheet-check-description" data-check-description></p><div class="sheet-check-dialog-actions"><button type="button" class="op-button" data-repeat-agent-check>Rolar novamente</button><button type="button" class="op-text-button" data-view-check-history>Ver histórico</button></div></dialog>`;
   }
 
   function page(hidden) {
+    finishAnimation?.();
     return `<section class="sheet-roll-panel" data-sheet-page="rolagens" aria-labelledby="sheet-roll-title" ${hidden ? 'hidden' : ''}><header class="sheet-paper-heading"><div><span>04 / APOIO AO AGENTE</span><h2 id="sheet-roll-title">Central de rolagens</h2></div><small>GMS / DADOS</small></header><p class="sheet-roll-help">Escolha seu dado. Cada clique faz uma nova rolagem, com a mesma chance para todas as faces. Para fazer um teste, clique no nome de um atributo ou de uma perícia na aba Ficha.</p><div class="sheet-roll-layout"><div class="sheet-dice-grid" role="group" aria-label="Dados disponíveis">${agentDice.map(sides => `<button type="button" class="sheet-die" data-roll-die="${sides}" aria-label="Rolar d${sides}">${dieIcon(sides)}<strong>d${sides}</strong><span>${sides} faces</span></button>`).join('')}</div><section class="sheet-roll-result" aria-label="Último resultado"><div class="sheet-roll-readout" data-roll-readout>${resultMarkup()}</div><button type="button" class="op-button" data-repeat-roll ${latest() ? '' : 'disabled'}>${esc(repeatLabel())}</button><p class="sheet-roll-feedback" data-roll-feedback role="status" aria-live="polite" aria-atomic="true"></p></section></div><section class="sheet-roll-history" aria-labelledby="sheet-roll-history-title"><div><div><h3 id="sheet-roll-history-title">Histórico de rolagens</h3><p>Últimas 20 rolagens · disponível até recarregar ou fechar esta página.</p></div><button type="button" class="op-text-button" data-clear-rolls ${rolls.length ? '' : 'disabled'}>Limpar histórico</button></div><div data-roll-history>${historyMarkup()}</div></section></section>`;
   }
 
   function bind(root) {
+    finishAnimation?.();
     const panel = root.querySelector('.sheet-roll-panel');
     if (!panel) return;
     const feedback = panel.querySelector('[data-roll-feedback]');
@@ -54,6 +65,8 @@ export function createAgentSheetRolls({ getFields } = {}) {
     const clear = panel.querySelector('[data-clear-rolls]');
     const checkDialog = root.querySelector('.sheet-check-dialog');
     let activeCheck = null;
+    let rolling = false;
+    let animationOutput = null;
     function refresh() {
       panel.querySelector('[data-roll-readout]').innerHTML = resultMarkup();
       panel.querySelector('[data-roll-history]').innerHTML = historyMarkup();
@@ -61,18 +74,55 @@ export function createAgentSheetRolls({ getFields } = {}) {
       repeat.textContent = repeatLabel();
     }
     function record(roll) {
-      rolls.unshift({ ...roll, id: ++sequence, at: Date.now() }); rolls = rolls.slice(0, 20); refresh();
+      const entry = { ...roll, id: ++sequence, at: Date.now() };
+      rolls.unshift(entry); rolls = rolls.slice(0, 20); return entry;
+    }
+    function present(entry, output, check = false) {
+      const motion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
+      const controls = [...root.querySelectorAll('[data-roll-die],[data-repeat-roll],[data-clear-rolls],[data-sheet-check],[data-repeat-agent-check]')].map(button => [button, button.disabled]);
+      const timers = [];
+      let finished = false;
+      function complete() {
+        if (finished) return;
+        finished = true; timers.forEach(clearTimeout);
+        motion?.removeEventListener('change', onMotionChange);
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+        controls.forEach(([button, disabled]) => { button.disabled = disabled; });
+        rolling = false; animationOutput = null; output.removeAttribute('aria-busy');
+        if (root.isConnected) {
+          refresh();
+          if (check) output.innerHTML = rollVisual(entry, { check: true });
+          feedback.classList.remove('sheet-roll-error');
+          feedback.textContent = entry.check ? `Rolagem ${entry.id}: ${entry.check.label}, d20 ${entry.result}, ${entry.evaluation.verdict.toLowerCase()}.` : `Rolagem ${entry.id}: d${entry.sides}, resultado ${entry.result}.`;
+        }
+        if (finishAnimation === complete) finishAnimation = null;
+      }
+      function onMotionChange(event) { if (event.matches) complete(); }
+      function onVisibilityChange() { if (document.hidden) complete(); }
+      finishAnimation = complete;
+      animationOutput = output;
+      if (motion?.matches || document.hidden) { complete(); return; }
+      rolling = true; controls.forEach(([button]) => { button.disabled = true; });
+      feedback.classList.remove('sheet-roll-error'); feedback.textContent = 'Rolagem em curso…';
+      output.setAttribute('aria-busy', 'true');
+      output.innerHTML = rollVisual(entry, { check, pending: true });
+      const phase = output.querySelector('[data-roll-phase]');
+      timers.push(setTimeout(() => { if (output.isConnected) phase.textContent = 'Lendo o dado…'; }, 280));
+      timers.push(setTimeout(() => { if (output.isConnected) phase.textContent = 'Concluindo a rolagem…'; }, 620));
+      timers.push(setTimeout(complete, 920));
+      motion?.addEventListener('change', onMotionChange);
+      document.addEventListener('visibilitychange', onVisibilityChange);
     }
     function roll(sides) {
+      if (rolling) return;
       try {
         const result = rollAgentDie(sides);
-        record({ sides, result });
-        feedback.classList.remove('sheet-roll-error');
-        feedback.textContent = `Rolagem ${sequence}: d${sides}, resultado ${result}.`;
+        const entry = record({ sides, result });
+        present(entry, panel.querySelector('[data-roll-readout]'));
       } catch (error) { feedback.classList.add('sheet-roll-error'); feedback.textContent = error.message; }
     }
     function runCheck(id) {
-      if (!checkDialog) return;
+      if (!checkDialog || rolling) return;
       activeCheck = id;
       const output = checkDialog.querySelector('[data-check-dialog-result]');
       const description = checkDialog.querySelector('[data-check-description]');
@@ -89,11 +139,9 @@ export function createAgentSheetRolls({ getFields } = {}) {
         } else {
           const result = rollAgentDie(20);
           const evaluation = resolveAgentCheck(check, result);
-          record({ sides: 20, result, check, evaluation });
-          output.innerHTML = `<span class="sheet-roll-kicker">ROLAGEM ${sequence} · VALOR DO TESTE: ${check.target}</span><strong class="sheet-check-number" data-check-result>${result}</strong><b class="sheet-check-verdict" data-check-outcome="${evaluation.outcome}">${evaluation.verdict}</b><p>${esc(evaluation.comparison)}</p>`;
+          const entry = record({ sides: 20, result, check, evaluation });
+          present(entry, output, true);
           description.textContent = `${check.breakdown}. Menor que o valor: sucesso; igual: sucesso crítico; maior: falha.${check.combat ? ' Em ataques, 20 natural é falha crítica.' : ''}`;
-          feedback.classList.remove('sheet-roll-error');
-          feedback.textContent = `Rolagem ${sequence}: ${check.label}, d20 ${result}, ${evaluation.verdict.toLowerCase()}.`;
         }
       } catch (error) {
         output.innerHTML = '<strong class="sheet-check-blocked">Teste não realizado</strong>';
@@ -103,11 +151,14 @@ export function createAgentSheetRolls({ getFields } = {}) {
     }
     panel.querySelectorAll('[data-roll-die]').forEach(button => button.addEventListener('click', () => roll(Number(button.dataset.rollDie))));
     repeat.addEventListener('click', () => { if (latest()?.check) runCheck(latest().check.id); else if (latest()) roll(latest().sides); });
-    clear.addEventListener('click', () => { rolls = []; sequence = 0; refresh(); feedback.classList.remove('sheet-roll-error'); feedback.textContent = 'Histórico limpo. Selecione um dado para começar.'; });
+    clear.addEventListener('click', () => { if (rolling) return; rolls = []; sequence = 0; refresh(); feedback.classList.remove('sheet-roll-error'); feedback.textContent = 'Histórico limpo. Selecione um dado para começar.'; });
     root.querySelectorAll('[data-sheet-check]').forEach(button => button.addEventListener('click', () => runCheck(button.dataset.sheetCheck)));
-    checkDialog?.querySelector('[data-close-agent-check]').addEventListener('click', () => checkDialog.close());
+    const finishDialogAnimation = () => { if (animationOutput && checkDialog.contains(animationOutput)) finishAnimation?.(); };
+    checkDialog?.addEventListener('close', finishDialogAnimation);
+    checkDialog?.addEventListener('cancel', finishDialogAnimation);
+    checkDialog?.querySelector('[data-close-agent-check]').addEventListener('click', () => { finishAnimation?.(); checkDialog.close(); });
     checkDialog?.querySelector('[data-repeat-agent-check]').addEventListener('click', () => { if (activeCheck) runCheck(activeCheck); });
-    checkDialog?.querySelector('[data-view-check-history]').addEventListener('click', () => { checkDialog.close(); location.hash = '#/minha-ficha?aba=rolagens'; });
+    checkDialog?.querySelector('[data-view-check-history]').addEventListener('click', () => { finishAnimation?.(); checkDialog.close(); location.hash = '#/minha-ficha?aba=rolagens'; });
   }
   return { page, bind, trigger, dialog };
 }

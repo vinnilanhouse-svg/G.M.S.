@@ -1,0 +1,20 @@
+/* Valores das oito paletas ficam em terminal-theme.js. Estes ajustes também
+   contemplam controles nativos e a leitura da logo no tema claro. */
+:root[data-gms-theme] { color-scheme: dark; }
+:root[data-gms-scheme="light"] { color-scheme: light; }
+:root[data-gms-theme] :is(input, select, textarea) { color-scheme: inherit; }
+:root[data-gms-theme] :is(.sheet-field, .note-editor, .folder-entry-editor, .admin-field, .credential-input-row, .filter-controls, .my-mission, .agent-identification, .progress-heading, .progress-stage-row, .mission-progress-editor) :is(input, select, textarea) { border-color: var(--theme-control-line); }
+:root[data-gms-theme] input::placeholder, :root[data-gms-theme] textarea::placeholder { color: var(--theme-muted); opacity: 1; }
+:root[data-gms-scheme="light"] .gms-mark { filter: brightness(0); opacity: .85; }
+:root[data-gms-theme] body.access-denied-active { color-scheme: dark; }
+.terminal-theme-panel { margin-top: 22px; padding: 20px; border: 1px solid var(--line); background: var(--panel); }
+.terminal-theme-panel h3 { margin: 0 0 14px; font-size: 17px; font-weight: 500; }
+.terminal-theme-current { display: flex; gap: 10px; align-items: center; color: var(--reading-secondary); font-size: 14px; line-height: 1.8; }
+.terminal-theme-current i { display: inline-block; width: 18px; height: 18px; background: var(--accent); border: 1px solid var(--text); }
+.terminal-theme-panel > p { font-size: 13px; line-height: 1.85; color: var(--muted); margin: 13px 0; }
+.terminal-theme-panel button { margin-top: 5px; }
+.terminal-theme-panel button:disabled { opacity: .5; cursor: default; }
+@media print {
+  :root[data-gms-theme] .agent-sheet { color-scheme: light; }
+  .terminal-theme-panel { display: none; }
+}

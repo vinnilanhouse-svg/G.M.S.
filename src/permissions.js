@@ -1,5 +1,7 @@
 // Credenciais narrativas de demonstração. Códigos e conteúdo estão no frontend;
 // este mecanismo não substitui autenticação ou autorização em um servidor.
+import { terminalThemes } from './terminal-theme.js';
+
 export const accessStorageKey = 'gms-access-v1';
 
 export const credentials = [
@@ -39,6 +41,11 @@ export const credentials = [
     description: 'Sequência temporária de acesso negado e retorno ao painel.',
     route: '#/inicio', entryOnly: true, effect: 'access-denied',
   },
+  ...terminalThemes.map(theme => ({
+    id: `paleta-${theme.id}`, code: theme.code, label: `Paleta ${theme.label}`,
+    description: `Aplica a paleta ${theme.label.toLowerCase()} à interface deste terminal.`,
+    entryOnly: true, effect: 'change-theme', theme: theme.id,
+  })),
 ];
 
 export function normalizeAccessCode(value) {

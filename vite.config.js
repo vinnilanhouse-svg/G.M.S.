@@ -1,4 +1,5 @@
 import {defineConfig,loadEnv} from 'vite';
+import {themeColors} from './scripts/theme-colors.mjs';
 
 // Mesmo endpoint em desenvolvimento e no Vercel; segredos ficam apenas no Node.
 export default defineConfig(({mode})=>{
@@ -12,6 +13,7 @@ export default defineConfig(({mode})=>{
   }
   return {
     build:{modulePreload:false},
+    css:{postcss:{plugins:[themeColors()]}},
     plugins:[{
       name:'gms-server',
       configureServer:install,

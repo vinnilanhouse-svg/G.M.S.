@@ -13,6 +13,7 @@ import { readAgentName, requestAgentIdentification } from './agent-identity.js';
 import { showEntryScreen } from './entry-screen.js';
 import { showAccessDeniedEffect } from './access-denied.js';
 import { showLostPage } from './lost-page.js';
+import { createTerminalTheme, terminalThemeKey } from './terminal-theme.js';
 import { isArchivePath, resolveRoute, shouldShowEntryDetour } from './routing.js';
 import gmsLogo from './assets/gms-logo.png';
 import '@fontsource/dm-sans/latin-400.css';
@@ -32,8 +33,10 @@ import './operational-panel.css';
 import './mission-progress.css';
 import './terminal-interface.css';
 import './agent-sheet.css';
+import './theme-palettes.css';
 import { records as originalRecords, categories } from './data.js';
 let allRecords=originalRecords;
+const terminalTheme=createTerminalTheme();
 import { credentials, accessStorageKey, findCredential, readActiveCredentials, visibleRecords, listedRecords } from './permissions.js';
 
 const paths = { inicio: 'Painel inicial', conhecimento: 'Base de conhecimento', documentos: 'Documentos internos', favoritos: 'Arquivos salvos', 'minha-ficha': 'Minha ficha de agente', 'pasta-de-trabalho': 'Pasta de trabalho', busca: 'Busca no arquivo', agentes: 'Agentes', missoes: 'Missões', 'missoes/relatorios': 'Relatórios de missão', alvos: 'Alvos de interesse', credenciais: 'Credenciais de acesso', reservado: 'Arquivo reservado', administracao: 'Administração' };
@@ -92,7 +95,7 @@ function statusBadge(status) { return `<span class="status ${status==='Em andame
 function recordLink(id, label) {const r=records.find(x=>x.id===id); return r?`<a class="inline-link" href="#/arquivo/${r.id}">${esc(label||r.title)} ${icon('external')}</a>`:'';}
 function credentialForm(placement) {
  const id=`credential-code-${placement}`;
- return `<section class="credential-panel ${placement==='main'?'credential-panel-main':''}" aria-label="Validação de credencial"><div class="credential-panel-heading"><a href="#/credenciais">${icon('key')}Credenciais de acesso</a><span>${activeCredentials.size.toString().padStart(2,'0')}</span></div>${placement==='main'?'<h2>Validar credencial</h2><p>Insira o código de autorização recebido para consultar novos registros.</p>':''}<form data-credential-form novalidate><label for="${id}" class="${placement==='sidebar'?'sr-only':''}">Código de autorização</label><div class="credential-input-row"><input id="${id}" name="code" type="text" placeholder="Insira seu código" maxlength="64" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="credential-feedback-${placement}"><button type="submit" aria-label="Validar código de autorização">${placement==='main'?'Validar':''}${icon('arrow')}</button></div><div class="credential-feedback" id="credential-feedback-${placement}" aria-live="polite"></div></form>${placement==='sidebar'?'<a href="#/credenciais" class="credential-manage">Consultar credenciais '+icon('chevron')+'</a>':''}</section>`;
+ return `<section class="credential-panel ${placement==='main'?'credential-panel-main':''}" aria-label="Validação de credencial"><div class="credential-panel-heading"><a href="#/credenciais">${icon('key')}Credenciais de acesso</a><span>${activeCredentials.size.toString().padStart(2,'0')}</span></div>${placement==='main'?'<h2>Validar credencial</h2><p>Insira o código recebido para habilitar uma consulta ou personalizar este terminal.</p>':''}<form data-credential-form novalidate><label for="${id}" class="${placement==='sidebar'?'sr-only':''}">Código de autorização</label><div class="credential-input-row"><input id="${id}" name="code" type="text" placeholder="Insira seu código" maxlength="64" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="credential-feedback-${placement}"><button type="submit" aria-label="Validar código de autorização">${placement==='main'?'Validar':''}${icon('arrow')}</button></div><div class="credential-feedback" id="credential-feedback-${placement}" aria-live="polite"></div></form>${placement==='sidebar'?'<a href="#/credenciais" class="credential-manage">Consultar credenciais '+icon('chevron')+'</a>':''}</section>`;
 }
 function showToast(message) {
  const toast=document.querySelector('#toast');
@@ -117,6 +120,13 @@ function redeemCredential(form) {
   input.setAttribute('aria-invalid','true');input.focus();return;
  }
  input.removeAttribute('aria-invalid');
+ if(credential.effect==='change-theme'){
+  const persisted=terminalTheme.select(credential.theme);
+  input.value='';
+  updateTerminalThemePanel();
+  feedback.textContent=persisted?`Paleta ${terminalTheme.label.toLowerCase()} aplicada e salva neste navegador.`:`Paleta ${terminalTheme.label.toLowerCase()} aplicada nesta sessão. O navegador não permitiu salvar a preferência.`;
+  return;
+ }
  if(credential.effect==='rename-agent'){
   input.value='';
   mobileOpen=false;
@@ -155,7 +165,14 @@ function redeemCredential(form) {
 }
 function credentialPage() {
  const active=credentials.filter(c=>activeCredentials.has(c.id));
- shell(`${heading('AUTORIZAÇÃO DE CONSULTA','Credenciais de acesso','Registre uma credencial para habilitar consultas adicionais neste terminal.',`<div class="result-total"><strong>${active.length.toString().padStart(2,'0')}</strong><span>ACESSOS<br>ATIVOS</span></div>`)}<div class="credentials-layout">${credentialForm('main')}<section class="active-credentials"><div class="section-heading"><h2>${icon('lock')}Autorizações deste terminal</h2></div>${active.length?active.map(c=>`<article class="active-credential"><div class="active-credential-heading">${icon('key')}<h3>${esc(c.label)}</h3><span class="status active"><i></i>Ativa</span></div><p>${esc(c.description)}</p><div class="active-credential-actions"><a href="${esc(c.route)}">Consultar acesso ${icon('arrow')}</a><button type="button" data-revoke-credential="${esc(c.id)}">Remover deste terminal</button></div></article>`).join(''):`<div class="credentials-empty">${icon('lock')}<h3>Nenhuma credencial ativa</h3><p>Os acessos liberados aparecerão aqui após a validação de um código.</p></div>`}</section></div>`);
+ shell(`${heading('AUTORIZAÇÃO DE CONSULTA','Credenciais de acesso','Valide credenciais de consulta e personalize a aparência deste terminal.',`<div class="result-total"><strong>${active.length.toString().padStart(2,'0')}</strong><span>ACESSOS<br>ATIVOS</span></div>`)}<div class="credentials-layout"><div>${credentialForm('main')}${terminalThemePanel()}</div><section class="active-credentials"><div class="section-heading"><h2>${icon('lock')}Autorizações deste terminal</h2></div>${active.length?active.map(c=>`<article class="active-credential"><div class="active-credential-heading">${icon('key')}<h3>${esc(c.label)}</h3><span class="status active"><i></i>Ativa</span></div><p>${esc(c.description)}</p><div class="active-credential-actions"><a href="${esc(c.route)}">Consultar acesso ${icon('arrow')}</a><button type="button" data-revoke-credential="${esc(c.id)}">Remover deste terminal</button></div></article>`).join(''):`<div class="credentials-empty">${icon('lock')}<h3>Nenhuma credencial ativa</h3><p>Os acessos liberados aparecerão aqui após a validação de um código.</p></div>`}</section></div>`);
+}
+function terminalThemePanel() {
+ return `<section class="terminal-theme-panel" aria-labelledby="terminal-theme-title"><h3 id="terminal-theme-title">Aparência deste terminal</h3><div class="terminal-theme-current"><i aria-hidden="true"></i><span>Paleta atual: <strong data-terminal-theme-name>${esc(terminalTheme.label)}</strong></span></div><p>A escolha fica salva neste navegador. Informe outra credencial de cor para trocar a paleta.</p><button type="button" class="op-text-button" data-reset-terminal-theme ${terminalTheme.id?'':'disabled'}>Restaurar paleta original</button></section>`;
+}
+function updateTerminalThemePanel() {
+ document.querySelectorAll('[data-terminal-theme-name]').forEach(element=>{element.textContent=terminalTheme.label;});
+ document.querySelectorAll('[data-reset-terminal-theme]').forEach(button=>{button.disabled=!terminalTheme.id;});
 }
 function credentialRequired() {
  shell(`${heading('CONSULTA CONDICIONADA','Credencial necessária','Este conteúdo exige uma autorização adicional vinculada ao terminal.')}<div class="locked-content"><div class="locked-content-symbol">${icon('lock')}</div>${credentialForm('main')}<a class="inline-link" href="#/credenciais">Consultar minhas credenciais ${icon('arrow')}</a></div>`);
@@ -304,6 +321,11 @@ function bind() {
   form.addEventListener('submit',event=>{event.preventDefault();redeemCredential(form);});
   form.elements.namedItem('code').addEventListener('input',()=>{form.elements.namedItem('code').removeAttribute('aria-invalid');const feedback=form.querySelector('.credential-feedback');feedback.textContent='';feedback.className='credential-feedback';});
  });
+ document.querySelector('[data-reset-terminal-theme]')?.addEventListener('click',()=>{
+  const persisted=terminalTheme.select('');
+  updateTerminalThemePanel();
+  showToast(persisted?'Paleta original restaurada.':'Paleta original restaurada nesta sessão. O navegador não permitiu salvar a preferência.');
+ });
  document.querySelectorAll('[data-revoke-credential]').forEach(button=>button.addEventListener('click',()=>{
   activeCredentials.delete(button.dataset.revokeCredential);
   const persisted=persistCredentials();
@@ -421,6 +443,7 @@ else requestAgentIdentification(gmsLogo,({name,persisted})=>{
 siteService.start();
 void adminPanel.init();
 addEventListener('storage',event=>{
+ if(event.key===terminalThemeKey||event.key===null){terminalTheme.reload();updateTerminalThemePanel();}
  if(event.key===agentSheetKey)agentSheet.reload();
  if(event.key===localEditsKey)siteService.reloadLocal();
  if(event.key===workFolderKey){

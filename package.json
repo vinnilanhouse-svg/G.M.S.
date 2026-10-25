@@ -12,6 +12,8 @@
   },
   "devDependencies": {
     "esbuild": "^0.28.2",
+    "postcss": "^8.5.31",
+    "postcss-value-parser": "^4.2.0",
     "vite": "^6.4.0"
   },
   "dependencies": {

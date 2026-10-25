@@ -81,7 +81,7 @@ export function createAgentSheetRolls({ getFields } = {}) {
       const entry = { ...roll, id: ++sequence, at: Date.now() };
       rolls.unshift(entry); rolls = rolls.slice(0, 20); return entry;
     }
-    const animationDuration = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches || document.hidden ? 0 : 3000 + randomBelow(7001);
+    const animationDuration = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches || document.hidden ? 0 : 3000 + randomBelow(5001);
     function present(entry, output, check, duration) {
       const motion = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
       const controls = [...root.querySelectorAll('[data-roll-die],[data-repeat-roll],[data-clear-rolls],[data-sheet-check],[data-repeat-agent-check]')].map(button => [button, button.disabled]);

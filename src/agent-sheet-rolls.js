@@ -38,7 +38,7 @@ function rollVisual(roll, { check = false, pending = false } = {}) {
   return `<div class="cyber-roll ${pending ? 'is-rolling' : roll ? 'is-revealed' : 'is-idle'}"><div class="cyber-roll-telemetry" aria-hidden="true"><span>${roll ? `SEQ. ${String(roll.id).padStart(3, '0')}` : 'GMS / DADOS'}</span><span><i></i>${pending ? 'EM CURSO' : roll ? 'CONCLUÍDO' : 'PRONTO'}</span></div><div class="cyber-roll-stage"><span class="cyber-roll-coordinate cyber-coordinate-left" aria-hidden="true">X / 01</span><span class="cyber-roll-coordinate cyber-coordinate-right" aria-hidden="true">Y / ${sides}</span><div class="cyber-roll-hologram" aria-hidden="true">${orbit}<div class="cyber-roll-wire">${dieIcon(sides)}</div><i class="cyber-roll-scan"></i></div><div class="cyber-roll-center"><span class="cyber-roll-die-label">${roll || pending ? `D${sides}` : 'DADOS'}</span><strong class="cyber-roll-number" ${!pending ? check ? 'data-check-result' : 'data-roll-value' : ''}>${pending ? '<span aria-hidden="true">··</span><span class="sr-only">Rolando o dado.</span>' : roll?.result ?? '—'}</strong><span class="cyber-roll-center-label" aria-hidden="true">${pending ? 'VARREDURA' : roll ? 'RESULTADO' : 'AGUARDANDO'}</span></div></div><div class="cyber-roll-meter" aria-hidden="true"><i></i></div><div class="cyber-roll-summary">${pending ? '<b class="cyber-roll-phase" data-roll-phase aria-hidden="true">Iniciando rolagem…</b><span class="sr-only">Aguarde o resultado da rolagem.</span>' : evaluation ? `<b class="sheet-check-verdict" data-check-outcome="${evaluation.outcome}">${evaluation.verdict}</b><p>${esc(evaluation.comparison)}</p>` : `<b class="cyber-roll-phase">${roll ? 'Rolagem concluída' : 'Selecione um dado'}</b><p>${roll ? `Resultado de um dado de ${sides} faces.` : 'O próximo movimento começa aqui.'}</p>`}</div><div class="cyber-roll-footer"><span>${pending ? 'LEITURA EM ANDAMENTO' : status}</span><span>${roll?.check ? `VALOR / ${roll.check.target}` : `FACES / ${roll ? sides : '—'}`}</span></div></div>`;
 }
 
-export function createAgentSheetRolls({ getFields } = {}) {
+export function createAgentSheetRolls({ getFields, sound } = {}) {
   let rolls = [];
   let sequence = 0;
   let finishAnimation = null;
@@ -87,9 +87,10 @@ export function createAgentSheetRolls({ getFields } = {}) {
       const controls = [...root.querySelectorAll('[data-roll-die],[data-repeat-roll],[data-clear-rolls],[data-sheet-check],[data-repeat-agent-check]')].map(button => [button, button.disabled]);
       const timers = [];
       let finished = false;
-      function complete() {
+      let stopProcessing = () => {};
+      function complete({ audible = false } = {}) {
         if (finished) return;
-        finished = true; timers.forEach(clearTimeout);
+        finished = true; timers.forEach(clearTimeout); stopProcessing();
         motion?.removeEventListener('change', onMotionChange);
         document.removeEventListener('visibilitychange', onVisibilityChange);
         controls.forEach(([button, disabled]) => { button.disabled = disabled; });
@@ -99,23 +100,25 @@ export function createAgentSheetRolls({ getFields } = {}) {
           if (check) output.innerHTML = rollVisual(entry, { check: true });
           feedback.classList.remove('sheet-roll-error');
           feedback.textContent = entry.check ? `Rolagem ${entry.id}: ${entry.check.label}, d20 ${entry.result}, ${entry.evaluation.verdict.toLowerCase()}.` : `Rolagem ${entry.id}: d${entry.sides}, resultado ${entry.result}.`;
+          if (audible && !document.hidden) sound?.play(entry.evaluation?.outcome || 'result');
         }
         if (finishAnimation === complete) finishAnimation = null;
       }
-      function onMotionChange(event) { if (event.matches) complete(); }
+      function onMotionChange(event) { if (event.matches) complete({ audible: true }); }
       function onVisibilityChange() { if (document.hidden) complete(); }
       finishAnimation = complete;
       animationOutput = output;
-      if (!duration || motion?.matches || document.hidden) { complete(); return; }
+      if (!duration || motion?.matches || document.hidden) { complete({ audible: !document.hidden }); return; }
       rolling = true; controls.forEach(([button]) => { button.disabled = true; });
       feedback.classList.remove('sheet-roll-error'); feedback.textContent = 'Rolagem em curso…';
       output.setAttribute('aria-busy', 'true');
       output.innerHTML = rollVisual(entry, { check, pending: true });
       output.querySelector('.cyber-roll').style.setProperty('--roll-duration', `${duration}ms`);
+      stopProcessing = sound?.startProcessing(duration) || stopProcessing;
       const phase = output.querySelector('[data-roll-phase]');
       timers.push(setTimeout(() => { if (output.isConnected) phase.textContent = 'Lendo o dado…'; }, Math.round(duration * .3)));
       timers.push(setTimeout(() => { if (output.isConnected) phase.textContent = 'Concluindo a rolagem…'; }, Math.round(duration * .7)));
-      timers.push(setTimeout(complete, duration));
+      timers.push(setTimeout(() => complete({ audible: true }), duration));
       motion?.addEventListener('change', onMotionChange);
       document.addEventListener('visibilitychange', onVisibilityChange);
     }
@@ -126,7 +129,7 @@ export function createAgentSheetRolls({ getFields } = {}) {
         const duration = animationDuration();
         const entry = record({ sides, result });
         present(entry, panel.querySelector('[data-roll-readout]'), false, duration);
-      } catch (error) { feedback.classList.add('sheet-roll-error'); feedback.textContent = error.message; }
+      } catch (error) { feedback.classList.add('sheet-roll-error'); feedback.textContent = error.message; sound?.play('error'); }
     }
     function runCheck(id) {
       if (!checkDialog || rolling) return;
@@ -143,6 +146,7 @@ export function createAgentSheetRolls({ getFields } = {}) {
         if (check.blocked) {
           output.innerHTML = '<strong class="sheet-check-blocked">Treinamento necessário</strong>';
           description.textContent = check.blocked;
+          sound?.play('error');
         } else {
           const result = rollAgentDie(20);
           const evaluation = resolveAgentCheck(check, result);
@@ -154,6 +158,7 @@ export function createAgentSheetRolls({ getFields } = {}) {
       } catch (error) {
         output.innerHTML = '<strong class="sheet-check-blocked">Teste não realizado</strong>';
         description.textContent = error.message; reroll.disabled = false;
+        sound?.play('error');
       }
       if (!checkDialog.open) checkDialog.showModal();
     }

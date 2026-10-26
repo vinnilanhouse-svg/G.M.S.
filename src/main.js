@@ -117,9 +117,10 @@ function redeemCredential(form) {
  if(!code||!credential){
   feedback.textContent=code?'Código não reconhecido. Confira e tente novamente.':'Digite um código de autorização.';
   feedback.classList.add('error');
-  input.setAttribute('aria-invalid','true');input.focus();return;
+  input.setAttribute('aria-invalid','true');input.focus();terminal.sound.play('error');return;
  }
  input.removeAttribute('aria-invalid');
+ terminal.sound.play(credential.effect==='access-denied'?'denied':'accepted');
  if(credential.effect==='change-theme'){
   const persisted=terminalTheme.select(credential.theme);
   input.value='';
@@ -421,6 +422,7 @@ const operationalPanel=createOperationalPanel({
 });
 const agentSheet=createAgentSheet({
  icon,
+ sound:terminal.sound,
  onNotice:showToast,
  onChange:()=>{const y=scrollY;render();scrollTo(0,y);},
 });

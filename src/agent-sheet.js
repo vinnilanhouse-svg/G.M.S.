@@ -12,10 +12,10 @@ const speciesVisual = species => {
 };
 const tabs = [['ficha', '01', 'Ficha'], ['habilidades', '02', 'Habilidades e combate'], ['inventario', '03', 'Inventário e histórico'], ['rolagens', '04', 'Central de rolagens']];
 
-export function createAgentSheet({ icon, onNotice, onChange, storage }) {
+export function createAgentSheet({ icon, onNotice, onChange, storage, sound }) {
   if (!storage) try { storage = globalThis.localStorage; } catch {}
   const store = createAgentSheetStore(storage);
-  const rolls = createAgentSheetRolls({ getFields() {
+  const rolls = createAgentSheetRolls({ sound, getFields() {
     if (invalid.size) throw new Error('Revise os campos destacados na ficha antes de fazer um teste.');
     store.reload(); return store.state.fields;
   } });

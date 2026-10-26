@@ -48,6 +48,7 @@ export function workFolderReadableText(state, records, { missionFilter = '', exp
     for (const entry of data[key]) {
       lines.push(key === 'documents' ? recordLabel(entry.recordId) : key === 'notes' ? entry.title.trim() || 'Anotação sem título' : entry.name.trim() || (key === 'people' ? 'Pessoa sem nome' : 'Localidade sem nome'));
       lines.push(`Missão: ${missionLabel(entry.missionId)}`);
+      if (entry.tags?.length) lines.push(`Etiquetas: ${entry.tags.join(', ')}`);
       if (key === 'notes' && noteIllustrations(entry).length) lines.push(`Imagens: ${noteIllustrations(entry).map(id => getEvidenceIllustration(id).label).join(' · ')}`);
       if (entry.role) lines.push(`Relação com a investigação: ${entry.role}`);
       if (entry.reference) lines.push(`Referência / coordenadas: ${entry.reference}`);
@@ -58,7 +59,7 @@ export function workFolderReadableText(state, records, { missionFilter = '', exp
   }
   if (data.progress.length) {
     lines.push('ANDAMENTO PESSOAL', '=================');
-    for (const entry of data.progress) lines.push(`Missão: ${missionLabel(entry.missionId)}`, `Etapa pessoal: ${entry.stage}`, `Atualizado em: ${new Date(entry.updatedAt).toLocaleString('pt-BR')}`, '', 'OBJETIVOS', ...entry.objectives.map(item => `[${item.done ? 'x' : ' '}] ${item.text}`), '', 'PENDÊNCIAS', entry.pending || 'Nenhuma pendência registrada.', '', 'RELATÓRIO DE RETORNO — RASCUNHO PESSOAL', entry.returnReport || 'Nenhum rascunho registrado.', '', '—', '');
+    for (const entry of data.progress) lines.push(`Missão: ${missionLabel(entry.missionId)}`, `Etapa pessoal: ${entry.stage}`, ...(entry.tags?.length ? [`Etiquetas: ${entry.tags.join(', ')}`] : []), `Atualizado em: ${new Date(entry.updatedAt).toLocaleString('pt-BR')}`, '', 'OBJETIVOS', ...entry.objectives.map(item => `[${item.done ? 'x' : ' '}] ${item.text}`), '', 'PENDÊNCIAS', entry.pending || 'Nenhuma pendência registrada.', '', 'RELATÓRIO DE RETORNO — RASCUNHO PESSOAL', entry.returnReport || 'Nenhum rascunho registrado.', '', '—', '');
   }
   if (data.connections.length) {
     const labels = new Map(evidenceNodes(data).map(node => [node.ref, node.kind === 'documents' ? recordLabel(node.entry.recordId) : node.entry.name || node.entry.title || 'Anotação sem título']));

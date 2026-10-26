@@ -1,0 +1,40 @@
+.folder-search-shortcut { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; margin: 0 0 22px; }
+.folder-search-shortcut label { display: inline-flex; align-items: center; gap: 9px; color: var(--reading-secondary); font-size: 14px; }
+.folder-search-shortcut label .icon { width: 17px; height: 17px; color: var(--muted); }
+.folder-search-shortcut > div { display: flex; flex: 1; min-width: min(100%, 280px); gap: 10px; max-width: 620px; }
+.folder-search-shortcut input[type="search"], .folder-search-form :is(input,select) { display: block; width: 100%; min-width: 0; padding: 11px 12px; border: 1px solid #637651; border-radius: 0; background: #172016; color: var(--text); font: 16px/1.7 var(--sans); }
+.folder-search-shortcut input[type="hidden"] { display: none; }
+.folder-search-shortcut input::placeholder, .folder-search-form input::placeholder { color: #aabb9b; opacity: 1; }
+.folder-search-page h2 { font-size: 28px; line-height: 1.5; font-weight: 500; margin: 0 0 12px; }
+.folder-search-help { font-size: 16px; line-height: 1.8; color: var(--reading-secondary); max-width: 800px; }
+.folder-search-form { border: 1px solid var(--line); background: #1e281c; padding: 24px; margin: 26px 0; }
+.folder-search-form label { display: block; font-size: 14px; line-height: 1.8; color: var(--reading-secondary); margin-bottom: 8px; }
+.folder-search-query-row { display: flex; gap: 12px; }
+.folder-search-filters { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 18px; margin: 22px 0; }
+.folder-search-filters > div { min-width: 0; }
+.folder-search-form select { font-size: 14px; }
+.folder-search-count { font: 12px/1.8 var(--mono); color: var(--muted); margin: 22px 0; }
+.folder-search-results { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); }
+.folder-search-results > li { min-width: 0; padding: 25px; background: #1c241b; }
+.folder-search-results > li + li { border-top: 1px solid var(--line); }
+.folder-search-result-meta { display: flex; justify-content: space-between; gap: 15px; color: var(--muted); font: 11px/1.8 var(--mono); }
+.folder-search-results h3 { font-size: 22px; line-height: 1.5; font-weight: 500; margin: 15px 0 12px; overflow-wrap: anywhere; }
+.folder-search-results h3 .icon { width: 17px; height: 17px; color: var(--accent); margin-left: 8px; }
+.folder-search-subtitle { color: var(--muted); font: 12px/1.8 var(--mono); overflow-wrap: anywhere; }
+.folder-search-excerpt { color: var(--reading-secondary); white-space: pre-wrap; overflow-wrap: anywhere; font-size: 16px; line-height: 1.8; margin: 12px 0; }
+.folder-search-empty { padding: 36px; border: 1px solid var(--line); }
+.folder-search-empty > .icon { width: 32px; height: 32px; color: var(--accent); }
+.folder-tags-field { margin: 22px 0; }
+.folder-tags-field label { display: block; margin-bottom: 8px; color: var(--reading-secondary); font-size: 14px; }
+.folder-tags-field input { display: block; width: 100%; min-width: 0; padding: 11px 12px; border: 1px solid #637651; border-radius: 0; background: #172016; color: var(--text); font: 16px/1.7 var(--sans); }
+.folder-tags-field p { font-size: 12px; line-height: 1.8; color: var(--muted); margin: 8px 0 0; }
+.folder-tag-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.folder-tag-chips a { display: inline-block; color: var(--accent); background: #263321; border: 1px solid #536646; padding: 4px 9px; font: 11px/1.7 var(--mono); overflow-wrap: anywhere; }
+:is(.folder-search-shortcut,.folder-search-form,.folder-search-results,.folder-tags-field,.folder-tag-chips) :is(input,select,button,a):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 700px) {
+  .folder-search-shortcut { align-items: stretch; flex-direction: column; }
+  .folder-search-shortcut > div { min-width: 0; max-width: none; }
+  .folder-search-filters { grid-template-columns: 1fr; }
+  .folder-search-form, .folder-search-results > li { padding: 20px 16px; }
+  .folder-search-query-row { flex-wrap: wrap; }
+}

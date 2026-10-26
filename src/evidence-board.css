@@ -14,6 +14,24 @@
 .evidence-legend i.is-confirmed { border-top-style: solid; margin-left: 12px; }
 .evidence-help { font: 14px/1.8 var(--sans); color: var(--reading-secondary); margin: 0 0 20px; }
 .evidence-viewport { max-width: 100%; height: 570px; overflow: auto; overscroll-behavior: contain; border: 1px solid #536646; background: #151d13; scrollbar-color: #637651 #151d13; }
+.evidence-stage { position: relative; overflow: clip; }
+.evidence-viewport:not(.is-list) .evidence-canvas { position: absolute; transform-origin: top left; }
+.evidence-viewport.is-list .evidence-stage { overflow: visible; }
+.evidence-zoom-tools { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.evidence-zoom-tools > div { display: inline-flex; border: 1px solid #637651; }
+.evidence-zoom-tools [data-evidence-zoom] { min-width: 37px; min-height: 39px; padding: 8px; border: 0; background: #172016; color: var(--text); font: 14px/1.6 var(--mono); cursor: pointer; }
+.evidence-zoom-tools [data-evidence-zoom] + button { border-left: 1px solid #637651; }
+.evidence-zoom-tools [data-evidence-zoom="reset"] { min-width: 64px; }
+.evidence-zoom-tools [data-evidence-fit] { display: inline-flex; gap: 8px; align-items: center; font-size: 13px; }
+.evidence-zoom-tools .icon { width: 16px; height: 16px; }
+.evidence-link-selection { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center; padding: 16px 18px; margin: 4px 0 20px; border: 1px dashed var(--accent); background: #263321; color: var(--text); font-size: 15px; line-height: 1.8; }
+.evidence-link-selection[hidden] { display: none; }
+.evidence-link-selection > span { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.evidence-link-selection .op-actions { margin: 0; gap: 18px; }
+.evidence-card-heading > .evidence-select-mark { display: none; }
+.evidence-card.is-selectable { outline: 1px dashed var(--accent); outline-offset: 3px; }
+.evidence-card.is-selectable .evidence-select-mark { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; color: var(--accent); font-size: 13px; }
+.evidence-card.is-selected { border: 2px solid var(--accent); background: #34452b; }
 .evidence-canvas { position: relative; min-height: 530px; background-image: radial-gradient(#3e4c36 1px, transparent 1px); background-size: 22px 22px; isolation: isolate; }
 .evidence-column-labels { position: absolute; display: flex; gap: 100px; left: 44px; top: 26px; pointer-events: none; color: var(--muted); font: 10px/1.7 var(--mono); letter-spacing: .9px; }
 .evidence-column-labels span { width: 250px; }

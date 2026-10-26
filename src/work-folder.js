@@ -1,5 +1,6 @@
 import { cleanEvidenceConnections, evidenceKinds, evidenceNodes, evidencePosition, evidenceRef, validEvidencePosition } from './evidence-board-model.js';
 import { noteIllustrationData, validNoteIllustrations } from './evidence-illustrations.js';
+import { folderTagData, folderTagKinds, validFolderTags } from './work-folder-search.js';
 
 export const workFolderKey = 'gms-work-folder-v1';
 export const workFolderCollections = ['notes', 'documents', 'people', 'localities', 'progress', 'connections'];
@@ -22,7 +23,7 @@ function readEntries(value, kind) {
     return true;
   }).map(entry => {
     const { id, recordId, missionId, body, name, role, reference, createdAt, updatedAt } = entry;
-    return { id, recordId, missionId, body, ...(kind === 'people' ? { name, role } : kind === 'localities' ? { name, reference } : {}), createdAt, updatedAt, ...evidencePosition(entry) };
+    return { id, recordId, missionId, body, ...(kind === 'people' ? { name, role } : kind === 'localities' ? { name, reference } : {}), createdAt, updatedAt, ...evidencePosition(entry), ...folderTagData(entry) };
   });
 }
 
@@ -34,7 +35,10 @@ function readProgress(value) {
       !Array.isArray(entry.objectives) || entry.objectives.length > 100 || new Set(entry.objectives.map(item => item?.id)).size !== entry.objectives.length ||
       !entry.objectives.every(item => item && validId(item.id) && validText(item.text, 2000) && item.text.trim() && typeof item.done === 'boolean')) return false;
     seen.add(entry.id); return true;
-  }).map(({ id, missionId, stage, pending, returnReport, objectives, createdAt, updatedAt }) => ({ id, missionId, stage, pending, returnReport, objectives: objectives.map(({ id, text, done }) => ({ id, text, done })), createdAt, updatedAt }));
+  }).map(entry => {
+    const { id, missionId, stage, pending, returnReport, objectives, createdAt, updatedAt } = entry;
+    return { id, missionId, stage, pending, returnReport, objectives: objectives.map(({ id, text, done }) => ({ id, text, done })), createdAt, updatedAt, ...folderTagData(entry) };
+  });
 }
 
 export function readWorkFolder(storage) {
@@ -50,7 +54,7 @@ export function readWorkFolder(storage) {
       return true;
     }).map(entry => {
       const { id, title, body, missionId, createdAt, updatedAt } = entry;
-      return { id, title, body, missionId, createdAt, updatedAt, ...evidencePosition(entry), ...noteIllustrationData(entry) };
+      return { id, title, body, missionId, createdAt, updatedAt, ...evidencePosition(entry), ...noteIllustrationData(entry), ...folderTagData(entry) };
     });
     const state = { missionId: validId(value.missionId) ? value.missionId : '', notes, documents: readEntries(value.documents, 'documents'), people: readEntries(value.people, 'people'), localities: readEntries(value.localities, 'localities'), progress: readProgress(value.progress) };
     return { ...state, connections: cleanEvidenceConnections(value.connections, state) };
@@ -67,6 +71,7 @@ export function validateWorkFolderData(value) {
   if (workFolderCollections.some(key => clean[key].length !== value[key].length)) throw new Error('A cópia contém registros inválidos ou repetidos. Nenhum registro foi importado.');
   if (evidenceKinds.some(kind => value[kind].some(entry => entry.position !== undefined && !validEvidencePosition(entry.position)))) throw new Error('A cópia contém posições inválidas no quadro de evidências.');
   if (value.notes.some(entry => entry.illustrations !== undefined && !validNoteIllustrations(entry.illustrations))) throw new Error('A cópia contém imagens de anotação inválidas. Escolha até quatro imagens do catálogo.');
+  if (folderTagKinds.some(kind => value[kind].some(entry => entry.tags !== undefined && !validFolderTags(entry.tags)))) throw new Error('A cópia contém etiquetas inválidas. Use até 8 etiquetas diferentes de 32 caracteres.');
   return clean;
 }
 
@@ -103,6 +108,17 @@ export function createWorkFolder(storage) {
     get state() { return state; },
     get persisted() { return persisted; },
     reload() { if (persisted) state = readWorkFolder(storage); return state; },
+    setEntryTags(kind, id, tags) {
+      if (!folderTagKinds.includes(kind) || !validFolderTags(tags)) throw new Error('Use até 8 etiquetas diferentes de 32 caracteres.');
+      return change(current => {
+        if (!current[kind].some(entry => entry.id === id)) throw new Error('Este registro foi removido em outra aba. Atualize a pasta.');
+        return { ...current, [kind]: current[kind].map(entry => {
+          if (entry.id !== id) return entry;
+          const { tags: previous, ...rest } = entry;
+          return { ...rest, ...folderTagData({ tags }), updatedAt: new Date().toISOString() };
+        }) };
+      });
+    },
     selectMission(missionId) {
       if (missionId !== '' && !validId(missionId)) throw new Error('Missão inválida.');
       return change(current => ({ ...current, missionId }));

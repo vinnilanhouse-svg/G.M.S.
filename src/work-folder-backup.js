@@ -32,11 +32,12 @@ export function workFolderCounts(data) {
   const kinds = [['notes', 'anotação', 'anotações'], ['documents', 'documento', 'documentos'], ['people', 'pessoa de interesse', 'pessoas de interesse'], ['localities', 'localidade', 'localidades']];
   if (data.progress?.length) kinds.push(['progress', 'acompanhamento', 'acompanhamentos']);
   if (data.connections?.length) kinds.push(['connections', 'ligação de evidências', 'ligações de evidências']);
+  if (data.trash?.length) kinds.push(['trash', 'anotação na lixeira', 'anotações na lixeira']);
   return kinds.map(([key, one, many]) => `${data[key].length} ${data[key].length === 1 ? one : many}`).join(' · ');
 }
 
 export function workFolderReadableText(state, records, { missionFilter = '', exportedAt = new Date().toISOString(), baseUrl = 'https://globalmonstersecurity.vercel.app/' } = {}) {
-  const data = selectWorkFolderData(state, missionFilter);
+  const data = { ...selectWorkFolderData(state, missionFilter), trash: [] };
   const known = new Map(records.filter(record => !record.unlisted).map(record => [record.id, record]));
   const missionLabel = id => !id ? 'Sem missão vinculada' : known.has(id) ? `${known.get(id).code} · ${known.get(id).title}` : 'Missão indisponível neste terminal';
   const recordLabel = id => known.has(id) ? `${known.get(id).code} · ${known.get(id).title}` : 'Arquivo indisponível neste terminal';

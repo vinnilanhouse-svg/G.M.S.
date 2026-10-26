@@ -5,6 +5,7 @@ import { bindNoteIllustrationControls, noteIllustrationControl } from './note-il
 import { createEvidenceViewport } from './evidence-viewport.js';
 import { folderTagsField } from './folder-tags-ui.js';
 import { parseFolderTags } from './work-folder-search.js';
+import { createBoardExport } from './board-export-ui.js';
 import './evidence-board.css';
 
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
@@ -19,7 +20,9 @@ export function createEvidenceBoard({ folder, getRecords, getMissions, icon, ren
   let mode = globalThis.matchMedia?.('(max-width: 700px)').matches ? 'list' : 'map';
   let reopenDetail = '';
   let cancelViewport = () => {};
+  let cancelShortcuts = () => {};
   const views = new Map();
+  const boardExport = createBoardExport({ folder, getRecords });
   const records = () => getRecords().filter(record => !record.unlisted);
   const notice = () => folder.persisted ? 'Quadro salvo neste navegador.' : 'Rascunho somente nesta sessão. Exporte a pasta antes de sair.';
   function meta(node) {
@@ -45,7 +48,7 @@ export function createEvidenceBoard({ folder, getRecords, getMissions, icon, ren
       ${renderTransfer(filter)}<p class="folder-storage-notice">${icon('lock')}Registros pessoais, salvos apenas neste navegador. O quadro e suas ligações estão incluídos na exportação da pasta.</p>
       ${workFolderTabs(folder.state, filter, 'evidencias', icon)}
       <div class="folder-section-heading"><div><span class="op-kicker">ANÁLISE DE VÍNCULOS / QEV</span><h2>Quadro de evidências</h2><p>Conecte pessoas, documentos, anotações e locais. Separe as hipóteses do que você já confirmou.</p></div><div class="folder-section-filter"><label for="folder-filter">Filtrar por missão</label><select id="folder-filter" data-folder-filter><option value="">Todos os registros</option><option value="avulsas" ${filter === 'avulsas' ? 'selected' : ''}>Sem missão vinculada</option>${missions.map(mission => `<option value="${esc(mission.id)}" ${filter === mission.id ? 'selected' : ''}>${esc(mission.code)} · ${esc(mission.title)}</option>`).join('')}${filter && filter !== 'avulsas' && !missions.some(mission => mission.id === filter) ? `<option selected value="${esc(filter)}">Missão indisponível</option>` : ''}</select></div></div>
-      <div class="evidence-toolbar"><div class="op-actions"><button type="button" class="op-button" data-evidence-add>${icon('file')}Adicionar evidência</button><button type="button" class="op-button" data-evidence-connect ${nodes.length < 2 ? 'disabled' : ''}>${icon('connections')}Criar ligação</button></div><div class="evidence-view" role="group" aria-label="Visualização das evidências"><button type="button" data-evidence-mode="map" aria-pressed="${mode === 'map'}">${icon('connections')}Quadro</button><button type="button" data-evidence-mode="list" aria-pressed="${mode === 'list'}">${icon('clipboard')}Lista</button></div>${mode === 'map' && nodes.length ? `<div class="evidence-zoom-tools" role="group" aria-label="Controles do quadro"><div><button type="button" data-evidence-zoom="out" aria-label="Diminuir zoom">−</button><button type="button" data-evidence-zoom="reset" aria-label="Restaurar zoom para 100%">100%</button><button type="button" data-evidence-zoom="in" aria-label="Aumentar zoom">+</button></div><button type="button" class="op-text-button" data-evidence-fit>${icon('expand')}Centralizar tudo</button></div>` : ''}</div>
+      <div class="evidence-toolbar"><div class="op-actions"><button type="button" class="op-button" data-evidence-add>${icon('file')}Adicionar evidência</button><button type="button" class="op-button" data-evidence-connect ${nodes.length < 2 ? 'disabled' : ''}>${icon('connections')}Criar ligação</button></div><div class="evidence-toolbox"><button type="button" class="evidence-toolbox-button" data-evidence-toolbox aria-expanded="false">Ferramentas do quadro ▾</button><div class="evidence-toolbox-content"><div class="evidence-history-tools" role="group" aria-label="Histórico do quadro"><button type="button" class="op-button" data-evidence-history="undo">↶ Desfazer</button><button type="button" class="op-button" data-evidence-history="redo">↷ Refazer</button></div><button type="button" class="op-button evidence-export-button" data-open-board-export ${nodes.length ? '' : 'disabled'}>${icon('external')}Exportar quadro</button><div class="evidence-view" role="group" aria-label="Visualização das evidências"><button type="button" data-evidence-mode="map" aria-pressed="${mode === 'map'}">${icon('connections')}Quadro</button><button type="button" data-evidence-mode="list" aria-pressed="${mode === 'list'}">${icon('clipboard')}Lista</button></div>${mode === 'map' && nodes.length ? `<div class="evidence-zoom-tools" role="group" aria-label="Controles do quadro"><div><button type="button" data-evidence-zoom="out" aria-label="Diminuir zoom">−</button><button type="button" data-evidence-zoom="reset" aria-label="Restaurar zoom para 100%">100%</button><button type="button" data-evidence-zoom="in" aria-label="Aumentar zoom">+</button></div><button type="button" class="op-text-button" data-evidence-fit>${icon('expand')}Centralizar tudo</button></div>` : ''}</div></div></div>
       <div class="evidence-readout"><span>${String(nodes.length).padStart(2, '0')} evidências · ${String(links.length).padStart(2, '0')} ligações</span><span class="evidence-legend"><i></i>Hipótese <i class="is-confirmed"></i>Confirmada pelo agente</span></div>
       <div class="evidence-link-selection" data-evidence-selection hidden><span role="status" data-evidence-selection-message></span><div class="op-actions"><button type="button" class="op-text-button" data-evidence-connect-list>Escolher pela lista</button><button type="button" class="op-text-button" data-cancel-evidence-selection>Cancelar seleção</button></div></div>${nodes.length ? `<p class="evidence-help">${mode === 'map' ? 'Arraste pela alça do cartão para organizar. Use as setas do teclado com a alça selecionada. Toque em um cartão para consultar.' : 'Abra uma evidência para consultar suas observações, a origem e suas ligações.'}</p><div class="evidence-viewport ${mode === 'list' ? 'is-list' : ''}" ${mode === 'map' ? 'tabindex="0" role="region" aria-label="Quadro de evidências. Role para explorar todos os cartões."' : ''}><div class="evidence-stage" data-evidence-stage><div class="evidence-canvas" data-evidence-canvas>${mode === 'map' ? '<svg class="evidence-wires" aria-hidden="true" data-evidence-wires></svg><div class="evidence-column-labels" aria-hidden="true"><span>PESSOAS DE INTERESSE</span><span>DOCUMENTOS / ANOTAÇÕES</span><span>LOCALIDADES</span></div>' : ''}${nodes.map(node => {
         const position = positions.get(node.ref);
@@ -63,13 +66,15 @@ export function createEvidenceBoard({ folder, getRecords, getMissions, icon, ren
 
   function bind() {
     cancelViewport(); cancelViewport = () => {};
+    cancelShortcuts(); cancelShortcuts = () => {};
     const root = document.querySelector('.evidence-page');
-    if (!root) return;
+    if (!root) { boardExport.bind({ root: null }); return; }
     const filter = new URLSearchParams(location.hash.split('?')[1]).get('missao') || '';
     const nodes = evidenceNodes(folder.state, filter).map(meta);
     const links = evidenceConnections(folder.state, filter);
     const byRef = new Map(nodes.map(node => [node.ref, node]));
     const positions = defaultEvidencePositions(nodes);
+    boardExport.bind({ root, filter, positions });
     const addDialog = root.querySelector('[data-evidence-add-dialog]');
     const linkDialog = root.querySelector('[data-evidence-link-dialog]');
     const detailDialog = root.querySelector('[data-evidence-detail-dialog]');
@@ -77,6 +82,24 @@ export function createEvidenceBoard({ folder, getRecords, getMissions, icon, ren
     const addForm = root.querySelector('[data-evidence-add-form]');
     const linkForm = root.querySelector('[data-evidence-link-form]');
     let deleting = '';
+    function updateHistory() {
+      for (const action of ['undo', 'redo']) root.querySelectorAll(`[data-evidence-history="${action}"]`).forEach(button => {
+        const label = action === 'undo' ? folder.undoLabel : folder.redoLabel;
+        button.disabled = !label; button.title = label ? `${action === 'undo' ? 'Desfazer' : 'Refazer'}: ${label}` : 'Nenhuma ação disponível';
+      });
+    }
+    function travelHistory(action) {
+      try { if (folder[action]()) { onChange(); onNotice(action === 'undo' ? 'Ação desfeita.' : 'Ação refeita.'); } }
+      catch (error) { onNotice(error.message); }
+    }
+    updateHistory();
+    const shortcut = event => {
+      if (!(event.ctrlKey || event.metaKey) || event.altKey || document.querySelector('dialog[open]') || document.activeElement?.closest('input,textarea,select,[contenteditable="true"]')) return;
+      const key = event.key.toLowerCase();
+      const action = key === 'z' ? event.shiftKey ? 'redo' : 'undo' : key === 'y' ? 'redo' : '';
+      if (!action) return; event.preventDefault(); travelHistory(action);
+    };
+    document.addEventListener('keydown', shortcut); cancelShortcuts = () => document.removeEventListener('keydown', shortcut);
     let selecting = false; let firstEvidence = '';
     function selectionState(active, first = '') {
       selecting = active; firstEvidence = first;
@@ -97,6 +120,7 @@ export function createEvidenceBoard({ folder, getRecords, getMissions, icon, ren
       onNotice(notice());
     }
     function feedback(error) {
+      updateHistory();
       const output = root.querySelector('[data-evidence-save]');
       if (output) { output.textContent = error?.message || notice(); output.classList.toggle('note-save-warning', Boolean(error) || !folder.persisted); }
       else if (error) onNotice(error.message);
@@ -136,6 +160,8 @@ export function createEvidenceBoard({ folder, getRecords, getMissions, icon, ren
       }
       else if (button.hasAttribute('data-evidence-mode')) { mode = button.dataset.evidenceMode; onChange(); document.querySelector(`[data-evidence-mode="${mode}"]`)?.focus({ preventScroll: true }); }
       else if (button.hasAttribute('data-evidence-organize')) { folder.organizeEvidence(nodes.map(node => node.ref)); refresh(); }
+      else if (button.hasAttribute('data-evidence-history')) travelHistory(button.dataset.evidenceHistory);
+      else if (button.hasAttribute('data-evidence-toolbox')) { const box = button.closest('.evidence-toolbox'); const open = box.classList.toggle('is-open'); button.setAttribute('aria-expanded', String(open)); }
       else if (button.hasAttribute('data-evidence-remove')) { deleting = linkForm.elements.namedItem('id').value; linkDialog.close(); deleteDialog.showModal(); }
       else if (button.hasAttribute('data-confirm-evidence-delete')) { folder.removeConnection(deleting); deleting = ''; deleteDialog.close(); refresh(); }
     });
@@ -171,12 +197,14 @@ export function createEvidenceBoard({ folder, getRecords, getMissions, icon, ren
         const previous = data.kind === 'documents' ? folder.state.documents.find(entry => entry.recordId === data.recordId && entry.missionId === data.missionId)?.body : '';
         const body = data.body.trim() ? previous ? `${previous}\n\n${data.body}` : data.body : '';
         if (body.length > 20000) throw new Error('O documento já possui observações. O texto combinado deve ter até 20.000 caracteres; edite o registro na aba Documentos.');
-        const id = data.kind === 'people' ? folder.addPerson(data) : data.kind === 'localities' ? folder.addLocality(data) : data.kind === 'notes' ? folder.addNote(data.missionId, JSON.parse(data.illustrations || '[]')) : folder.addDocument(data.recordId, data.missionId);
-        const update = data.kind === 'people' ? folder.updatePerson : data.kind === 'localities' ? folder.updateLocality : data.kind === 'notes' ? folder.updateNote : folder.updateDocument;
-        if (data.kind === 'notes') update(id, 'title', data.title);
-        // Vincular novamente um documento não apaga observações já existentes.
-        if (body) update(id, 'body', body);
-        if (tags.length) folder.setEntryTags(data.kind, id, tags);
+        const id = folder.transaction('Adicionar evidência', () => {
+          const id = data.kind === 'people' ? folder.addPerson(data) : data.kind === 'localities' ? folder.addLocality(data) : data.kind === 'notes' ? folder.addNote(data.missionId, JSON.parse(data.illustrations || '[]')) : folder.addDocument(data.recordId, data.missionId);
+          const update = data.kind === 'people' ? folder.updatePerson : data.kind === 'localities' ? folder.updateLocality : data.kind === 'notes' ? folder.updateNote : folder.updateDocument;
+          if (data.kind === 'notes') update(id, 'title', data.title);
+          if (body) update(id, 'body', body);
+          if (tags.length) folder.setEntryTags(data.kind, id, tags);
+          return id;
+        });
         addDialog.close();
         if (filter && (filter === 'avulsas' ? Boolean(data.missionId) : data.missionId !== filter)) location.hash = workFolderUrl(data.missionId || 'avulsas', '', 'evidencias');
         else refresh(`${data.kind}:${id}`);

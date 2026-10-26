@@ -1,6 +1,6 @@
 import { folderSearchExcerpt, folderSearchKinds, folderSearchUrl, folderTagOptions, normalizeFolderText, searchWorkFolder } from './work-folder-search.js';
 import { folderTagChips } from './folder-tags-ui.js';
-import { workFolderTabs } from './work-folder-sections.js';
+import { bindFolderNavigation, workFolderTabs } from './work-folder-sections.js';
 import './work-folder-search.css';
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 
@@ -42,8 +42,8 @@ export function createWorkFolderSearch({ folder, getRecords, getMissions, icon, 
       history.replaceState(null, '', folderSearchUrl(options()));
       document.querySelector('[data-folder-search-results]').innerHTML = results(options());
       // Os atalhos de aba preservam a missão escolhida no formulário.
-      const nav = document.querySelector('.work-folder-tabs');
-      if (nav) nav.outerHTML = workFolderTabs(folder.state, form.elements.missao.value, 'busca', icon);
+      const nav = document.querySelector('.folder-navigation');
+      if (nav) { nav.outerHTML = workFolderTabs(folder.state, form.elements.missao.value, 'busca', icon); bindFolderNavigation(); }
       const scope = document.querySelector('#folder-export-scope'); const missionId = form.elements.missao.value;
       if (scope) scope.innerHTML = '<option value="">Pasta completa</option>' + (missionId ? `<option value="${esc(missionId)}">${missionId === 'avulsas' ? 'Somente registros sem missão vinculada' : 'Somente registros da missão selecionada'}</option>` : '');
     }

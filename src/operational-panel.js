@@ -1,5 +1,7 @@
 import { createWorkFolder, operationalMissions } from './work-folder.js';
-import { createWorkFolderSections, workFolderTabs, workFolderUrl as folderUrl } from './work-folder-sections.js';
+import { bindFolderNavigation, createWorkFolderSections, workFolderTabs, workFolderUrl as folderUrl } from './work-folder-sections.js';
+import { createWorkFolderTrash } from './work-folder-trash.js';
+import './work-folder-navigation.css';
 import { createWorkFolderTransfer } from './work-folder-transfer.js';
 import { createMissionProgress } from './mission-progress.js';
 import { createEvidenceBoard } from './evidence-board.js';
@@ -29,6 +31,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
   const missionProgress = createMissionProgress({ folder, getMissions: () => context().missions, icon, renderTransfer: folderTools, onChange, onNotice });
   const folderSections = createWorkFolderSections({ folder, getRecords, getMissions: () => context().missions, icon, onNotice, onChange, renderTransfer: folderTools });
   const evidenceBoard = createEvidenceBoard({ folder, getRecords, getMissions: () => context().missions, icon, onNotice, onChange, renderTransfer: folderTools });
+  const folderTrash = createWorkFolderTrash({ folder, getMissions: () => context().missions, icon, onNotice, onChange, renderTransfer: folderTools });
 
   function missionAction(mission) {
     const selected = selectedMission()?.id === mission.id;
@@ -62,6 +65,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
     const params = new URLSearchParams(query);
     const filter = params.get('missao') || '';
     if (params.get('aba') === 'busca') return folderSearch.page(query);
+    if (params.get('aba') === 'lixeira') return folderTrash.page(filter);
     if (params.get('aba') === 'andamento') return missionProgress.page(query);
     if (params.get('aba') === 'evidencias') return evidenceBoard.page(filter);
     const sectionPage = folderSections.page(params.get('aba'), filter);
@@ -77,11 +81,13 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
       ${workFolderTabs(folder.state, filter, 'anotacoes', icon)}
       <div class="folder-layout"><aside class="folder-index" aria-label="Índice de anotações"><label for="folder-filter">Filtrar por missão</label><select id="folder-filter" data-folder-filter><option value="">Todas as anotações</option><option value="avulsas" ${filter === 'avulsas' ? 'selected' : ''}>Sem missão vinculada</option>${missions.map(mission => `<option value="${esc(mission.id)}" ${filter === mission.id ? 'selected' : ''}>${esc(mission.code)} · ${esc(mission.title)}</option>`).join('')}${filter && !knownFilter ? '<option selected value="indisponivel">Missão indisponível</option>' : ''}</select><p class="folder-count">${filtered.length} ${filtered.length === 1 ? 'ANOTAÇÃO' : 'ANOTAÇÕES'}</p><nav class="folder-notes" aria-label="Anotações">${filtered.map(item => `<a href="${folderUrl(filter, item.id)}" class="folder-note ${item.id === note?.id ? 'selected' : ''}" ${item.id === note?.id ? 'aria-current="true"' : ''} data-note-link="${esc(item.id)}"><strong>${esc(noteTitle(item))}</strong><span>${esc(missions.find(mission => mission.id === item.missionId)?.code || (item.missionId ? 'Missão indisponível' : 'Anotação avulsa'))}</span><time datetime="${esc(item.updatedAt)}">${esc(noteDate(item.updatedAt))}</time></a>`).join('') || '<p class="folder-no-notes">Nenhuma anotação nesta pasta.</p>'}</nav><a class="op-link folder-saved-link" href="#/favoritos">${icon('bookmark')}Consultar arquivos salvos ${icon('arrow')}</a></aside>
       ${note ? `<form class="note-editor" data-work-note="${esc(note.id)}"><div class="note-editor-heading"><span class="op-kicker">ANOTAÇÃO DE CAMPO</span><span role="status" class="note-save-status" data-note-status>${esc(memoryNotice())}</span></div><label for="note-title">Título da anotação</label><input id="note-title" name="title" maxlength="120" placeholder="Dê um título à anotação" value="${esc(note.title)}" autocomplete="off"><label for="note-mission">Missão vinculada</label><select id="note-mission" name="missionId">${options(note.missionId)}${note.missionId && !linkedMission ? '<option selected value="indisponivel">Missão indisponível</option>' : ''}</select><a class="op-link note-mission-link" data-note-mission-link ${linkedMission ? `href="#/arquivo/${esc(linkedMission.id)}"` : 'hidden'}>Consultar ordem de missão ${icon('arrow')}</a>${noteIllustrationControl(note, { noteId: note.id })}${folderTagsField(note, 'note')}<label for="note-body">Suas anotações</label><textarea id="note-body" name="body" maxlength="20000" placeholder="Registre pistas, observações, hipóteses e questões em aberto…">${esc(note.body)}</textarea><div class="note-editor-foot"><span data-note-length>${note.body.length.toLocaleString('pt-BR')} / 20.000 caracteres</span><span data-note-save-mode>${folder.persisted ? 'Alterações salvas automaticamente' : 'Rascunho somente nesta sessão'}</span></div><div class="note-editor-actions"><button type="button" class="op-button" data-download-work-note>${icon('file')}Baixar anotação</button><button type="button" class="op-text-button" data-delete-work-note>Excluir anotação</button></div></form>` : `<div class="op-empty folder-empty">${icon('folder')}<h2>Seu caderno está aberto.</h2><p>Crie uma anotação para registrar suas observações${filter && knownFilter && filter !== 'avulsas' ? ' sobre esta missão' : ''}.</p><button type="button" class="op-button" data-new-work-note>Nova anotação</button></div>`}</div>
-      <dialog class="note-delete-dialog" aria-labelledby="note-delete-title"><h2 id="note-delete-title">Excluir esta anotação?</h2><p>O texto será removido da sua pasta de trabalho. Você pode baixar uma cópia antes de excluir.</p><div class="op-actions"><button type="button" class="op-button" data-cancel-note-delete>Manter anotação</button><button type="button" class="op-button" data-confirm-note-delete>Excluir anotação</button></div></dialog></section>`;
+      <dialog class="note-delete-dialog" aria-labelledby="note-delete-title"><h2 id="note-delete-title">Enviar esta anotação para a lixeira?</h2><p>Você poderá restaurar o texto, as imagens e suas ligações pela seção Lixeira.</p><div class="op-actions"><button type="button" class="op-button" data-cancel-note-delete>Manter anotação</button><button type="button" class="op-button" data-confirm-note-delete>Enviar para a lixeira</button></div></dialog></section>`;
   }
 
   function bind() {
     folderTransfer.bind();
+    bindFolderNavigation();
+    folderTrash.bind();
     missionProgress.bind();
     evidenceBoard.bind();
     folderSearch.bind();
@@ -99,7 +105,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
     });
     const params = new URLSearchParams(location.hash.split('?')[1]);
     const filter = params.get('missao') || '';
-    const tab = ['documentos', 'pessoas', 'localidades', 'evidencias'].includes(params.get('aba')) ? params.get('aba') : 'anotacoes';
+    const tab = ['documentos', 'pessoas', 'localidades', 'evidencias', 'lixeira'].includes(params.get('aba')) ? params.get('aba') : 'anotacoes';
     document.querySelectorAll('[data-new-work-note]').forEach(button => button.addEventListener('click', () => {
       const missionId = context().missions.some(mission => mission.id === filter) ? filter : filter === 'avulsas' ? '' : selectedMission()?.id || '';
       const id = folder.addNote(missionId);
@@ -160,7 +166,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
       folder.deleteNote(id); dialog.close();
       const next = folderUrl(filter);
       if (location.hash === next) onChange(); else location.hash = next;
-      announce('Anotação excluída.');
+      announce('Anotação enviada para a lixeira.');
     });
   }
   return { dashboard, page, bind, missionTools, reload: () => folder.reload() };

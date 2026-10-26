@@ -1,11 +1,12 @@
 import { cleanEvidenceConnections, evidenceKinds, evidenceNodes, evidencePosition, evidenceRef, validEvidencePosition } from './evidence-board-model.js';
 import { noteIllustrationData, validNoteIllustrations } from './evidence-illustrations.js';
 import { folderTagData, folderTagKinds, validFolderTags } from './work-folder-search.js';
+import { createWorkFolderHistory } from './work-folder-history.js';
 
 export const workFolderKey = 'gms-work-folder-v1';
-export const workFolderCollections = ['notes', 'documents', 'people', 'localities', 'progress', 'connections'];
+export const workFolderCollections = ['notes', 'documents', 'people', 'localities', 'progress', 'connections', 'trash'];
 export const personalMissionStages = ['Preparação', 'Em campo', 'Aguardando apoio', 'Em retirada', 'Retorno concluído'];
-const emptyFolder = () => ({ missionId: '', notes: [], documents: [], people: [], localities: [], progress: [], connections: [] });
+const emptyFolder = () => ({ missionId: '', notes: [], documents: [], people: [], localities: [], progress: [], connections: [], trash: [] });
 const validId = value => typeof value === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(value);
 const validDate = value => typeof value === 'string' && Number.isFinite(Date.parse(value));
 const optionalId = value => value === '' || validId(value);
@@ -41,23 +42,45 @@ function readProgress(value) {
   });
 }
 
+function readNotes(value) {
+  const seen = new Set();
+  return (Array.isArray(value) ? value : []).filter(note => {
+    if (!note || !validId(note.id) || seen.has(note.id) || !validText(note.title, 120) || !validText(note.body, 20000) ||
+      !optionalId(note.missionId) || !validDate(note.createdAt) || !validDate(note.updatedAt)) return false;
+    seen.add(note.id); return true;
+  }).map(entry => {
+    const { id, title, body, missionId, createdAt, updatedAt } = entry;
+    return { id, title, body, missionId, createdAt, updatedAt, ...evidencePosition(entry), ...noteIllustrationData(entry), ...folderTagData(entry) };
+  });
+}
+
+function archivedConnections(value, note) {
+  const state = { notes: [note], documents: [], people: [], localities: [] };
+  const links = (Array.isArray(value) ? value : []).filter(link => link && (link.from === `notes:${note.id}` || link.to === `notes:${note.id}`));
+  for (const link of links) for (const ref of [link.from, link.to]) {
+    const match = typeof ref === 'string' && /^(notes|documents|people|localities):([a-zA-Z0-9_-]{1,100})$/.exec(ref);
+    if (match && !state[match[1]].some(entry => entry.id === match[2])) state[match[1]].push({ id: match[2], missionId: '' });
+  }
+  return cleanEvidenceConnections(links, state);
+}
+
+function readTrash(value) {
+  const seen = new Set();
+  return (Array.isArray(value) ? value : []).flatMap(entry => {
+    const note = readNotes([entry?.note])[0];
+    if (!entry || !validId(entry.id) || seen.has(entry.id) || !note || !validDate(entry.deletedAt) || !validDate(entry.createdAt) || !validDate(entry.updatedAt) || !Array.isArray(entry.connections)) return [];
+    seen.add(entry.id);
+    return [{ id: entry.id, missionId: note.missionId, note, connections: archivedConnections(entry.connections, note), deletedAt: entry.deletedAt, createdAt: entry.createdAt, updatedAt: entry.updatedAt }];
+  });
+}
+
 export function readWorkFolder(storage) {
   try {
     const value = JSON.parse(storage.getItem(workFolderKey));
     if (value?.version !== 1 || !Array.isArray(value.notes)) return emptyFolder();
-    const seen = new Set();
-    const notes = value.notes.filter(note => {
-      if (!note || !validId(note.id) || seen.has(note.id) || typeof note.title !== 'string' ||
-        note.title.length > 120 || typeof note.body !== 'string' || note.body.length > 20000 ||
-        (note.missionId !== '' && !validId(note.missionId)) || !validDate(note.createdAt) || !validDate(note.updatedAt)) return false;
-      seen.add(note.id);
-      return true;
-    }).map(entry => {
-      const { id, title, body, missionId, createdAt, updatedAt } = entry;
-      return { id, title, body, missionId, createdAt, updatedAt, ...evidencePosition(entry), ...noteIllustrationData(entry), ...folderTagData(entry) };
-    });
+    const notes = readNotes(value.notes);
     const state = { missionId: validId(value.missionId) ? value.missionId : '', notes, documents: readEntries(value.documents, 'documents'), people: readEntries(value.people, 'people'), localities: readEntries(value.localities, 'localities'), progress: readProgress(value.progress) };
-    return { ...state, connections: cleanEvidenceConnections(value.connections, state) };
+    return { ...state, connections: cleanEvidenceConnections(value.connections, state), trash: readTrash(value.trash) };
   } catch { return emptyFolder(); }
 }
 
@@ -66,11 +89,15 @@ export function readWorkFolder(storage) {
 export function validateWorkFolderData(value) {
   if (value && value.progress === undefined) value = { ...value, progress: [] };
   if (value && value.connections === undefined) value = { ...value, connections: [] };
+  if (value && value.trash === undefined) value = { ...value, trash: [] };
   if (!value || value.version !== 1 || !optionalId(value.missionId) || workFolderCollections.some(key => !Array.isArray(value[key]))) throw new Error('A cópia da pasta está incompleta ou usa uma versão incompatível.');
   const clean = readWorkFolder({ getItem: () => JSON.stringify(value) });
   if (workFolderCollections.some(key => clean[key].length !== value[key].length)) throw new Error('A cópia contém registros inválidos ou repetidos. Nenhum registro foi importado.');
   if (evidenceKinds.some(kind => value[kind].some(entry => entry.position !== undefined && !validEvidencePosition(entry.position)))) throw new Error('A cópia contém posições inválidas no quadro de evidências.');
-  if (value.notes.some(entry => entry.illustrations !== undefined && !validNoteIllustrations(entry.illustrations))) throw new Error('A cópia contém imagens de anotação inválidas. Escolha até quatro imagens do catálogo.');
+  const allNotes = [...value.notes, ...value.trash.map(entry => entry.note)];
+  if (allNotes.some(entry => entry.position !== undefined && !validEvidencePosition(entry.position))) throw new Error('A cópia contém posições inválidas na lixeira.');
+  if (allNotes.some(entry => entry.illustrations !== undefined && !validNoteIllustrations(entry.illustrations))) throw new Error('A cópia contém imagens de anotação inválidas. Escolha até quatro imagens do catálogo.');
+  if (value.trash.some((entry, index) => entry.connections.length !== clean.trash[index].connections.length || (entry.note.tags !== undefined && !validFolderTags(entry.note.tags)))) throw new Error('A cópia contém registros inválidos na lixeira.');
   if (folderTagKinds.some(kind => value[kind].some(entry => entry.tags !== undefined && !validFolderTags(entry.tags)))) throw new Error('A cópia contém etiquetas inválidas. Use até 8 etiquetas diferentes de 32 caracteres.');
   return clean;
 }
@@ -80,13 +107,23 @@ export function validateWorkFolderData(value) {
 export function createWorkFolder(storage) {
   let state = readWorkFolder(storage);
   let persisted = true;
-  function change(update) {
-    if (persisted) state = readWorkFolder(storage);
+  let batching = false;
+  const history = createWorkFolderHistory(workFolderCollections, update => change(current => {
+    const next = update(current);
+    if (cleanEvidenceConnections(next.connections, next).length !== next.connections.length) throw new Error('Uma evidência desta ação não está mais disponível. As alterações atuais foram preservadas.');
+    return next;
+  }));
+  function persist() {
+    try { storage.setItem(workFolderKey, JSON.stringify({ version: 1, ...state })); persisted = true; }
+    catch { persisted = false; }
+  }
+  function change(update, label = '') {
+    if (persisted && !batching) state = readWorkFolder(storage);
+    const before = state;
     const next = update(state);
     next.connections = cleanEvidenceConnections(next.connections, next);
     state = next;
-    try { storage.setItem(workFolderKey, JSON.stringify({ version: 1, ...next })); persisted = true; }
-    catch { persisted = false; }
+    if (!batching) { persist(); if (label) history.record(before, next, label); }
     return { state, persisted };
   }
   function updateEntry(kind, id, field, value) {
@@ -107,6 +144,15 @@ export function createWorkFolder(storage) {
   return {
     get state() { return state; },
     get persisted() { return persisted; },
+    get undoLabel() { return history.undoLabel; }, get redoLabel() { return history.redoLabel; },
+    undo: history.undo, redo: history.redo,
+    transaction(label, action) {
+      if (batching) return action();
+      if (persisted) state = readWorkFolder(storage);
+      const before = structuredClone(state); batching = true;
+      try { const result = action(); batching = false; persist(); history.record(before, state, label); return result; }
+      catch (error) { state = before; batching = false; throw error; }
+    },
     reload() { if (persisted) state = readWorkFolder(storage); return state; },
     setEntryTags(kind, id, tags) {
       if (!folderTagKinds.includes(kind) || !validFolderTags(tags)) throw new Error('Use até 8 etiquetas diferentes de 32 caracteres.');
@@ -140,7 +186,45 @@ export function createWorkFolder(storage) {
         return { ...current, notes: current.notes.map(note => note.id === id ? { ...note, [field]: value, updatedAt: new Date().toISOString() } : note) };
       });
     },
-    deleteNote(id) { return change(current => ({ ...current, notes: current.notes.filter(note => note.id !== id) })); },
+    deleteNote(id) {
+      return change(current => {
+        const note = current.notes.find(note => note.id === id); if (!note) throw new Error('Esta anotação já foi removida.');
+        const now = new Date().toISOString();
+        const archived = { id: newId(), missionId: note.missionId, note: structuredClone(note), connections: archivedConnections(current.connections, note), deletedAt: now, createdAt: now, updatedAt: now };
+        return { ...current, notes: current.notes.filter(note => note.id !== id), trash: [archived, ...current.trash] };
+      }, 'Enviar anotação para a lixeira');
+    },
+    restoreNote(trashId) {
+      let restoredId; let restoredLinks = 0; let unavailableLinks = 0;
+      change(current => {
+        const item = current.trash.find(entry => entry.id === trashId); if (!item) throw new Error('Esta anotação não está mais na lixeira.');
+        restoredId = current.notes.some(note => note.id === item.note.id) ? newId() : item.note.id;
+        const note = { ...item.note, id: restoredId, updatedAt: new Date().toISOString() };
+        const next = { ...current, notes: [note, ...current.notes], connections: [...current.connections], trash: current.trash.filter(entry => entry.id !== trashId).map(entry => ({ ...entry, connections: [...entry.connections] })) };
+        for (const original of item.connections) {
+          const remap = ref => ref === `notes:${item.note.id}` ? `notes:${restoredId}` : ref;
+          const link = { ...original, from: remap(original.from), to: remap(original.to) };
+          if (cleanEvidenceConnections([link], next).length) {
+            if (!next.connections.some(existing => ['from', 'to', 'label', 'status', 'body'].every(key => existing[key] === link[key]))) {
+              if (next.connections.some(existing => existing.id === link.id)) link.id = newId();
+              next.connections.push(link); restoredLinks++;
+            }
+          } else {
+            const pending = next.trash.find(entry => link.from === `notes:${entry.note.id}` || link.to === `notes:${entry.note.id}`);
+            if (pending) { if (!pending.connections.some(existing => existing.id === link.id)) pending.connections.push(link); }
+            else unavailableLinks++;
+          }
+        }
+        return next;
+      }, 'Restaurar anotação');
+      return { id: restoredId, restoredLinks, unavailableLinks, persisted };
+    },
+    permanentlyDeleteNote(trashId) {
+      let removed;
+      const result = change(current => { removed = current.trash.find(item => item.id === trashId); return { ...current, trash: current.trash.filter(item => item.id !== trashId) }; });
+      if (removed) history.forget({ notes: new Set([removed.note.id]), trash: new Set([removed.id]), connections: new Set(removed.connections.map(link => link.id)) });
+      return result;
+    },
     setNoteIllustrations(id, illustrations) {
       if (!validNoteIllustrations(illustrations)) throw new Error('Escolha até quatro imagens diferentes do catálogo.');
       return change(current => {
@@ -189,7 +273,7 @@ export function createWorkFolder(storage) {
         const node = evidenceNodes(current).find(node => node.ref === ref);
         if (!node) throw new Error('Este registro foi removido em outra aba. Atualize o quadro.');
         return { ...current, [node.kind]: current[node.kind].map(entry => entry.id === node.entry.id ? { ...entry, ...evidencePosition({ position }) } : entry) };
-      });
+      }, 'Mover cartão');
     },
     organizeEvidence(refs) {
       return change(current => {
@@ -200,7 +284,7 @@ export function createWorkFolder(storage) {
           const { position, ...rest } = entry; return rest;
         });
         return next;
-      });
+      }, 'Organizar cartões');
     },
     saveConnection({ id = '', from, to, label, status = 'hipotese', body = '' }) {
       const now = new Date().toISOString();
@@ -211,10 +295,10 @@ export function createWorkFolder(storage) {
         const candidate = { id: nextId, from, to, label: typeof label === 'string' ? label.trim() : label, status, body, createdAt: existing?.createdAt || now, updatedAt: now };
         if (!cleanEvidenceConnections([candidate], current).length) throw new Error('Escolha duas evidências diferentes, descreva a ligação e confira os limites dos campos.');
         return { ...current, connections: [candidate, ...current.connections.filter(link => link.id !== id)] };
-      });
+      }, id ? 'Editar ligação' : 'Criar ligação');
       return nextId;
     },
-    removeConnection(id) { return change(current => ({ ...current, connections: current.connections.filter(link => link.id !== id) })); },
+    removeConnection(id) { return change(current => ({ ...current, connections: current.connections.filter(link => link.id !== id) }), 'Remover ligação'); },
     startProgress(missionId, objectives = []) {
       if (!validId(missionId) || !Array.isArray(objectives) || objectives.length > 100 || !objectives.every(text => validText(text, 2000) && text.trim())) throw new Error('Confira a missão e os objetivos do acompanhamento.');
       let id = newId();
@@ -257,7 +341,10 @@ export function createWorkFolder(storage) {
           const ids = new Set(current[key].map(entry => entry.id));
           const added = [];
           for (const original of incoming[key]) {
-            const entry = key === 'connections' ? { ...original, from: references.get(original.from), to: references.get(original.to) } : original;
+            const entry = key === 'connections' ? { ...original, from: references.get(original.from), to: references.get(original.to) } : key === 'trash' ? { ...original, connections: original.connections.map(link => {
+              const remap = ref => ref === `notes:${original.note.id}` ? ref : references.get(ref) || ref;
+              return { ...link, from: remap(link.from), to: remap(link.to) };
+            }) } : original;
             const signature = content(entry);
             if (knownContent.has(signature)) {
               if (evidenceKinds.includes(key)) references.set(evidenceRef(key, original.id), evidenceRef(key, knownContent.get(signature)));

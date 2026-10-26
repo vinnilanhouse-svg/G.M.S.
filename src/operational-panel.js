@@ -10,6 +10,7 @@ import { getEvidenceIllustration, noteIllustrations } from './evidence-illustrat
 import { bindFolderSearchShortcuts, createWorkFolderSearch, folderSearchShortcut } from './work-folder-search-ui.js';
 import { folderTagsField } from './folder-tags-ui.js';
 import { parseFolderTags } from './work-folder-search.js';
+import { createFieldReports, fieldReportUrl } from './field-reports.js';
 
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const noteTitle = note => note.title.trim() || 'Anotação sem título';
@@ -32,6 +33,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
   const folderSections = createWorkFolderSections({ folder, getRecords, getMissions: () => context().missions, icon, onNotice, onChange, renderTransfer: folderTools });
   const evidenceBoard = createEvidenceBoard({ folder, getRecords, getMissions: () => context().missions, icon, onNotice, onChange, renderTransfer: folderTools });
   const folderTrash = createWorkFolderTrash({ folder, getMissions: () => context().missions, icon, onNotice, onChange, renderTransfer: folderTools });
+  const fieldReports = createFieldReports({ folder, getRecords, getMissions: () => context().missions, icon, onNotice, onChange, storage });
 
   function missionAction(mission) {
     const selected = selectedMission()?.id === mission.id;
@@ -57,13 +59,14 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
   }
 
   function missionTools(mission) {
-    return `<div class="mission-personal-tools"><div>${icon('folder')}<span>Seu acompanhamento</span></div><div class="op-actions">${missionAction(mission)}<a class="op-link" href="${folderUrl(mission.id, '', 'andamento')}">Andamento pessoal ${icon('arrow')}</a><a class="op-link" href="${folderUrl(mission.id)}">Anotações desta missão ${icon('arrow')}</a></div></div>`;
+    return `<div class="mission-personal-tools"><div>${icon('folder')}<span>Seu acompanhamento</span></div><div class="op-actions">${missionAction(mission)}<a class="op-link" href="${folderUrl(mission.id, '', 'andamento')}">Andamento pessoal ${icon('arrow')}</a><a class="op-link" href="${folderUrl(mission.id)}">Anotações desta missão ${icon('arrow')}</a><a class="op-link" href="${fieldReportUrl('', mission.id)}">Montar relatório ${icon('arrow')}</a></div></div>`;
   }
 
   function page(query) {
     folder.reload();
     const params = new URLSearchParams(query);
     const filter = params.get('missao') || '';
+    if (params.get('aba') === 'relatorios') return fieldReports.page(query, filter);
     if (params.get('aba') === 'busca') return folderSearch.page(query);
     if (params.get('aba') === 'lixeira') return folderTrash.page(filter);
     if (params.get('aba') === 'andamento') return missionProgress.page(query);
@@ -86,6 +89,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
 
   function bind() {
     folderTransfer.bind();
+    fieldReports.bind();
     bindFolderNavigation();
     folderTrash.bind();
     missionProgress.bind();

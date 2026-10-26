@@ -1,4 +1,5 @@
 import { cleanEvidenceConnections, evidenceKinds, evidenceNodes, evidencePosition, evidenceRef, validEvidencePosition } from './evidence-board-model.js';
+import { noteIllustrationData, validNoteIllustrations } from './evidence-illustrations.js';
 
 export const workFolderKey = 'gms-work-folder-v1';
 export const workFolderCollections = ['notes', 'documents', 'people', 'localities', 'progress', 'connections'];
@@ -49,7 +50,7 @@ export function readWorkFolder(storage) {
       return true;
     }).map(entry => {
       const { id, title, body, missionId, createdAt, updatedAt } = entry;
-      return { id, title, body, missionId, createdAt, updatedAt, ...evidencePosition(entry) };
+      return { id, title, body, missionId, createdAt, updatedAt, ...evidencePosition(entry), ...noteIllustrationData(entry) };
     });
     const state = { missionId: validId(value.missionId) ? value.missionId : '', notes, documents: readEntries(value.documents, 'documents'), people: readEntries(value.people, 'people'), localities: readEntries(value.localities, 'localities'), progress: readProgress(value.progress) };
     return { ...state, connections: cleanEvidenceConnections(value.connections, state) };
@@ -65,6 +66,7 @@ export function validateWorkFolderData(value) {
   const clean = readWorkFolder({ getItem: () => JSON.stringify(value) });
   if (workFolderCollections.some(key => clean[key].length !== value[key].length)) throw new Error('A cópia contém registros inválidos ou repetidos. Nenhum registro foi importado.');
   if (evidenceKinds.some(kind => value[kind].some(entry => entry.position !== undefined && !validEvidencePosition(entry.position)))) throw new Error('A cópia contém posições inválidas no quadro de evidências.');
+  if (value.notes.some(entry => entry.illustrations !== undefined && !validNoteIllustrations(entry.illustrations))) throw new Error('A cópia contém imagens de anotação inválidas. Escolha até quatro imagens do catálogo.');
   return clean;
 }
 
@@ -105,11 +107,12 @@ export function createWorkFolder(storage) {
       if (missionId !== '' && !validId(missionId)) throw new Error('Missão inválida.');
       return change(current => ({ ...current, missionId }));
     },
-    addNote(missionId = '') {
+    addNote(missionId = '', illustrations = []) {
       if (missionId !== '' && !validId(missionId)) throw new Error('Missão inválida.');
+      if (!validNoteIllustrations(illustrations)) throw new Error('Escolha até quatro imagens diferentes do catálogo.');
       const now = new Date().toISOString();
       const id = newId();
-      change(current => ({ ...current, notes: [{ id, title: '', body: '', missionId, createdAt: now, updatedAt: now }, ...current.notes] }));
+      change(current => ({ ...current, notes: [{ id, title: '', body: '', missionId, createdAt: now, updatedAt: now, ...noteIllustrationData({ illustrations }) }, ...current.notes] }));
       return id;
     },
     updateNote(id, field, value) {
@@ -122,6 +125,17 @@ export function createWorkFolder(storage) {
       });
     },
     deleteNote(id) { return change(current => ({ ...current, notes: current.notes.filter(note => note.id !== id) })); },
+    setNoteIllustrations(id, illustrations) {
+      if (!validNoteIllustrations(illustrations)) throw new Error('Escolha até quatro imagens diferentes do catálogo.');
+      return change(current => {
+        if (!current.notes.some(note => note.id === id)) throw new Error('Esta anotação foi excluída em outra aba. Atualize a pasta.');
+        return { ...current, notes: current.notes.map(note => {
+          if (note.id !== id) return note;
+          const { illustrations: previous, ...rest } = note;
+          return { ...rest, ...noteIllustrationData({ illustrations }), updatedAt: new Date().toISOString() };
+        }) };
+      });
+    },
     addDocument(recordId, missionId = '') {
       if (!validId(recordId) || !optionalId(missionId)) throw new Error('Selecione um documento válido.');
       let id = newId();

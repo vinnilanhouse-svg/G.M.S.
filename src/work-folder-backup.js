@@ -1,5 +1,6 @@
 import { validateWorkFolderData, workFolderCollections } from './work-folder.js';
 import { evidenceConnections, evidenceNodes } from './evidence-board-model.js';
+import { getEvidenceIllustration, noteIllustrations } from './evidence-illustrations.js';
 
 export const workFolderBackupFormat = 'arquivo-gms-pasta-de-trabalho';
 export const maxWorkFolderBackupBytes = 20 * 1024 * 1024;
@@ -47,6 +48,7 @@ export function workFolderReadableText(state, records, { missionFilter = '', exp
     for (const entry of data[key]) {
       lines.push(key === 'documents' ? recordLabel(entry.recordId) : key === 'notes' ? entry.title.trim() || 'Anotação sem título' : entry.name.trim() || (key === 'people' ? 'Pessoa sem nome' : 'Localidade sem nome'));
       lines.push(`Missão: ${missionLabel(entry.missionId)}`);
+      if (key === 'notes' && noteIllustrations(entry).length) lines.push(`Imagens: ${noteIllustrations(entry).map(id => getEvidenceIllustration(id).label).join(' · ')}`);
       if (entry.role) lines.push(`Relação com a investigação: ${entry.role}`);
       if (entry.reference) lines.push(`Referência / coordenadas: ${entry.reference}`);
       if (entry.recordId && key !== 'documents') lines.push(`Ficha vinculada: ${recordLabel(entry.recordId)}`);

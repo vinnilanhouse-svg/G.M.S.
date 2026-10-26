@@ -1,0 +1,58 @@
+.note-artwork { display: block; width: 100%; height: 100%; min-width: 0; object-fit: contain; }
+.note-artwork-map { color: var(--accent); }
+.note-artwork-map .earth-grid { opacity: .3; stroke-width: .8; }
+.note-illustration-strip { display: flex; gap: 8px; flex-wrap: wrap; }
+.note-illustration-tile { display: block; width: 72px; height: 72px; padding: 6px; border: 1px solid #536646; background: #172016; }
+.note-illustration-tile:has(.note-artwork-creature) { padding: 0; }
+.evidence-card-content > .note-illustration-strip { display: flex; flex-direction: row; flex-shrink: 0; flex-wrap: nowrap; gap: 7px; height: 43px; margin: 0 0 7px; overflow: visible; }
+.evidence-card-content .note-illustration-tile { width: 43px; height: 43px; padding: 2px; flex-shrink: 0; }
+.evidence-card-content .note-illustration-tile:has(.note-artwork-creature) { padding: 0; }
+.evidence-card-content.has-note-illustrations > span:not(.note-illustration-strip) { display: none; }
+.evidence-card-content.has-note-illustrations strong { font-size: 16px; line-height: 1.35; }
+.note-illustration-control { margin: 24px 0; padding: 18px; border: 1px solid #536646; background: #1b2519; min-width: 0; }
+.note-illustration-control-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.note-illustration-control-heading > span { color: var(--reading-secondary); font: 14px/1.7 var(--sans); }
+.note-illustration-control-heading small { display: block; color: var(--muted); font: 10px/1.8 var(--mono); }
+.note-illustration-control-heading .op-text-button { font-size: 13px; }
+.note-illustration-control [type="hidden"] { display: none; }
+.note-illustration-empty { font: 13px/1.8 var(--sans); color: var(--muted); margin: 14px 0 0; }
+.note-illustration-empty[hidden] { display: none; }
+.note-illustration-selected { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; margin-top: 18px; }
+.note-illustration-selected:empty { display: none; }
+.note-illustration-choice { display: grid; position: relative; justify-items: center; align-content: start; padding: 12px 8px; border: 1px solid #536646; background: #172016; min-width: 0; }
+.note-illustration-choice > .note-artwork { width: 68px; height: 68px; }
+.note-illustration-choice > span { color: var(--reading-secondary); font: 12px/1.7 var(--sans); text-align: center; overflow-wrap: anywhere; margin-top: 9px; }
+.note-illustration-choice button { position: absolute; top: 2px; right: 2px; border: 0; background: #172016; color: var(--accent); font: 22px/1 var(--sans); width: 28px; height: 28px; cursor: pointer; }
+.note-illustration-dialog { width: min(740px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 28px; overflow-y: auto; border: 1px solid #7e906b; background: #222d1e; color: var(--text); }
+.note-illustration-dialog::backdrop { background: #091006db; }
+.note-illustration-dialog[open] { display: flex; flex-direction: column; }
+.note-illustration-dialog > * { flex-shrink: 0; }
+.note-illustration-dialog h2 { margin: 8px 0 0; font-size: 27px; line-height: 1.5; font-weight: 500; }
+.note-image-help { color: var(--reading-secondary); font-size: 15px; line-height: 1.8; }
+.note-illustration-dialog label { display: block; font-size: 14px; color: var(--reading-secondary); margin: 20px 0 8px; }
+.note-illustration-dialog input[type="search"] { display: block; width: 100%; padding: 11px 12px; border: 1px solid #637651; border-radius: 0; background: #172016; color: var(--text); font: 16px/1.7 var(--sans); }
+.note-illustration-dialog input::placeholder { color: #aabb9b; opacity: 1; }
+.note-image-groups { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; }
+.note-image-groups button { background: #172016; border: 1px solid #637651; color: var(--reading-secondary); font: 13px/1.8 var(--sans); padding: 7px 12px; cursor: pointer; }
+.note-image-groups button[aria-pressed="true"] { background: #34452b; color: var(--text); border-color: var(--accent); }
+.note-image-count { color: var(--muted); font: 11px/1.8 var(--mono); margin: 0 0 14px; }
+.note-image-library { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; align-content: start; flex-shrink: 1; min-height: 100px; max-height: min(42dvh, 400px); overflow-y: auto; padding: 4px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); overscroll-behavior: contain; }
+.note-image-option { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; padding: 12px 6px 10px; min-width: 0; min-height: 118px; border: 1px solid #536646; background: #172016; color: var(--text); font: 12px/1.6 var(--sans); cursor: pointer; }
+.note-image-option > .note-artwork { width: 65px; height: 65px; flex-shrink: 0; }
+.note-image-option > span { display: block; overflow-wrap: anywhere; }
+.note-image-option > b { position: absolute; top: 2px; right: 5px; color: var(--muted); font: 15px/1.4 var(--mono); }
+.note-image-option[aria-pressed="true"] { border: 2px solid var(--accent); padding: 11px 5px 9px; background: #2a3624; }
+.note-image-option[aria-pressed="true"] > b { color: var(--accent); }
+.note-image-library > .note-image-help { grid-column: 1 / -1; padding: 25px 10px; }
+.note-image-feedback { min-height: 20px; color: var(--accent); font: 13px/1.8 var(--sans); margin: 14px 0; }
+.note-image-actions { display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap; padding-top: 15px; border-top: 1px solid var(--line); }
+:is(.note-illustration-control, .note-illustration-dialog) :is(button,input):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 600px) {
+  .note-illustration-dialog { padding: 22px 16px; }
+  .note-illustration-dialog h2 { font-size: 23px; }
+  .note-image-library { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .note-image-option > .note-artwork { width: 58px; height: 58px; }
+  .note-image-option { font-size: 11px; }
+  .note-image-groups button { padding: 7px 10px; }
+  .note-illustration-control { padding: 15px; }
+}

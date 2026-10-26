@@ -35,23 +35,23 @@ function setup(initial = 'on', options = {}) {
   return { sound, storage, data, doc, view, audio, gains, oscillators, tasks, advance, get created() { return created; } };
 }
 
-test('o áudio aguarda interação e o sinal original recebe exatamente 50% de ganho adicional', () => {
-  const env = setup(); env.sound.play('navigation'); assert.equal(env.created, 0);
-  env.sound.unlock(); env.sound.play('navigation');
+test('o áudio das rolagens aguarda interação e preserva o ganho adicional de 50%', () => {
+  const env = setup(); env.sound.play('result'); assert.equal(env.created, 0);
+  env.sound.unlock(); env.sound.play('result');
   assert.equal(env.created, 1); assert.equal(terminalSoundGain, 1.5);
   assert.deepEqual(env.gains[0].gain.events[0], ['set', 1.5, 0]);
   assert.deepEqual(env.oscillators[0].frequency.events[0], ['set', 620, 0]);
-  assert.deepEqual(env.gains[1].gain.events[1], ['linear', .016, .008]);
-  assert.equal(.016 * terminalSoundGain, .024);
-  env.advance(100); assert.equal(env.gains[1].disconnected, true); env.sound.dispose();
+  assert.deepEqual(env.gains[1].gain.events[1], ['linear', .012, .008]);
+  assert.ok(Math.abs(.012 * terminalSoundGain - .018) < Number.EPSILON);
+  env.advance(200); assert.equal(env.gains[1].disconnected, true); env.sound.dispose();
 });
 
 test('som começa desativado, guarda somente a preferência e silencia notas já em andamento', () => {
   const env = setup('off'); env.data.set('gms-agent-name-v1', 'Agente');
-  env.sound.unlock(); env.sound.play('click'); assert.equal(env.created, 0);
-  env.sound.setEnabled(true); env.sound.play('accepted'); assert.equal(env.oscillators.length, 2);
+  env.sound.unlock(); env.sound.play('result'); assert.equal(env.created, 0);
+  env.sound.setEnabled(true); env.sound.play('result'); assert.equal(env.oscillators.length, 2);
   assert.equal(readTerminalSound(env.storage), true);
-  env.sound.setEnabled(false); env.sound.play('click'); env.advance(1000);
+  env.sound.setEnabled(false); env.sound.play('result'); env.advance(1000);
   assert.equal(env.oscillators.length, 2); assert.ok(env.oscillators.every(node => node.disconnected));
   assert.equal(env.data.get(terminalSoundKey), 'off'); assert.equal(env.data.get('gms-agent-name-v1'), 'Agente');
   env.sound.dispose();
@@ -87,14 +87,22 @@ test('sucesso crítico e falha possuem assinaturas sonoras diferentes e áudio i
   env.advance(500); env.sound.play('failure'); const failure = env.oscillators.slice(3).map(node => node.frequency.events[0][1]);
   assert.ok(success[0] < success.at(-1)); assert.ok(failure[0] > failure.at(-1)); env.sound.dispose();
   const unavailable = setup('on', { factory() { throw new Error('Sem áudio'); } });
-  assert.doesNotThrow(() => { unavailable.sound.unlock(); unavailable.sound.play('navigation'); const stop = unavailable.sound.startProcessing(3000); unavailable.advance(500); stop(); unavailable.sound.dispose(); });
+  assert.doesNotThrow(() => { unavailable.sound.unlock(); unavailable.sound.play('result'); const stop = unavailable.sound.startProcessing(3000); unavailable.advance(500); stop(); unavailable.sound.dispose(); });
 });
 
 test('retomar o contexto depois de silenciar não reproduz sinais pendentes antigos', async () => {
   const pending = [];
   const env = setup('on', { factory(audio) { audio.state = 'suspended'; audio.resume = () => new Promise(resolve => pending.push(() => { audio.state = 'running'; resolve(); })); return audio; } });
-  env.sound.unlock(); env.sound.play('navigation'); env.sound.setEnabled(false); env.sound.setEnabled(true);
+  env.sound.unlock(); env.sound.play('result'); env.sound.setEnabled(false); env.sound.setEnabled(true);
   pending.forEach(resolve => resolve()); await Promise.resolve();
   assert.equal(env.oscillators.length, 0);
-  env.sound.play('click'); assert.equal(env.oscillators.length, 1); env.sound.dispose();
+  env.sound.play('result'); assert.equal(env.oscillators.length, 2); env.sound.dispose();
+});
+
+test('navegação, cliques, imagens e credenciais permanecem silenciosos mesmo com o som ativado', () => {
+  const env = setup(); env.sound.unlock();
+  for (const name of ['navigation', 'click', 'open', 'close', 'accepted', 'saved', 'denied']) env.sound.play(name);
+  assert.equal(env.oscillators.length, 0);
+  env.sound.play('result'); assert.equal(env.oscillators.length, 2);
+  env.sound.dispose();
 });

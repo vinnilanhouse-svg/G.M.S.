@@ -5,17 +5,10 @@ export function readTerminalSound(storage) {
   try { return storage.getItem(terminalSoundKey) === 'on'; } catch { return false; }
 }
 
-// Frequência, atraso, duração, amplitude e forma. O ganho mestre aplica +50%
-// ao efeito original de navegação e mantém a mesma proporção nos novos sinais.
+// Sons exclusivos das rolagens. Frequência, atraso, duração, amplitude e forma.
+// O ganho mestre preserva o aumento de volume de 50%.
 const sounds = {
-  navigation: [[620, 0, .075, .016]],
-  click: [[880, 0, .035, .006, 'triangle']],
-  open: [[360, 0, .06, .009], [540, .045, .08, .009]],
-  close: [[540, 0, .05, .008], [360, .035, .06, .008]],
-  accepted: [[660, 0, .075, .014], [990, .07, .1, .014]],
   error: [[420, 0, .09, .012], [260, .08, .11, .012]],
-  saved: [[740, 0, .06, .01], [980, .055, .08, .01]],
-  denied: [[145, 0, .17, .014, 'triangle'], [110, .13, .2, .014, 'triangle']],
   processing: [[220, 0, .16, .008, 'triangle', 660]],
   result: [[620, 0, .075, .012], [930, .07, .11, .012]],
   success: [[660, 0, .08, .012], [880, .08, .14, .012]],
@@ -122,18 +115,8 @@ export function createTerminalSound({ storage, doc = globalThis.document, view =
   const onGesture = event => { if (event.isTrusted) unlock(); };
   const onVisibility = () => { if (!visible()) stopAll(); };
   const onStorage = event => { if (event.key === terminalSoundKey || event.key === null) setEnabled(readTerminalSound(storage), false); };
-  function onClick(event) {
-    if (!event.isTrusted) return;
-    const target = event.target.closest?.('button,a[href],input[type="checkbox"]');
-    if (!target || target.disabled || target.getAttribute('aria-disabled') === 'true' || target.matches('[data-terminal-sound],[data-roll-die],[data-repeat-roll],[data-sheet-check],[data-repeat-agent-check]') || target.closest('[data-credential-form]')) return;
-    if (target.matches('a[href^="#/"]')) return; // A mudança de consulta já possui seu sinal.
-    play(target.matches('[data-save]') ? 'saved' : target.matches('[data-view-image]') ? 'open' : target.matches('[data-close-image-viewer],[data-close-agent-check],[data-close-sheet-import]') ? 'close' : 'click');
-  }
-  const onChange = event => { if (event.isTrusted && event.target.matches?.('select')) play('click'); };
   doc?.addEventListener('pointerdown', onGesture, { capture: true, passive: true });
   doc?.addEventListener('keydown', onGesture, true);
-  doc?.addEventListener('click', onClick, true);
-  doc?.addEventListener('change', onChange, true);
   doc?.addEventListener('visibilitychange', onVisibility);
   view.addEventListener?.('storage', onStorage);
   view.addEventListener?.('pagehide', stopAll);
@@ -145,7 +128,7 @@ export function createTerminalSound({ storage, doc = globalThis.document, view =
       for (const voice of voices) { voice.oscillator.disconnect(); voice.gain.disconnect(); }
       voices.clear();
       doc?.removeEventListener('pointerdown', onGesture, true); doc?.removeEventListener('keydown', onGesture, true);
-      doc?.removeEventListener('click', onClick, true); doc?.removeEventListener('change', onChange, true); doc?.removeEventListener('visibilitychange', onVisibility);
+      doc?.removeEventListener('visibilitychange', onVisibility);
       view.removeEventListener?.('storage', onStorage); view.removeEventListener?.('pagehide', stopAll);
       try { void audio?.close().catch(() => {}); } catch {}
     },

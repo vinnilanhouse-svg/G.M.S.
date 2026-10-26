@@ -1,4 +1,5 @@
 import { validateWorkFolderData, workFolderCollections } from './work-folder.js';
+import { evidenceConnections, evidenceNodes } from './evidence-board-model.js';
 
 export const workFolderBackupFormat = 'arquivo-gms-pasta-de-trabalho';
 export const maxWorkFolderBackupBytes = 20 * 1024 * 1024;
@@ -7,6 +8,7 @@ const byteLength = text => new TextEncoder().encode(text).length;
 export function selectWorkFolderData(state, missionFilter = '') {
   const selected = { version: 1, missionId: missionFilter ? missionFilter === 'avulsas' ? '' : missionFilter : state.missionId };
   for (const key of workFolderCollections) selected[key] = (state[key] || []).filter(entry => !missionFilter || (missionFilter === 'avulsas' ? !entry.missionId : entry.missionId === missionFilter));
+  selected.connections = evidenceConnections(state, missionFilter);
   return { version: 1, ...validateWorkFolderData(selected) };
 }
 
@@ -28,6 +30,7 @@ export function parseWorkFolderBackup(text) {
 export function workFolderCounts(data) {
   const kinds = [['notes', 'anotação', 'anotações'], ['documents', 'documento', 'documentos'], ['people', 'pessoa de interesse', 'pessoas de interesse'], ['localities', 'localidade', 'localidades']];
   if (data.progress?.length) kinds.push(['progress', 'acompanhamento', 'acompanhamentos']);
+  if (data.connections?.length) kinds.push(['connections', 'ligação de evidências', 'ligações de evidências']);
   return kinds.map(([key, one, many]) => `${data[key].length} ${data[key].length === 1 ? one : many}`).join(' · ');
 }
 
@@ -54,6 +57,11 @@ export function workFolderReadableText(state, records, { missionFilter = '', exp
   if (data.progress.length) {
     lines.push('ANDAMENTO PESSOAL', '=================');
     for (const entry of data.progress) lines.push(`Missão: ${missionLabel(entry.missionId)}`, `Etapa pessoal: ${entry.stage}`, `Atualizado em: ${new Date(entry.updatedAt).toLocaleString('pt-BR')}`, '', 'OBJETIVOS', ...entry.objectives.map(item => `[${item.done ? 'x' : ' '}] ${item.text}`), '', 'PENDÊNCIAS', entry.pending || 'Nenhuma pendência registrada.', '', 'RELATÓRIO DE RETORNO — RASCUNHO PESSOAL', entry.returnReport || 'Nenhum rascunho registrado.', '', '—', '');
+  }
+  if (data.connections.length) {
+    const labels = new Map(evidenceNodes(data).map(node => [node.ref, node.kind === 'documents' ? recordLabel(node.entry.recordId) : node.entry.name || node.entry.title || 'Anotação sem título']));
+    lines.push('QUADRO DE EVIDÊNCIAS', '===================', 'Ligações pessoais registradas pelo agente.', '');
+    for (const link of data.connections) lines.push(`${labels.get(link.from)} → ${labels.get(link.to)}`, `Ligação: ${link.label}`, `Situação: ${link.status === 'confirmado' ? 'Confirmada pelo agente' : 'Hipótese'}`, `Missão: ${missionLabel(link.missionId)}`, link.body || 'Sem observações adicionais.', '', '—', '');
   }
   return lines.join('\n');
 }

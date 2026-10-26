@@ -1,7 +1,9 @@
+import { cleanEvidenceConnections, evidenceKinds, evidenceNodes, evidencePosition, evidenceRef, validEvidencePosition } from './evidence-board-model.js';
+
 export const workFolderKey = 'gms-work-folder-v1';
-export const workFolderCollections = ['notes', 'documents', 'people', 'localities', 'progress'];
+export const workFolderCollections = ['notes', 'documents', 'people', 'localities', 'progress', 'connections'];
 export const personalMissionStages = ['Preparação', 'Em campo', 'Aguardando apoio', 'Em retirada', 'Retorno concluído'];
-const emptyFolder = () => ({ missionId: '', notes: [], documents: [], people: [], localities: [], progress: [] });
+const emptyFolder = () => ({ missionId: '', notes: [], documents: [], people: [], localities: [], progress: [], connections: [] });
 const validId = value => typeof value === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(value);
 const validDate = value => typeof value === 'string' && Number.isFinite(Date.parse(value));
 const optionalId = value => value === '' || validId(value);
@@ -17,7 +19,10 @@ function readEntries(value, kind) {
         (kind === 'people' ? validText(entry.role, 160) : validText(entry.reference, 240)))) return false;
     seen.add(entry.id);
     return true;
-  }).map(({ id, recordId, missionId, body, name, role, reference, createdAt, updatedAt }) => ({ id, recordId, missionId, body, ...(kind === 'people' ? { name, role } : kind === 'localities' ? { name, reference } : {}), createdAt, updatedAt }));
+  }).map(entry => {
+    const { id, recordId, missionId, body, name, role, reference, createdAt, updatedAt } = entry;
+    return { id, recordId, missionId, body, ...(kind === 'people' ? { name, role } : kind === 'localities' ? { name, reference } : {}), createdAt, updatedAt, ...evidencePosition(entry) };
+  });
 }
 
 function readProgress(value) {
@@ -42,8 +47,12 @@ export function readWorkFolder(storage) {
         (note.missionId !== '' && !validId(note.missionId)) || !validDate(note.createdAt) || !validDate(note.updatedAt)) return false;
       seen.add(note.id);
       return true;
-    }).map(({ id, title, body, missionId, createdAt, updatedAt }) => ({ id, title, body, missionId, createdAt, updatedAt }));
-    return { missionId: validId(value.missionId) ? value.missionId : '', notes, documents: readEntries(value.documents, 'documents'), people: readEntries(value.people, 'people'), localities: readEntries(value.localities, 'localities'), progress: readProgress(value.progress) };
+    }).map(entry => {
+      const { id, title, body, missionId, createdAt, updatedAt } = entry;
+      return { id, title, body, missionId, createdAt, updatedAt, ...evidencePosition(entry) };
+    });
+    const state = { missionId: validId(value.missionId) ? value.missionId : '', notes, documents: readEntries(value.documents, 'documents'), people: readEntries(value.people, 'people'), localities: readEntries(value.localities, 'localities'), progress: readProgress(value.progress) };
+    return { ...state, connections: cleanEvidenceConnections(value.connections, state) };
   } catch { return emptyFolder(); }
 }
 
@@ -51,9 +60,11 @@ export function readWorkFolder(storage) {
 // A leitura cotidiana continua tolerante a dados antigos do navegador.
 export function validateWorkFolderData(value) {
   if (value && value.progress === undefined) value = { ...value, progress: [] };
+  if (value && value.connections === undefined) value = { ...value, connections: [] };
   if (!value || value.version !== 1 || !optionalId(value.missionId) || workFolderCollections.some(key => !Array.isArray(value[key]))) throw new Error('A cópia da pasta está incompleta ou usa uma versão incompatível.');
   const clean = readWorkFolder({ getItem: () => JSON.stringify(value) });
   if (workFolderCollections.some(key => clean[key].length !== value[key].length)) throw new Error('A cópia contém registros inválidos ou repetidos. Nenhum registro foi importado.');
+  if (evidenceKinds.some(kind => value[kind].some(entry => entry.position !== undefined && !validEvidencePosition(entry.position)))) throw new Error('A cópia contém posições inválidas no quadro de evidências.');
   return clean;
 }
 
@@ -65,6 +76,7 @@ export function createWorkFolder(storage) {
   function change(update) {
     if (persisted) state = readWorkFolder(storage);
     const next = update(state);
+    next.connections = cleanEvidenceConnections(next.connections, next);
     state = next;
     try { storage.setItem(workFolderKey, JSON.stringify({ version: 1, ...next })); persisted = true; }
     catch { persisted = false; }
@@ -141,6 +153,38 @@ export function createWorkFolder(storage) {
     removeDocument(id) { return change(current => ({ ...current, documents: current.documents.filter(entry => entry.id !== id) })); },
     removePerson(id) { return change(current => ({ ...current, people: current.people.filter(entry => entry.id !== id) })); },
     removeLocality(id) { return change(current => ({ ...current, localities: current.localities.filter(entry => entry.id !== id) })); },
+    moveEvidence(ref, position) {
+      if (!validEvidencePosition(position)) throw new Error('Posição inválida no quadro de evidências.');
+      return change(current => {
+        const node = evidenceNodes(current).find(node => node.ref === ref);
+        if (!node) throw new Error('Este registro foi removido em outra aba. Atualize o quadro.');
+        return { ...current, [node.kind]: current[node.kind].map(entry => entry.id === node.entry.id ? { ...entry, ...evidencePosition({ position }) } : entry) };
+      });
+    },
+    organizeEvidence(refs) {
+      return change(current => {
+        const selected = new Set(refs);
+        const next = { ...current };
+        for (const kind of evidenceKinds) next[kind] = current[kind].map(entry => {
+          if (!selected.has(evidenceRef(kind, entry.id))) return entry;
+          const { position, ...rest } = entry; return rest;
+        });
+        return next;
+      });
+    },
+    saveConnection({ id = '', from, to, label, status = 'hipotese', body = '' }) {
+      const now = new Date().toISOString();
+      const nextId = id || newId();
+      change(current => {
+        if (id && !current.connections.some(link => link.id === id)) throw new Error('Esta ligação foi removida em outra aba. Atualize o quadro.');
+        const existing = current.connections.find(link => link.id === id);
+        const candidate = { id: nextId, from, to, label: typeof label === 'string' ? label.trim() : label, status, body, createdAt: existing?.createdAt || now, updatedAt: now };
+        if (!cleanEvidenceConnections([candidate], current).length) throw new Error('Escolha duas evidências diferentes, descreva a ligação e confira os limites dos campos.');
+        return { ...current, connections: [candidate, ...current.connections.filter(link => link.id !== id)] };
+      });
+      return nextId;
+    },
+    removeConnection(id) { return change(current => ({ ...current, connections: current.connections.filter(link => link.id !== id) })); },
     startProgress(missionId, objectives = []) {
       if (!validId(missionId) || !Array.isArray(objectives) || objectives.length > 100 || !objectives.every(text => validText(text, 2000) && text.trim())) throw new Error('Confira a missão e os objetivos do acompanhamento.');
       let id = newId();
@@ -176,17 +220,23 @@ export function createWorkFolder(storage) {
       const counts = { added: 0, copied: 0, skipped: 0 };
       const result = change(current => {
         const next = { ...current, missionId: current.missionId || incoming.missionId };
+        const references = new Map();
         for (const key of workFolderCollections) {
           const content = entry => JSON.stringify(Object.keys(entry).filter(field => field !== 'id').sort().map(field => [field, entry[field]]));
-          const knownContent = new Set(current[key].map(content));
+          const knownContent = new Map(current[key].map(entry => [content(entry), entry.id]));
           const ids = new Set(current[key].map(entry => entry.id));
           const added = [];
-          for (const entry of incoming[key]) {
+          for (const original of incoming[key]) {
+            const entry = key === 'connections' ? { ...original, from: references.get(original.from), to: references.get(original.to) } : original;
             const signature = content(entry);
-            if (knownContent.has(signature)) { counts.skipped++; continue; }
+            if (knownContent.has(signature)) {
+              if (evidenceKinds.includes(key)) references.set(evidenceRef(key, original.id), evidenceRef(key, knownContent.get(signature)));
+              counts.skipped++; continue;
+            }
             let id = entry.id;
             if (ids.has(id)) { do { id = newId(); } while (ids.has(id)); counts.copied++; }
-            added.push({ ...entry, id }); ids.add(id); knownContent.add(signature); counts.added++;
+            added.push({ ...entry, id }); ids.add(id); knownContent.set(signature, id); counts.added++;
+            if (evidenceKinds.includes(key)) references.set(evidenceRef(key, original.id), evidenceRef(key, id));
           }
           next[key] = [...added, ...current[key]];
         }

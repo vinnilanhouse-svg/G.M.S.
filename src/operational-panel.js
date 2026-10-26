@@ -2,6 +2,7 @@ import { createWorkFolder, operationalMissions } from './work-folder.js';
 import { createWorkFolderSections, workFolderTabs, workFolderUrl as folderUrl } from './work-folder-sections.js';
 import { createWorkFolderTransfer } from './work-folder-transfer.js';
 import { createMissionProgress } from './mission-progress.js';
+import { createEvidenceBoard } from './evidence-board.js';
 
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const noteTitle = note => note.title.trim() || 'Anotação sem título';
@@ -20,6 +21,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
   const folderTransfer = createWorkFolderTransfer({ folder, getRecords, icon, onNotice, onChange });
   const missionProgress = createMissionProgress({ folder, getMissions: () => context().missions, icon, renderTransfer: folderTransfer.render, onChange, onNotice });
   const folderSections = createWorkFolderSections({ folder, getRecords, getMissions: () => context().missions, icon, onNotice, onChange, renderTransfer: folderTransfer.render });
+  const evidenceBoard = createEvidenceBoard({ folder, getRecords, getMissions: () => context().missions, icon, onNotice, onChange, renderTransfer: folderTransfer.render });
 
   function missionAction(mission) {
     const selected = selectedMission()?.id === mission.id;
@@ -53,6 +55,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
     const params = new URLSearchParams(query);
     const filter = params.get('missao') || '';
     if (params.get('aba') === 'andamento') return missionProgress.page(query);
+    if (params.get('aba') === 'evidencias') return evidenceBoard.page(filter);
     const sectionPage = folderSections.page(params.get('aba'), filter);
     if (sectionPage) return sectionPage;
     const missions = context().missions;
@@ -72,6 +75,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
   function bind() {
     folderTransfer.bind();
     missionProgress.bind();
+    evidenceBoard.bind();
     document.querySelectorAll('[data-follow-mission]').forEach(button => button.addEventListener('click', () => {
       if (!context().missions.some(mission => mission.id === button.dataset.followMission)) return;
       folder.selectMission(button.dataset.followMission); onChange(); announce('Missão adicionada ao seu acompanhamento.');
@@ -85,7 +89,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
     });
     const params = new URLSearchParams(location.hash.split('?')[1]);
     const filter = params.get('missao') || '';
-    const tab = ['documentos', 'pessoas', 'localidades'].includes(params.get('aba')) ? params.get('aba') : 'anotacoes';
+    const tab = ['documentos', 'pessoas', 'localidades', 'evidencias'].includes(params.get('aba')) ? params.get('aba') : 'anotacoes';
     document.querySelectorAll('[data-new-work-note]').forEach(button => button.addEventListener('click', () => {
       const missionId = context().missions.some(mission => mission.id === filter) ? filter : filter === 'avulsas' ? '' : selectedMission()?.id || '';
       const id = folder.addNote(missionId);

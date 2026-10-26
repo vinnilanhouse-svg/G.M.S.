@@ -46,6 +46,7 @@ const recordSections = { verbete:'conhecimento', documento:'documentos', agente:
 const sectionForRecord = record => record?.collection === 'reservado' ? 'reservado' : recordSections[record?.kind];
 const pageKey = () => current.page === 'missoes' && current.id ? `missoes/${current.id}` : current.page;
 const icons = {
+ connections:'<circle cx="5" cy="6" r="3"/><circle cx="19" cy="7" r="3"/><circle cx="12" cy="19" r="3"/><path d="m8 6 8 1M6 9l5 7m7-6-5 6"/>',
  expand:'<path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/>',
  key:'<circle cx="8" cy="8" r="5"/><path d="m12 12 9 9m-5-5 3-3m-1 5 3-3"/>',
  users:'<circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 5a3 3 0 0 1 0 6M18 15a5 5 0 0 1 3 5"/>',
@@ -117,10 +118,9 @@ function redeemCredential(form) {
  if(!code||!credential){
   feedback.textContent=code?'Código não reconhecido. Confira e tente novamente.':'Digite um código de autorização.';
   feedback.classList.add('error');
-  input.setAttribute('aria-invalid','true');input.focus();terminal.sound.play('error');return;
+  input.setAttribute('aria-invalid','true');input.focus();return;
  }
  input.removeAttribute('aria-invalid');
- terminal.sound.play(credential.effect==='access-denied'?'denied':'accepted');
  if(credential.effect==='change-theme'){
   const persisted=terminalTheme.select(credential.theme);
   input.value='';

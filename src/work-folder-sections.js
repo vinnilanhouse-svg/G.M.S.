@@ -1,3 +1,5 @@
+import { evidenceConnections } from './evidence-board-model.js';
+
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const sections = {
   documentos: { key: 'documents', label: 'Documentos', icon: 'file', add: 'Vincular documento', empty: 'Nenhum documento vinculado.', description: 'Reúna ordens, relatórios e referências do acervo para consultar durante a investigação.' },
@@ -12,7 +14,7 @@ export function workFolderUrl(missionId = '', noteId = '', tab = 'anotacoes') {
 
 export function workFolderTabs(state, filter, tab, icon) {
   const visible = entries => entries.filter(entry => !filter || (filter === 'avulsas' ? !entry.missionId : entry.missionId === filter)).length;
-  return `<nav class="work-folder-tabs" aria-label="Seções da pasta de trabalho">${[['anotacoes', 'Anotações', 'clipboard', 'notes'], ['andamento', 'Andamento pessoal', 'flag', 'progress'], ...Object.entries(sections).map(([id, section]) => [id, section.label, section.icon, section.key])].map(([id, label, symbol, key]) => `<a href="${workFolderUrl(filter, '', id)}" class="${tab === id ? 'selected' : ''}" ${tab === id ? 'aria-current="page"' : ''}>${icon(symbol)}<span>${label}</span><b>${visible(state[key] || [])}</b></a>`).join('')}</nav>`;
+  return `<nav class="work-folder-tabs" aria-label="Seções da pasta de trabalho">${[['anotacoes', 'Anotações', 'clipboard', 'notes'], ['andamento', 'Andamento pessoal', 'flag', 'progress'], ...Object.entries(sections).map(([id, section]) => [id, section.label, section.icon, section.key]), ['evidencias', 'Quadro de evidências', 'connections', 'connections']].map(([id, label, symbol, key]) => `<a href="${workFolderUrl(filter, '', id)}" class="${tab === id ? 'selected' : ''}" ${tab === id ? 'aria-current="page"' : ''}>${icon(symbol)}<span>${label}</span><b>${key === 'connections' ? evidenceConnections(state, filter).length : visible(state[key] || [])}</b></a>`).join('')}</nav>`;
 }
 
 export function createWorkFolderSections({ folder, getRecords, getMissions, icon, onNotice, onChange, renderTransfer }) {
@@ -49,6 +51,8 @@ export function createWorkFolderSections({ folder, getRecords, getMissions, icon
     if (!addDialog) return;
     const tab = document.querySelector('[data-add-folder-entry]').dataset.addFolderEntry;
     const filter = new URLSearchParams(location.hash.split('?')[1]).get('missao') || '';
+    const requested = new URLSearchParams(location.hash.split('?')[1]).get('registro');
+    if (requested) document.getElementById(`folder-entry-${requested}`)?.scrollIntoView({ block: 'center' });
     const addForm = addDialog.querySelector('form');
     document.querySelectorAll('[data-open-folder-add]').forEach(button => button.addEventListener('click', () => addDialog.showModal()));
     addDialog.querySelector('[data-close-folder-add]').addEventListener('click', () => addDialog.close());

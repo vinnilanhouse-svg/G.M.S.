@@ -1,4 +1,5 @@
 // Comentários narrativos do arquivista. Não acrescentam fatos aos acontecimentos.
+const codexFace = '/agent-icons/codex-chibi-face.webp';
 export const codexAnnotations = {
   'missao-sol-velado': {
     text: 'Bashir apresenta uma interpretação para os acontecimentos. A ordem registra o que precisa ser investigado. Preserve essa distinção: uma hipótese bem arquivada ainda é uma hipótese.',
@@ -37,5 +38,5 @@ const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&a
 export function codexAnnotation(record, availableRecords) {
   const note = codexAnnotations[record.id]; if (!note || record.unlisted) return '';
   const references = note.references.map(id => availableRecords.find(item => item.id === id && !item.unlisted)).filter(Boolean);
-  return `<aside class="codex-margin-note" aria-label="Comentário de C.O.D.E.X"><div class="codex-note-heading"><span class="codex-note-symbol" aria-hidden="true">C.X</span><span>C.O.D.E.X<small>NOTA DO ARQUIVISTA</small></span></div><p>${esc(note.text)}</p>${references.length ? `<div class="codex-note-references"><span>LEITURA CRUZADA</span>${references.map(item => `<a href="#/arquivo/${esc(item.id)}">${esc(item.code)} · ${esc(item.title)} ↗</a>`).join('')}</div>` : ''}</aside>`;
+  return `<aside class="codex-margin-note" aria-label="Comentário de C.O.D.E.X"><div class="codex-note-heading"><span class="codex-note-symbol" style="--codex-face:url('${codexFace}')"><img src="${codexFace}" alt="Rosto chibi de C.O.D.E.X" width="48" height="48" loading="lazy" decoding="async"></span><span>C.O.D.E.X<small>NOTA DO ARQUIVISTA</small></span></div><p>${esc(note.text)}</p>${references.length ? `<div class="codex-note-references"><span>LEITURA CRUZADA</span>${references.map(item => `<a href="#/arquivo/${esc(item.id)}">${esc(item.code)} · ${esc(item.title)} ↗</a>`).join('')}</div>` : ''}</aside>`;
 }

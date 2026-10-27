@@ -1,0 +1,91 @@
+/* A pasta usa menos controles simultâneos; os formulários continuam completos. */
+.work-folder > .op-section-heading { margin-bottom: 20px; }
+.work-folder > .op-section-heading .op-kicker { display: none; }
+.work-folder > .op-section-heading h1 { font-size: clamp(29px, 3vw, 38px); line-height: 1.25; margin: 0; }
+.work-folder > .op-section-heading p { font-size: 15px; margin: 9px 0 0; }
+.work-folder .folder-storage-notice { background: none; border: 0; padding: 0; margin: 12px 0 17px; font-size: 12px; line-height: 1.7; }
+.folder-tools-row { display: flex; align-items: center; gap: 18px; margin-bottom: 12px; }
+.folder-tools-row .folder-search-shortcut { flex: 1; margin: 0; max-width: 490px; }
+.folder-tools-row .folder-search-shortcut > div { align-items: center; gap: 10px; border: 1px solid var(--line); padding-left: 12px; background: var(--panel); min-width: 0; max-width: none; }
+.folder-search-shortcut > div > .icon { width: 17px; height: 17px; flex-shrink: 0; color: var(--muted); }
+.folder-tools-row .folder-search-shortcut input[type=search] { border: 0; padding: 9px 0; background: transparent; font-size: 15px; }
+.folder-search-shortcut button { display: grid; place-items: center; width: 44px; align-self: stretch; border: 0; border-left: 1px solid var(--line); background: transparent; color: var(--accent); cursor: pointer; flex-shrink: 0; }
+.folder-options, .folder-action-menu { position: relative; flex-shrink: 0; }
+.folder-tools-row > .folder-options { margin-left: auto; }
+.folder-options > summary, .folder-action-menu > summary { display: flex; align-items: center; gap: 9px; list-style: none; color: var(--reading-secondary); padding: 10px 12px; font-size: 14px; cursor: pointer; border: 1px solid var(--line); min-height: 44px; }
+.folder-options > summary::-webkit-details-marker, .folder-action-menu > summary::-webkit-details-marker { display: none; }
+.folder-options > summary .icon { width: 14px; height: 14px; }
+.folder-action-menu > summary::after { content: '⌄'; margin-left: 6px; }
+.folder-options[open] > summary, .folder-action-menu[open] > summary { color: var(--accent); border-color: var(--accent); }
+.folder-options-menu { position: absolute; right: 0; top: calc(100% + 7px); z-index: 35; width: 235px; max-width: calc(100vw - 42px); padding: 7px; border: 1px solid var(--line); background: var(--panel); box-shadow: 0 10px 30px color-mix(in srgb, var(--bg) 75%, transparent); }
+.folder-options-menu > :is(a,button) { display: flex; align-items: center; width: 100%; gap: 10px; text-align: left; padding: 12px; border: 0; background: transparent; color: var(--text); font: 14px/1.5 var(--sans); cursor: pointer; text-decoration: none; }
+.folder-options-menu > :is(a,button):hover { background: var(--panel-light); color: var(--accent); }
+.folder-options-menu .icon { width: 17px; height: 17px; flex-shrink: 0; }
+.folder-navigation .work-folder-tabs { gap: 8px 28px; margin-bottom: 23px; }
+.folder-navigation .work-folder-tabs a { font-size: 15px; padding: 13px 0; }
+.folder-reference-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: -8px 0 24px; }
+.folder-reference-tabs a { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 13px; color: var(--reading-secondary); border: 1px solid transparent; }
+.folder-reference-tabs a.selected { background: var(--panel-light); border-color: var(--line); color: var(--accent); }
+.folder-reference-tabs a span { font: 11px var(--mono); color: var(--muted); }
+.folder-note-extras, .folder-entry-details, .folder-progress-return, .folder-fold, .folder-search-advanced { border-top: 1px solid var(--line); margin-top: 22px; padding-top: 4px; }
+:is(.folder-note-extras,.folder-entry-details,.folder-progress-return,.folder-fold,.folder-search-advanced) > summary { padding: 14px 0; color: var(--reading-secondary); cursor: pointer; font-size: 14px; }
+.folder-note-extras > div > label { display: block; margin: 18px 0 8px; font-size: 13px; color: var(--reading-secondary); }
+.folder-note-extras > div > select { width: 100%; padding: 11px 12px; font: 16px var(--sans); border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+.folder-layout .note-editor textarea { min-height: 350px; }
+.folder-layout .note-editor > label { margin-top: 18px; }
+.folder-layout .note-editor-heading { margin-bottom: 15px; }
+.folder-layout .note-editor-actions { display: block; padding-top: 0; border: 0; margin-top: 18px; width: fit-content; }
+.note-editor-actions .folder-options-menu { top: auto; bottom: calc(100% + 7px); right: auto; left: 0; }
+.folder-entry-card .folder-entry-preview { margin: 0; color: var(--reading-secondary); font-size: 15px; line-height: 1.85; white-space: pre-wrap; overflow-wrap: anywhere; }
+.folder-entry-card h3 { margin-bottom: 13px; }
+.folder-entry-card { padding: 22px; }
+.folder-entry-details { margin-top: 15px; }
+.folder-content-title { font-size: 25px; font-weight: 500; margin: 0 0 20px; }
+.field-reports .report-toolbar { border: 0; border-bottom: 1px solid var(--line); padding: 0 0 16px; gap: 14px; }
+.report-toolbar .folder-action-menu { margin-left: auto; }
+.report-basics { margin: 23px 0; }
+.report-part { margin: 12px 0; border: 1px solid var(--line); background: var(--panel); padding: 0 18px; }
+.report-part > summary { display: flex; align-items: center; gap: 12px; padding: 16px 0; color: var(--text); cursor: pointer; font-size: 15px; list-style: none; }
+.report-part > summary::-webkit-details-marker { display: none; }
+.report-part > summary::before { content: '+'; color: var(--accent); font: 18px var(--mono); flex-shrink: 0; }
+.report-part[open] > summary::before { content: '−'; }
+.report-part > summary > small { margin-left: auto; font: 10px/1.6 var(--mono); color: var(--muted); flex-shrink: 0; }
+.report-part > .report-field > label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.report-part > .report-field { margin-top: 6px; }
+.field-report-editor .report-identification > fieldset { margin: 0 0 18px; padding: 0; border: 0; }
+.report-identification .report-field > label { position: static; width: auto; height: auto; clip-path: none; white-space: normal; }
+.work-folder .evidence-toolbox { width: 100%; }
+.work-folder .evidence-toolbox-button { display: inline-flex; border: 0; background: transparent; color: var(--accent); font: 13px/1.8 var(--sans); padding: 7px 0; cursor: pointer; }
+.work-folder .evidence-toolbox-content { display: none; padding: 12px 0; }
+.work-folder .evidence-toolbox.is-open .evidence-toolbox-content { display: flex; }
+.evidence-relations > summary { display: flex; gap: 12px; align-items: center; }
+.evidence-relations > summary span { font: 11px var(--mono); padding: 2px 7px; border: 1px solid var(--line); }
+.evidence-relations > section > .op-section-heading { display: none; }
+.folder-mobile-notes, .folder-mobile-reports { display: none; }
+.folder-mission-filter { margin-bottom: 15px; }
+.folder-mission-filter > summary { cursor: pointer; font-size: 13px; color: var(--reading-secondary); padding: 4px 0 10px; }
+.folder-mission-filter > summary span { color: var(--accent); }
+.folder-mission-filter > label { display: block; margin: 8px 0; font-size: 12px; color: var(--muted); }
+.work-folder :is(summary,a,button,input,select,textarea):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media(max-width:940px) {
+  .folder-mobile-notes, .folder-mobile-reports { display: block; }
+  .folder-index .folder-notes, .folder-index .folder-count, .folder-index .folder-saved-link, .report-index > nav { display: none; }
+  .folder-mobile-notes label, .folder-mobile-reports label { display: block; font-size: 13px; color: var(--reading-secondary); margin: 16px 0 8px; }
+  .folder-mobile-notes select, .folder-mobile-reports select { display: block; width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 16px/1.5 var(--sans); }
+  .report-workspace { gap: 22px; grid-template-columns: 1fr; }
+}
+@media(max-width:700px) {
+  .folder-tools-row { gap: 9px; }
+  .folder-tools-row .folder-search-shortcut { flex-direction: row; min-width: 0; }
+  .folder-tools-row .folder-search-shortcut > div { width: 100%; }
+  .folder-tools-row .folder-search-shortcut input[type=search] { font-size: 16px; min-width: 0; }
+  .folder-options > summary { padding: 9px 8px; font-size: 12px; gap: 3px; }
+  .folder-reference-tabs { display: none; }
+  .folder-layout .note-editor textarea { min-height: 260px; }
+  .folder-layout .note-editor { padding: 18px; }
+  .work-folder .folder-section-heading p { font-size: 14px; }
+  .report-toolbar .folder-action-menu { margin-left: 0; }
+  .report-part { padding: 0 13px; }
+  .report-part > summary { font-size: 14px; }
+  .report-part > summary > small { font-size: 9px; }
+}

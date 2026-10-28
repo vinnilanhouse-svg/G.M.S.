@@ -1,5 +1,7 @@
 # Arquivo GMS
 
+Ideias escolhidas para implementar depois estão em [IDEIAS.md](IDEIAS.md).
+
 Arquivo institucional navegável da **Global Monster Security**, em português brasileiro. Interface responsiva em JavaScript e CSS, com Vite. O editor permite salvar textos neste navegador sem banco de dados. Para publicar as mudanças para todos, a administração compartilhada usa uma função no Vercel e Upstash Redis.
 
 ## Executar

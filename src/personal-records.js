@@ -18,7 +18,7 @@ export function createPersonalRecords(key, validate, storage) {
       });
     } catch { return []; }
   }
-  function reload() { if (persisted) items = read(); return structuredClone(items); }
+  function reload(force = false) { if (force) persisted = true; if (persisted) items = read(); return structuredClone(items); }
   function write(next) {
     items = next;
     try { storage.setItem(key, JSON.stringify({ version: 1, items })); persisted = true; } catch { persisted = false; }

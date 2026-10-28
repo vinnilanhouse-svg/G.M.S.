@@ -4,14 +4,14 @@ import { readAgentSheet } from './agent-sheet-model.js';
 import logoUrl from './assets/gms-logo.png';
 import './personal-credential.css';
 
-export function createPersonalCredential({ getAgentName, icon, storage }) {
+export function createPersonalCredential({ getAgentName, icon, storage, onNameChange = () => '' }) {
   if (!storage) try { storage = globalThis.localStorage; } catch {}
   const store = createPersonalRecords(personalCredentialKey, validatePersonalCredential, storage);
   let current, imageEpoch = 0, drawingEpoch = 0;
   const status = () => store.persisted ? 'Credencial salva neste navegador.' : 'Credencial apenas nesta sessão. Exporte uma cópia antes de sair; o navegador não permitiu salvar.';
   function page() {
     current = store.reload()[0] || store.add(newPersonalCredential(readAgentSheet(storage).fields, getAgentName()));
-    return `<section class="personal-credential" aria-labelledby="personal-credential-title"><div class="op-section-heading"><div><span class="op-kicker">IDENTIFICAÇÃO FUNCIONAL</span><h1 id="personal-credential-title">Minha credencial</h1><p>O seu registro de identificação na G.M.S.</p></div><a href="#/minha-ficha" class="op-link">Consultar minha ficha ${icon('arrow')}</a></div><div class="credential-personal-layout"><div><div class="credential-art" role="img" aria-label="Credencial pessoal da G.M.S." aria-busy="true"><p>Preparando credencial…</p></div><div class="op-actions credential-downloads"><button type="button" class="op-button" data-credential-png>Exportar imagem PNG</button><button type="button" class="op-button" data-credential-pdf>Exportar PDF</button></div><p class="op-local-note">Identificação narrativa pessoal. Não libera arquivos nem altera seu nome de acesso ao terminal.</p></div><form class="personal-credential-editor"><div class="op-actions"><button type="button" class="op-text-button" data-credential-from-sheet>Preencher com minha ficha</button></div>${Object.entries(credentialFields).filter(([key]) => key !== 'photo').map(([key, [label, max]]) => `<label for="credential-personal-${key}">${label}</label><input id="credential-personal-${key}" name="${key}" type="${key === 'issued' ? 'date' : 'text'}" value="${esc(current[key])}" maxlength="${max}">`).join('')}<label for="credential-personal-photo">Retrato do agente</label><input id="credential-personal-photo" type="file" accept="image/png,image/jpeg,image/webp"><p class="op-local-note">PNG, JPG ou WebP, até 8 MB. A imagem fica apenas neste navegador.</p><button type="button" class="op-text-button" data-credential-remove-photo ${current.photo ? '' : 'disabled'}>Remover retrato</button><p role="status" class="personal-save-status" data-personal-credential-status>${status()}</p></form></div></section>`;
+    return `<section class="personal-credential" aria-labelledby="personal-credential-title"><div class="op-section-heading"><div><span class="op-kicker">IDENTIFICAÇÃO FUNCIONAL</span><h1 id="personal-credential-title">Minha credencial</h1><p>O seu registro de identificação na G.M.S.</p></div><a href="#/minha-ficha" class="op-link">Consultar minha ficha ${icon('arrow')}</a></div><div class="credential-personal-layout"><div><div class="credential-art" role="img" aria-label="Credencial pessoal da G.M.S." aria-busy="true"><p>Preparando credencial…</p></div><div class="op-actions credential-downloads"><button type="button" class="op-button" data-credential-png>Exportar imagem PNG</button><button type="button" class="op-button" data-credential-pdf>Exportar PDF</button></div><p class="op-local-note">Identificação narrativa pessoal. Configure a sincronização do nome no seu perfil.</p></div><form class="personal-credential-editor"><div class="op-actions"><button type="button" class="op-text-button" data-credential-from-sheet>Preencher com minha ficha</button></div>${Object.entries(credentialFields).filter(([key]) => key !== 'photo').map(([key, [label, max]]) => `<label for="credential-personal-${key}">${label}</label><input id="credential-personal-${key}" name="${key}" type="${key === 'issued' ? 'date' : 'text'}" value="${esc(current[key])}" maxlength="${max}">`).join('')}<label for="credential-personal-photo">Retrato do agente</label><input id="credential-personal-photo" type="file" accept="image/png,image/jpeg,image/webp"><p class="op-local-note">PNG, JPG ou WebP, até 8 MB. A imagem fica apenas neste navegador.</p><button type="button" class="op-text-button" data-credential-remove-photo ${current.photo ? '' : 'disabled'}>Remover retrato</button><p role="status" class="personal-save-status" data-personal-credential-status>${status()}</p></form></div></section>`;
   }
   function bind() {
     const root = document.querySelector('.personal-credential'); if (!root) return;
@@ -39,11 +39,17 @@ export function createPersonalCredential({ getAgentName, icon, storage }) {
       try { update({ [input.name]: input.value }); invalid.delete(input.name); input.removeAttribute('aria-invalid'); }
       catch (error) { invalid.add(input.name); input.setAttribute('aria-invalid', 'true'); controls.forEach(button => { button.disabled = true; }); say(error.message, true); }
     }));
+    root.querySelector('[name="name"]').addEventListener('blur', event => {
+      if (invalid.has('name')) return;
+      const warning = onNameChange(current.name);
+      current = store.reload()[0] || current; base.name = current.name; event.target.value = current.name;
+      say(warning || status(), Boolean(warning) || !store.persisted); void draw();
+    });
     root.querySelector('[data-credential-from-sheet]').addEventListener('click', () => {
       try {
         const fields = readAgentSheet(storage).fields;
         const patch = { name: (fields.nome || getAgentName()).slice(0, 100), species: fields.especie === '-' ? '' : fields.especie, role: (fields.cargo || current.role).slice(0, 100) };
-        update(patch); for (const key of Object.keys(patch)) { root.querySelector(`[name="${key}"]`).value = current[key]; invalid.delete(key); root.querySelector(`[name="${key}"]`).removeAttribute('aria-invalid'); }
+        update(patch); const warning = onNameChange(current.name); current = store.reload()[0] || current; base.name = current.name; if (warning) say(warning, true); for (const key of Object.keys(patch)) { root.querySelector(`[name="${key}"]`).value = current[key]; invalid.delete(key); root.querySelector(`[name="${key}"]`).removeAttribute('aria-invalid'); }
       } catch (error) { say(error.message, true); }
     });
     root.querySelector('#credential-personal-photo').addEventListener('change', async event => {
@@ -65,5 +71,5 @@ export function createPersonalCredential({ getAgentName, icon, storage }) {
     });
     void draw();
   }
-  return { page, bind };
+  return { page, bind, snapshot: () => store.reload()[0] || null, reload: force => store.reload(force) };
 }

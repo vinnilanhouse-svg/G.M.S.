@@ -12,6 +12,7 @@ import { bindFolderSearchShortcuts, createWorkFolderSearch, folderSearchShortcut
 import { folderTagsField } from './folder-tags-ui.js';
 import { parseFolderTags } from './work-folder-search.js';
 import { createFieldReports, fieldReportUrl } from './field-reports.js';
+import { createMissionWorkspace } from './mission-workspace.js';
 
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const noteTitle = note => note.title.trim() || 'Anotação sem título';
@@ -35,6 +36,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
   const evidenceBoard = createEvidenceBoard({ folder, getRecords, getMissions: () => context().missions, icon, onNotice, onChange, renderTransfer: folderTools });
   const folderTrash = createWorkFolderTrash({ folder, getMissions: () => context().missions, icon, onNotice, onChange, renderTransfer: folderTools });
   const fieldReports = createFieldReports({ folder, getRecords, getMissions: () => context().missions, icon, onNotice, onChange, storage, renderTransfer: folderTools });
+  const missionWorkspace = createMissionWorkspace({ folder, getRecords, reports: fieldReports, icon, onChange, onNotice });
 
   function missionAction(mission) {
     const selected = selectedMission()?.id === mission.id;
@@ -54,7 +56,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
         const team = item.profile?.find(field => field.label === 'Equipe');
         return `<article class="op-mission ${item.status === 'Contato perdido' ? 'op-mission-alert' : ''}"><div class="op-card-meta"><span>${esc(item.code)}</span>${status(item)}</div><h3><a href="#/arquivo/${esc(item.id)}">${esc(item.title)}</a></h3>${team ? `<p class="op-team">Equipe ${esc(team.value)}</p>` : ''}<p>${esc(item.summary)}</p><div class="op-actions"><a class="op-link" href="#/arquivo/${esc(item.id)}">Consultar ordem ${icon('arrow')}</a>${missionAction(item)}</div></article>`;
       }).join('') : '<div class="op-empty"><h3>Nenhuma operação aberta</h3><p>As ordens anteriores continuam disponíveis no arquivo de missões.</p></div>'}</div>
-      <aside class="my-mission" aria-labelledby="my-mission-title"><span class="op-kicker">ACOMPANHAMENTO PESSOAL</span><h3 id="my-mission-title">Sua missão</h3>${mission ? `<div class="op-card-meta"><span>${esc(mission.code)}</span>${status(mission)}</div><h4><a href="#/arquivo/${esc(mission.id)}">${esc(mission.title)}</a></h4><p>${esc(mission.summary)}</p><div class="my-mission-links"><a href="#/arquivo/${esc(mission.id)}">${icon('flag')}Ordem de missão ${icon('arrow')}</a><a href="#/missoes/relatorios?missao=${encodeURIComponent(mission.id)}">${icon('clipboard')}Relatórios ${icon('arrow')}</a><a href="${folderUrl(mission.id)}">${icon('folder')}Anotações da missão <span>${missionNotes.length}</span></a></div>${missionProgress.summary(mission.id)}` : `<div class="my-mission-empty">${icon('flag')}<p>Nenhuma missão em acompanhamento.</p><p>Escolha a operação que está acompanhando para reunir seus documentos e anotações aqui.</p></div>`}<label for="personal-mission">${mission ? 'Trocar missão' : 'Selecionar missão'}</label><select id="personal-mission" data-personal-mission>${options(mission?.id || '')}</select>${mission ? '<button type="button" class="op-text-button" data-unfollow-mission>Remover do acompanhamento</button>' : ''}<p class="op-local-note">Sua seleção fica salva neste navegador.</p></aside></div>
+      <aside class="my-mission" aria-labelledby="my-mission-title"><span class="op-kicker">ACOMPANHAMENTO PESSOAL</span><h3 id="my-mission-title">Sua missão</h3>${mission ? `<div class="op-card-meta"><span>${esc(mission.code)}</span>${status(mission)}</div><h4><a href="#/arquivo/${esc(mission.id)}">${esc(mission.title)}</a></h4><p>${esc(mission.summary)}</p><a class="op-button continue-mission" href="${missionWorkspace.currentUrl()}">Continuar minha missão ${icon('arrow')}</a><div class="my-mission-links"><a href="#/arquivo/${esc(mission.id)}">${icon('flag')}Ordem de missão ${icon('arrow')}</a><a href="#/missoes/relatorios?missao=${encodeURIComponent(mission.id)}">${icon('clipboard')}Relatórios ${icon('arrow')}</a><a href="${folderUrl(mission.id)}">${icon('folder')}Anotações da missão <span>${missionNotes.length}</span></a></div>${missionProgress.summary(mission.id)}` : `<div class="my-mission-empty">${icon('flag')}<p>Nenhuma missão em acompanhamento.</p><p>Escolha a operação que está acompanhando para reunir seus documentos e anotações aqui.</p></div>`}<label for="personal-mission">${mission ? 'Trocar missão' : 'Selecionar missão'}</label><select id="personal-mission" data-personal-mission>${options(mission?.id || '')}</select>${mission ? '<button type="button" class="op-text-button" data-unfollow-mission>Remover do acompanhamento</button>' : ''}<p class="op-local-note">Sua seleção fica salva neste navegador.</p></aside></div>
     </section>
     <section class="work-folder-preview" aria-labelledby="folder-preview-title"><div class="op-section-heading"><div><span class="op-kicker">CADERNO PESSOAL</span><h2 id="folder-preview-title">Pasta de trabalho</h2></div><a class="op-link" href="${folderUrl()}">Abrir pasta ${icon('arrow')}</a></div><div class="folder-preview-content"><div><p>Observações de campo, pistas e perguntas para a próxima etapa.</p>${notes.length ? `<ul>${notes.slice(0, 3).map(note => `<li><a href="${folderUrl('', note.id)}">${icon('file')}<span>${esc(noteTitle(note))}</span>${icon('arrow')}</a></li>`).join('')}</ul>` : '<p class="op-local-note">Nenhuma anotação registrada. Seu caderno começa aqui.</p>'}</div><button type="button" class="op-button" data-new-work-note>${icon('file')}Nova anotação</button></div><p class="op-local-note">${folder.state.notes.length} ${folder.state.notes.length === 1 ? 'anotação' : 'anotações'} · Caderno pessoal salvo neste navegador.</p></section>`;
   }
@@ -90,6 +92,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
 
   function bind() {
     folderTransfer.bind();
+    missionWorkspace.bind();
     fieldReports.bind();
     bindFolderNavigation();
     folderTrash.bind();
@@ -176,5 +179,5 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
       announce('Anotação enviada para a lixeira.');
     });
   }
-  return { dashboard, page, bind, missionTools, reload: () => folder.reload() };
+  return { dashboard, page, bind, missionTools, missionPage: missionWorkspace.page, contextBar: missionWorkspace.contextBar, currentMissionUrl: missionWorkspace.currentUrl, folderLink: missionWorkspace.folderLink, selectedMission: missionWorkspace.selected, snapshot: () => ({ folder: { version: 1, ...structuredClone(folder.reload()) }, reports: fieldReports.snapshot() }), reload: force => { folder.reload(force); fieldReports.reload(force); } };
 }

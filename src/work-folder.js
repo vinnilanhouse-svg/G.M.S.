@@ -153,7 +153,7 @@ export function createWorkFolder(storage) {
       try { const result = action(); batching = false; persist(); history.record(before, state, label); return result; }
       catch (error) { state = before; batching = false; throw error; }
     },
-    reload() { if (persisted) state = readWorkFolder(storage); return state; },
+    reload(force = false) { if (force) { persisted = true; history.clear(); } if (persisted) state = readWorkFolder(storage); return state; },
     setEntryTags(kind, id, tags) {
       if (!folderTagKinds.includes(kind) || !validFolderTags(tags)) throw new Error('Use até 8 etiquetas diferentes de 32 caracteres.');
       return change(current => {

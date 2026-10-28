@@ -297,3 +297,27 @@ A navegação da pasta está agrupada em **Anotações**, **Quadro**, **Referên
 As anotações abrem com título e texto; missão, imagens e etiquetas ficam em **Imagens e organização**, e download/exclusão em **Opções da anotação**. Referências mostram o resumo do registro antes do formulário **Editar registro**. Os links diretos para registros e os itens recém-adicionados abrem o editor correspondente. No celular, seletores de anotação e relatório substituem listas longas.
 
 Nos relatórios, título, autoria e relato ficam visíveis; identificação, classificação, assinatura e outras seções abrem conforme necessário. Acrescentar fontes da pasta abre a seção de destino. No quadro, exibição, histórico, zoom e exportação ficam em **Exibição e ferramentas**; a lista de ligações é recolhível. Etiquetas e rascunho de retorno também ficam recolhidos no andamento pessoal. São mudanças de apresentação: chaves de armazenamento, arquivos importados, vínculos, textos completos e formatos de exportação permanecem compatíveis.
+
+## Perfil, missão atual e backup completo
+
+O menu tem três grupos: **Consultar**, **Meu agente** e **Meu trabalho**. Seções do acervo sem registros ficam em **Outros arquivos**, conservando suas URLs. O painel inicial mostra atalhos para as coleções preenchidas. No celular, três atalhos fixos abrem missão, ficha de campo e anotações da missão atual; eles são recolhidos enquanto há uma janela aberta ou um campo em edição.
+
+| Entrada | Uso |
+| --- | --- |
+| `#/meu-agente` | Perfil com os nomes de acesso, da ficha e da credencial |
+| `#/minha-ficha?aba=campo` | Recursos atuais, testes, habilidades, ataques e rolagens |
+| `#/minha-ficha` | Ficha completa, com os campos e a exportação do PDF original |
+| `#/minha-missao` | Missão em acompanhamento: ordem, objetivos, anotações e relatórios |
+| `#/salvar-meus-dados` | Backup completo dos dados pessoais |
+
+O perfil permite escolher **Usar esse nome no acesso, na ficha e na credencial**. Ao salvar com a opção ativada, os três nomes são atualizados; alterações posteriores de nome na ficha ou credencial são sincronizadas ao sair do campo. A importação individual da ficha também respeita essa preferência. Desativar a opção conserva identidades independentes. A preferência fica em `gms-agent-profile-v1`, com `syncName`. A sincronização altera somente os nomes: atributos, habilidades, história, espécie e demais dados permanecem sob seus próprios controles. A escrita verifica alterações concorrentes e reverte gravações parciais em caso de falha.
+
+**Continuar missão** reúne a ordem institucional, os objetivos pessoais, notas da pasta e relatórios do acervo e do agente. A seleção usa a mesma `missionId` do painel operacional. O acompanhamento de objetivos e etapas continua pessoal; não altera a situação oficial da missão. Novas anotações e relatórios criados nessa área já recebem o vínculo da missão. A barra de contexto e os atalhos da pasta acompanham a operação selecionada. Links diretos aceitam `#/minha-missao?missao=ID&aba=ordem|objetivos|anotacoes|relatorios`.
+
+A **visão de campo** usa a mesma ficha e o mesmo motor de rolagens. Editar Vida ou Essência/Energia atualiza os campos originais; os máximos continuam calculados pelas fórmulas existentes. Atributos e perícias disparam os mesmos testes. Habilidades e ataques apresentam os dados preenchidos na ficha completa. O PDF fornecido, as opções e os cálculos do sistema não são reconstruídos nem substituídos.
+
+O backup completo é um JSON com `format: arquivo-gms-dados-pessoais`, `version: 1`, limitado a **32 MB**. Inclui identidade, preferência de sincronização, ficha, credencial com retrato, missão selecionada, todas as coleções da pasta e sua lixeira, posições e ligações do quadro, relatórios pessoais, grifos e comentários, arquivos salvos, paleta e preferência de som. **Credenciais de consulta, sessões administrativas, edições do acervo e códigos secretos não integram essa cópia.** O exportador consulta também os rascunhos mantidos em memória pelos componentes quando o navegador recusou armazenamento.
+
+A importação valida a cópia inteira antes de gravar. Notas e registros são mesclados; versões conflitantes viram cópias, com remapeamento de ligações. Por padrão, preserva identificação, ficha e credencial já preenchidas; **Restaurar os dados da cópia** também restaura esses dados e as preferências de aparência e som. A gravação é revertida se alguma parte falhar. **Desfazer última importação desta sessão** retorna aos dados anteriores, incluindo rascunhos que estavam em memória, desde que os registros não tenham mudado depois. Exportações e importações individuais anteriores continuam disponíveis em cada seção. Os dados permanecem locais ao navegador; transferir entre dispositivos é feito pelo arquivo de backup.
+
+Implementação: `src/agent-profile-model.js` e `src/agent-profile.js` (identificação), `src/mission-workspace.js` (missão), `src/personal-backup-model.js` e `src/personal-backup.js` (backup), `src/personal-storage.js` (escrita com recuperação) e `src/workspace-experience.css` (navegação e apresentação). A visão de campo compartilha os componentes de `src/agent-sheet.js`.

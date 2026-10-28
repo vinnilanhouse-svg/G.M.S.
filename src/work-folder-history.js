@@ -54,6 +54,7 @@ export function createWorkFolderHistory(collections, apply) {
     from.pop(); to.push(command); return true;
   }
   return {
+    clear() { undo.length = 0; redo.length = 0; },
     record, undo: () => move(undo, redo, true), redo: () => move(redo, undo, false),
     get undoLabel() { return undo.at(-1)?.label || ''; }, get redoLabel() { return redo.at(-1)?.label || ''; },
     forget(ids) {

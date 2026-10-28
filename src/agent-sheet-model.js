@@ -77,7 +77,7 @@ export function createAgentSheetStore(storage) {
   return {
     get state() { return state; },
     get persisted() { return persisted; },
-    reload() { if (persisted) state = readAgentSheet(storage); return state; },
+    reload(force = false) { if (force) persisted = true; if (persisted) state = readAgentSheet(storage); return state; },
     updateField(name, value) {
       const valid = validateAgentSheetValue(name, value);
       const current = persisted ? readAgentSheet(storage) : state;

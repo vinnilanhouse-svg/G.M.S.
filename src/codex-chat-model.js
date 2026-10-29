@@ -1,5 +1,5 @@
 // Consulta local: respostas preparadas e trechos do índice, sem geração de lore.
-import { codexSocialReply, stripCodexCourtesy } from './codex-small-talk.js';
+import { codexSocialReply, stripCodexCourtesy, personalizeCodexText } from './codex-small-talk.js';
 const link = (title, href) => ({ title, href });
 const sheet = link('Abrir minha ficha', '#/minha-ficha');
 const folder = link('Abrir pasta de trabalho', '#/pasta-de-trabalho?aba=anotacoes');
@@ -94,7 +94,7 @@ export const codexHelpTopics = [
 ];
 
 export const codexSuggestions = ['Como exporto minha ficha?', 'Relatório do Bashir', 'Espécies', 'Como salvo todos os meus dados?'];
-export const codexGreeting = 'Olá, agente! Sou C.O.D.E.X. Bom ter você por aqui. Posso encontrar registros e ajudar com este terminal. Por onde começamos?';
+export const codexGreeting = 'Olá, {agente}! Sou C.O.D.E.X. Bom ter você por aqui. Posso encontrar registros e ajudar com este terminal. Por onde começamos?';
 export const codexQueryLimit = 240;
 
 export function normalizeCodexQuery(value) {
@@ -151,16 +151,16 @@ export function searchCodexRecords(query, records = []) {
   return { total: candidates.length, results: candidates.slice(0, 5).map(({ score, ...result }) => result) };
 }
 
-export function answerCodex(value, records = []) {
+export function answerCodex(value, records = [], options = {}) {
   const query = String(value ?? '').trim();
   if (!query) return { type: 'help', text: 'Informe um nome, código, assunto ou dúvida sobre o terminal.', links: [] };
   if (query.length > codexQueryLimit) return { type: 'help', text: `Use uma consulta de até ${codexQueryLimit} caracteres. Um nome, código ou pergunta curta é suficiente.`, links: [] };
   const normalized = normalizeCodexQuery(query);
-  const social = codexSocialReply(normalized);
+  const social = codexSocialReply(normalized, options);
   if (social) return social;
   const lookup = stripCodexCourtesy(normalized);
   if (/^(?:ajuda|menu|o que voce faz|o que vc faz)$/.test(lookup)) {
-    return { type: 'help', text: codexGreeting, links: [link('Consultar espécies', '#/conhecimento'), link('Consultar agentes', '#/agentes'), link('Consultar missões', '#/missoes')] };
+    return { type: 'help', text: personalizeCodexText(codexGreeting, options.agentName), links: [link('Consultar espécies', '#/conhecimento'), link('Consultar agentes', '#/agentes'), link('Consultar missões', '#/missoes')] };
   }
   const topic = codexHelpTopics.find(item => item.matches(lookup));
   if (topic) return { type: 'help', topic: topic.id, text: topic.text, links: topic.links };

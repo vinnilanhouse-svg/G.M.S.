@@ -1,10 +1,11 @@
 import { answerCodex, codexGreeting, codexSuggestions, codexQueryLimit } from './codex-chat-model.js';
+import { createCodexResponsePicker, personalizeCodexText } from './codex-small-talk.js';
 import './codex-chat.css';
 
 const face = '/agent-icons/codex-chibi-face.webp';
 const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>';
 
-export function createCodexChat({ getRecords, isAvailable = () => true }) {
+export function createCodexChat({ getRecords, getAgentName = () => '', isAvailable = () => true }) {
   const root = document.createElement('div'); root.className = 'codex-chat';
   root.innerHTML = `<button type="button" class="codex-chat-launcher" aria-label="Conversar com C.O.D.E.X" aria-haspopup="dialog" aria-controls="codex-chat-dialog" aria-expanded="false"><span class="codex-chat-face"><img src="${face}" width="40" height="40" alt=""></span><span>C.O.D.E.X<small>CONSULTAR</small></span></button>
     <dialog id="codex-chat-dialog" class="codex-chat-dialog" aria-labelledby="codex-chat-title" aria-describedby="codex-chat-description">
@@ -26,6 +27,7 @@ export function createCodexChat({ getRecords, isAvailable = () => true }) {
   const form = root.querySelector('form');
   const submit = form.querySelector('button[type=submit]');
   const turns = [];
+  const pickResponse = createCodexResponsePicker();
   let pending = null;
   let replyTimer;
 
@@ -69,10 +71,13 @@ export function createCodexChat({ getRecords, isAvailable = () => true }) {
   }
   function renderConversation() {
     const fragment = document.createDocumentFragment();
-    fragment.append(message('C.O.D.E.X', codexGreeting));
-    for (const query of turns) {
-      fragment.append(message('AGENTE', query));
-      const reply = answerCodex(query, getRecords());
+    fragment.append(message('C.O.D.E.X', personalizeCodexText(codexGreeting, getAgentName())));
+    for (const turn of turns) {
+      fragment.append(message('AGENTE', turn.query));
+      // Preserve a fala sorteada no histórico. Consultas ao índice continuam
+      // verificando o acervo atual, sem sortear outra resposta ao reabrir.
+      const reply = ['records', 'empty'].includes(turn.reply.type)
+        ? answerCodex(turn.query, getRecords(), { agentName: turn.agentName }) : turn.reply;
       fragment.append(message('C.O.D.E.X', reply.text, reply));
     }
     if (pending) fragment.append(message('AGENTE', pending.query), typingMessage());
@@ -89,10 +94,12 @@ export function createCodexChat({ getRecords, isAvailable = () => true }) {
     input.value = ''; input.focus({ preventScroll: true }); log.scrollTop = log.scrollHeight;
     replyTimer = setTimeout(() => {
       if (pending !== turn) return;
-      const reply = answerCodex(query, getRecords());
+      turn.agentName = getAgentName();
+      const reply = answerCodex(query, getRecords(), { agentName: turn.agentName, pickResponse });
+      turn.reply = reply;
       pending = null; replyTimer = undefined;
       // Mantém apenas as doze consultas mais recentes em memória, sem armazenamento.
-      turns.push(query);
+      turns.push(turn);
       if (turns.length > 12) { turns.shift(); renderConversation(); }
       else log.querySelector('.codex-chat-typing')?.replaceWith(message('C.O.D.E.X', reply.text, reply));
       updateControls(); log.scrollTop = log.scrollHeight;

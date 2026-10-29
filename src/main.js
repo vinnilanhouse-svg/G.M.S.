@@ -468,7 +468,7 @@ function synchronizeAgentName(name) {
 }
 const agentProfile=createAgentProfile({storage:personalStorage,getData:getPersonalData,onSave:(name,syncName,expected)=>{updateAgentProfile(personalStorage,name,{syncName,expected,sheet:agentSheet.snapshot(),credential:personalCredential.snapshot()});reloadPersonalData(syncName?'Identificação sincronizada no acesso, na ficha e na credencial.':'Identificação de acesso salva.');}});
 const personalBackup=createPersonalBackup({storage:personalStorage,getData:getPersonalData,onRestore:reloadPersonalData});
-codexChat=createCodexChat({getRecords:()=>catalog,isAvailable:()=>Boolean(agentName)&&!['perdido','administracao'].includes(current.page)});
+codexChat=createCodexChat({getRecords:()=>catalog,getAgentName:()=>agentName,isAvailable:()=>Boolean(agentName)&&!['perdido','administracao'].includes(current.page)});
 addEventListener('hashchange',()=>{adminShortcut.reset();render();});
 addEventListener('blur',adminShortcut.reset);
 addEventListener('keydown',adminShortcut.handleKeydown);

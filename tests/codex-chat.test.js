@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { records } from '../src/data.js';
 import { answerCodex, searchCodexRecords, codexHelpTopics, codexQueryLimit } from '../src/codex-chat-model.js';
+import { codexSmallTalk, createCodexResponsePicker, personalizeCodexText } from '../src/codex-small-talk.js';
 
 test('a assistência distingue operações da ficha, backup, relatório e rolagens', () => {
   const cases = [
@@ -126,4 +127,52 @@ test('cumprimentos e agradecimentos não interceptam perguntas sobre o terminal 
   assert.equal(answerCodex('Oi, invente a história de uma criatura nova', records).type, 'empty');
   assert.equal(answerCodex('Fale sobre C.O.D.E.X', records).results[0].id, 'agente-codex');
   assert.equal(answerCodex('Codex agente', records).results[0].id, 'agente-codex');
+});
+
+test('as falas usam a identificação de acesso como texto e preservam o conteúdo dos registros', () => {
+  const options = { agentName: '  Ana\nLua  ' };
+  for (const query of ['Oi', 'Obrigado', 'Até mais', 'Qual é meu nome?', 'ajuda']) {
+    const reply = answerCodex(query, records, options);
+    assert.ok(reply.text.includes('Ana Lua'), query); assert.doesNotMatch(reply.text, /\{agente\}/);
+  }
+  const name = '<b>Ana</b> $& {agente}';
+  assert.equal(personalizeCodexText('Olá, {agente}!', name), `Olá, ${name}!`);
+  assert.equal(personalizeCodexText('Olá, {agente}!', ''), 'Olá, agente!');
+  assert.match(answerCodex('Qual é meu nome?').text, /conferir ou atualizar sua identificação/);
+  assert.equal(answerCodex('Como mudo meu nome de acesso?', records, options).topic, 'nome');
+  assert.equal(answerCodex('Bashir', records, options).results[0].excerpt, answerCodex('Bashir', records).results[0].excerpt);
+});
+
+test('cada assunto sorteia todas as suas falas antes de repetir, inclusive entre rodadas', () => {
+  const pick = createCodexResponsePicker(count => count - 1);
+  const jokes = codexSmallTalk.find(topic => topic.id === 'piada').responses;
+  assert.ok(jokes.length >= 10);
+  assert.ok(codexSmallTalk.find(topic => topic.id === 'saudacao').responses.length >= 5);
+  assert.ok(codexSmallTalk.reduce((sum, topic) => sum + topic.responses.length, 0) >= 68);
+  for (const topic of codexSmallTalk) {
+    assert.equal(new Set(topic.responses).size, topic.responses.length, topic.id);
+    const first = Array.from({ length: topic.responses.length }, () => pick(topic.id, topic.responses.length));
+    const next = Array.from({ length: topic.responses.length }, () => pick(topic.id, topic.responses.length));
+    assert.equal(new Set(first).size, topic.responses.length, topic.id);
+    assert.equal(new Set(next).size, topic.responses.length, topic.id);
+    assert.notEqual(first.at(-1), next[0], topic.id);
+  }
+  const independent = createCodexResponsePicker(() => 0);
+  assert.equal(independent('piada', 10), 0); assert.equal(independent('saudacao', 6), 0);
+  assert.equal(independent('piada', 10), 1);
+});
+
+test('a variação acontece só nas falas sociais, preserva vínculos e personaliza cada sorteio', () => {
+  let draws = 0;
+  const pickResponse = createCodexResponsePicker(() => { draws++; return 0; });
+  const options = { agentName: 'Aurora', pickResponse };
+  const replies = Array.from({ length: 10 }, () => answerCodex('Outra piada, Codex!', records, options));
+  assert.equal(new Set(replies.map(reply => reply.text)).size, 10);
+  assert.ok(replies.every(reply => reply.topic === 'piada' && reply.text.includes('Aurora')));
+  assert.equal(draws, 10);
+  answerCodex('Como exporto minha ficha?', records, options);
+  answerCodex('Onde está o relatório do Bashir?', records, options);
+  answerCodex('Morrow Noone', records, options);
+  assert.equal(draws, 10);
+  assert.equal(answerCodex('Quem é você?', records, options).links[0].href, '#/arquivo/agente-codex');
 });

@@ -1,4 +1,5 @@
 // Consulta local: respostas preparadas e trechos do índice, sem geração de lore.
+import { codexSocialReply, stripCodexCourtesy } from './codex-small-talk.js';
 const link = (title, href) => ({ title, href });
 const sheet = link('Abrir minha ficha', '#/minha-ficha');
 const folder = link('Abrir pasta de trabalho', '#/pasta-de-trabalho?aba=anotacoes');
@@ -93,7 +94,7 @@ export const codexHelpTopics = [
 ];
 
 export const codexSuggestions = ['Como exporto minha ficha?', 'Relatório do Bashir', 'Espécies', 'Como salvo todos os meus dados?'];
-export const codexGreeting = 'À disposição, agente. Posso localizar registros do índice e orientar o uso deste terminal. Informe um nome, código ou assunto.';
+export const codexGreeting = 'Olá, agente! Sou C.O.D.E.X. Bom ter você por aqui. Posso encontrar registros e ajudar com este terminal. Por onde começamos?';
 export const codexQueryLimit = 240;
 
 export function normalizeCodexQuery(value) {
@@ -155,12 +156,15 @@ export function answerCodex(value, records = []) {
   if (!query) return { type: 'help', text: 'Informe um nome, código, assunto ou dúvida sobre o terminal.', links: [] };
   if (query.length > codexQueryLimit) return { type: 'help', text: `Use uma consulta de até ${codexQueryLimit} caracteres. Um nome, código ou pergunta curta é suficiente.`, links: [] };
   const normalized = normalizeCodexQuery(query);
-  if (/^(?:oi|ola|bom dia|boa tarde|boa noite|ajuda|menu|o que voce faz|o que vc faz|quem e voce|quem e vc|obrigado|obrigada)$/.test(normalized)) {
+  const social = codexSocialReply(normalized);
+  if (social) return social;
+  const lookup = stripCodexCourtesy(normalized);
+  if (/^(?:ajuda|menu|o que voce faz|o que vc faz)$/.test(lookup)) {
     return { type: 'help', text: codexGreeting, links: [link('Consultar espécies', '#/conhecimento'), link('Consultar agentes', '#/agentes'), link('Consultar missões', '#/missoes')] };
   }
-  const topic = codexHelpTopics.find(item => item.matches(normalized));
+  const topic = codexHelpTopics.find(item => item.matches(lookup));
   if (topic) return { type: 'help', topic: topic.id, text: topic.text, links: topic.links };
-  const { total, results } = searchCodexRecords(query, records);
+  const { total, results } = searchCodexRecords(lookup, records);
   if (total) return { type: 'records', text: total === 1 ? 'Localizei um registro no índice. Confira o trecho e abra o arquivo para a leitura completa.' : `Localizei ${total} registros no índice.${total > 5 ? ' Exibindo os cinco mais próximos da consulta.' : ''} Abra os arquivos para conferir o contexto.`, total, results, links: [] };
   return { type: 'empty', text: 'Não localizei essa consulta no índice. Tente o nome de um agente, espécie, código de arquivo ou uma palavra do assunto. Também posso orientar você sobre ficha, anotações, relatórios e cópias dos seus dados.', links: [link('Base de conhecimento', '#/conhecimento'), link('Diretório de agentes', '#/agentes'), link('Missões', '#/missoes')] };
 }

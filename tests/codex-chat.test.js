@@ -86,7 +86,44 @@ test('perguntas desconhecidas e limites de consulta têm respostas explícitas, 
   assert.equal(answerCodex('   ').type, 'help');
   assert.match(answerCodex('a'.repeat(codexQueryLimit + 1)).text, /até 240/);
   assert.equal(answerCodex('Crie uma espécie inédita chamada Xyz', records).type, 'empty');
-  assert.equal(answerCodex('Olá', records).type, 'help');
+  assert.equal(answerCodex('Olá', records).type, 'social');
   const replies = [answerCodex('<img src=x onerror=alert(1)>', records), ...codexHelpTopics.map(topic => answerCodex(topic.prompt, records))];
   for (const reply of replies) for (const link of reply.links) assert.match(link.href, /^#\/[a-z0-9/?=._-]+$/i);
+});
+
+test('C.O.D.E.X reconhece conversa casual, abreviações e seu nome sem confundir intenções', () => {
+  const cases = [
+    ['Oi!', 'saudacao'], ['Oiiii, C.O.D.E.X!!!', 'saudacao'], ['Olááá', 'saudacao'], ['E aí Codex?', 'saudacao'],
+    ['Bom dia, Codex!', 'bom-dia'], ['Boa tarde', 'boa-tarde'], ['Boa noite!', 'boa-noite'],
+    ['Oi Codex, tudo bem?', 'tudo-bem'], ['Como você está?', 'tudo-bem'], ['td bem?', 'tudo-bem'], ['Tudo bem com você?', 'tudo-bem'],
+    ['Obrigado!', 'agradecimento'], ['Muito obrigada pela ajuda, Codex!', 'agradecimento'],
+    ['obg', 'agradecimento'], ['Vlw', 'agradecimento'], ['Valeu demais mesmo!', 'agradecimento'], ['Brigadão!', 'agradecimento'], ['Obrigado pela sua ajuda!', 'agradecimento'],
+    ['Até mais, Codex!', 'despedida'], ['Tchauuu!', 'despedida'], ['flw', 'despedida'],
+    ['Estou bem', 'bem'], ['Tô cansada', 'cansaco'], ['Você é muito legal!', 'elogio'],
+    ['Kkkkk', 'risada'], ['Me conta uma piada', 'piada'], ['Quer um café?', 'cafe'],
+    ['Foi mal', 'desculpa'], ['Entendi', 'combinado'], ['Me deseja sorte', 'boa-sorte'],
+    ['Quem é você?', 'identidade'], ['Quem é C.O.D.E.X?', 'identidade'], ['Codex', 'chamado'],
+  ];
+  for (const [query, topic] of cases) {
+    const reply = answerCodex(query, records);
+    assert.equal(reply.type, 'social', query); assert.equal(reply.topic, topic, query);
+    assert.ok(reply.text.length > 20, query);
+    assert.ok(reply.links.every(link => link.href === '#/arquivo/agente-codex'), query);
+  }
+  assert.equal(new Set(['Oi', 'Obrigado', 'Até mais'].map(query => answerCodex(query).text)).size, 3);
+});
+
+test('cumprimentos e agradecimentos não interceptam perguntas sobre o terminal ou os arquivos', () => {
+  assert.equal(answerCodex('Oi, Codex! Como exporto minha ficha?', records).topic, 'exportar-ficha');
+  assert.equal(answerCodex('Bom dia, como salvo meus dados?', records).topic, 'backup');
+  for (const query of ['Oi, quem é Bashir?', 'Codex, onde está o relatório do Bashir, por favor?', 'Obrigado! Onde está o relatório do Bashir?']) {
+    const reply = answerCodex(query, records);
+    assert.equal(reply.type, 'records', query);
+    assert.ok(reply.results.some(result => result.id.includes('bashir')), query);
+  }
+  assert.equal(answerCodex('Obrigado, onde está Morrow Noone?', records).type, 'empty');
+  assert.equal(answerCodex('O relatório desconhecido cita a palavra obrigado', []).type, 'empty');
+  assert.equal(answerCodex('Oi, invente a história de uma criatura nova', records).type, 'empty');
+  assert.equal(answerCodex('Fale sobre C.O.D.E.X', records).results[0].id, 'agente-codex');
+  assert.equal(answerCodex('Codex agente', records).results[0].id, 'agente-codex');
 });

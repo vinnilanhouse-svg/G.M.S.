@@ -16,6 +16,7 @@ import { agentSheetKey } from './agent-sheet-model.js';
 import { createTerminalInterface } from './terminal-interface.js';
 import { archiveTrace } from './archive-trace.js';
 import { codexAnnotation } from './codex-annotations.js';
+import { createCodexChat } from './codex-chat.js';
 import './codex-annotations.css';
 import { workFolderKey } from './work-folder.js';
 import { applyContentOverrides } from './content-editing.js';
@@ -101,6 +102,7 @@ let filters={q:'',status:'',category:'',access:'',missionId:''};
 let previousPage='';
 let mobileOpen=false;
 let clearAccessEffect=null;
+let codexChat;
 
 function accessBadge(access) { return `<span class="access ${access==='Público'?'public':access==='Censurado'?'redacted':'restricted'}">${icon(access==='Público'?'globe':'lock')}${esc(access)}</span>`; }
 function statusBadge(status) { return `<span class="status ${status==='Em andamento'?'active':status==='Encerrado'?'closed':''}"><i></i>${esc(status)}</span>`; }
@@ -367,6 +369,7 @@ function returnHome() {
  if(title){title.tabIndex=-1;title.focus({preventScroll:true});}
 }
 function lostPage() {
+ codexChat?.close(false);
  terminal.cancel();
  clearAccessEffect?.();
  clearAccessEffect=null;
@@ -379,6 +382,7 @@ function lostPage() {
 function render() {
  try {renderPage();}
  catch(error){console.error('Não foi possível abrir esta página.',error);lostPage();}
+ finally {codexChat?.refresh();}
 }
 function renderPage() {
  if(/^#\/depuracao(?:$|\?)/.test(location.hash))history.replaceState(null,'',location.hash.replace('#/depuracao','#/administracao'));
@@ -464,6 +468,7 @@ function synchronizeAgentName(name) {
 }
 const agentProfile=createAgentProfile({storage:personalStorage,getData:getPersonalData,onSave:(name,syncName,expected)=>{updateAgentProfile(personalStorage,name,{syncName,expected,sheet:agentSheet.snapshot(),credential:personalCredential.snapshot()});reloadPersonalData(syncName?'Identificação sincronizada no acesso, na ficha e na credencial.':'Identificação de acesso salva.');}});
 const personalBackup=createPersonalBackup({storage:personalStorage,getData:getPersonalData,onRestore:reloadPersonalData});
+codexChat=createCodexChat({getRecords:()=>catalog,isAvailable:()=>Boolean(agentName)&&!['perdido','administracao'].includes(current.page)});
 addEventListener('hashchange',()=>{adminShortcut.reset();render();});
 addEventListener('blur',adminShortcut.reset);
 addEventListener('keydown',adminShortcut.handleKeydown);

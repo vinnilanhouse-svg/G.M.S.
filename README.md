@@ -50,6 +50,14 @@ Duplique um objeto do mesmo tipo, atribua um `id` e `code` únicos e atualize `r
 
 As categorias da wiki estão no array `categories`. Contagens, resultados e vínculos são calculados a partir dos registros. A seleção inicial de atualizações recentes é organizada no painel em `src/main.js`.
 
+## Assistência do C.O.D.E.X
+
+O botão com o rosto chibi no canto inferior abre uma conversa com o arquivista. Ele oferece orientações preparadas sobre ficha, importação/exportação, cópias dos dados, pasta, quadro, relatórios, missão pessoal, grifos, credencial e rolagens. Também encontra nomes, códigos e assuntos no índice institucional, mostrando trechos do texto e links para os arquivos. A busca ignora acentos e maiúsculas, combina os termos e apresenta até cinco resultados. Fichas não listadas e registros que exigem credencial ficam fora dessa consulta; o chat não revela códigos de autorização nem cria informações da campanha.
+
+Tudo é executado no navegador, sem IA generativa, API, chave, banco ou custo de serviço. O chat consulta os textos atuais do acervo, incluindo edições disponíveis no terminal. Não lê fichas pessoais, anotações ou backups. As últimas doze consultas ficam apenas na memória da página: continuam ao navegar, são apagadas por **Limpar conversa** ou ao recarregar e não entram no backup pessoal.
+
+Edite perguntas, regras de reconhecimento e orientações em `src/codex-chat-model.js`, nos arrays `codexHelpTopics` e `codexSuggestions`. O modelo busca os registros automaticamente, sem duplicar a lore. `src/codex-chat.js` cuida da conversa e `src/codex-chat.css` da apresentação, com a mesma paleta do terminal, suporte a celular e navegação por teclado. O botão fica recolhido durante formulários no celular, outros diálogos, seleção para grifo, acesso negado e a tela de rota não encontrada.
+
 ## Recursos e limites
 
 - Busca integrada no título, código, descrição e capacidades; ignora maiúsculas e acentos.

@@ -76,6 +76,8 @@ A barra inferior reúne Arquivo, Missões, Minha ficha, Pasta, Credenciais e C.O
 
 O visual fica em `src/server-workspace.css`, com as mesmas paletas do terminal. A mudança mantém URLs, arquivos, dados pessoais, mecanismos da ficha e permissões existentes. Não adiciona sistema de janelas flutuantes nem altera a história da campanha.
 
+Os detalhes de pasta física ficam em `src/physical-folders.css`: abas salientes em cartolina, moldura com bordas em camadas, identificação da folha aberta e páginas sobrepostas. Fichas e documentos usam papel claro com tinta escura, textura discreta e marca-d'água da G.M.S.; essas cores de material permanecem claras nas paletas do terminal. No desktop, o índice da pasta lista somente registros disponíveis e listados no diretório. As divisórias laterais levam aos vínculos existentes e às anotações, pessoas de interesse e localidades da pasta; arquivos de missão mantêm seu filtro correspondente. Em telas menores, o índice recolhe e as divisórias ficam abaixo do documento. A aba superior em consulta continua visível ao redimensionar a tela.
+
 - Busca integrada no título, código, descrição e capacidades; ignora maiúsculas e acentos.
 - Filtros combináveis de situação, categoria e acesso, com estado vazio e opção de limpar.
 - Dossiês com referências clicáveis, cronologia, evidências, capacidades, fatos e hipóteses.

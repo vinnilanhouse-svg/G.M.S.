@@ -46,6 +46,7 @@ import './terminal-interface.css';
 import './agent-sheet.css';
 import './theme-palettes.css';
 import './server-workspace.css';
+import './physical-folders.css';
 import { records as originalRecords, categories } from './data.js';
 let allRecords=originalRecords;
 const terminalTheme=createTerminalTheme();
@@ -209,6 +210,10 @@ function nav() {
 function folderSection() {
  return current.page==='arquivo'?sectionForRecord(records.find(record=>record.id===current.id)):pageKey();
 }
+function revealFolderTab() {
+ const tabs=document.querySelector('.archive-folder-tabs'),selected=tabs?.querySelector('[aria-current="page"]');
+ if(selected)tabs.scrollLeft=Math.max(0,selected.offsetLeft-tabs.clientWidth/2+selected.clientWidth/2);
+}
 function folderNavigation() {
  const section=folderSection();
  const tabs=[['inicio','grid','Arquivo central'],['conhecimento','book','Conhecimento'],['agentes','users','Agentes'],['missoes','flag','Missões'],['missoes/relatorios','clipboard','Relatórios'],['pasta-de-trabalho','folder','Pasta de trabalho']];
@@ -246,6 +251,24 @@ function shell(content) {
  topbar.querySelector('.topbar-right').insertAdjacentHTML('afterbegin',`<a class="server-agent" href="#/meu-agente" title="${esc(agentName)}">${icon('users')}<span>${esc(agentName||'Meu agente')}</span></a>`);
  const main=workspace.querySelector('main');const folder=document.createElement('section');folder.className='archive-folder';folder.setAttribute('aria-label','Pasta em consulta');
  main.before(folder);folder.innerHTML=folderNavigation();folder.append(main);
+ const dossier=main.querySelector('.dossier');
+ const openRecord=current.page==='arquivo'?records.find(record=>record.id===current.id):null;
+ if(dossier&&openRecord){
+  const reading=document.createElement('div');reading.className='folio-reading-layout';dossier.before(reading);
+  const index=document.createElement('nav');index.className='folio-file-index';index.setAttribute('aria-label','Arquivos desta pasta');
+  const siblings=catalog.filter(record=>record.kind===openRecord.kind&&(record.kind!=='verbete'||record.category===openRecord.category));
+  index.innerHTML=`<div class="folio-index-heading">${icon('folder')}<span>${esc(kinds[openRecord.kind]||'Arquivo')}<small>REGISTROS NA PASTA</small></span></div>${siblings.map(record=>`<a href="#/arquivo/${esc(record.id)}" ${record.id===openRecord.id?'aria-current="page" class="selected"':''}><small>${esc(record.code)}</small><span>${esc(record.title)}</span></a>`).join('')}`;
+  const stack=document.createElement('div');stack.className='folio-paper-stack';
+  dossier.style.setProperty('--folio-seal',`url("${gmsLogo}")`);
+  const tab=document.createElement('div');tab.className='folio-document-tab';tab.textContent=`${openRecord.code} · ${openRecord.title}`;
+  reading.append(index,stack);stack.append(tab,dossier);
+  const pockets=document.createElement('nav');pockets.className='folio-pockets';pockets.setAttribute('aria-label','Divisórias da pasta');
+  const missionId=openRecord.kind==='missao'?openRecord.id:openRecord.missionId;
+  const destination=tab=>missionId?`#/pasta-de-trabalho?${new URLSearchParams({aba:tab,missao:missionId})}`:operationalPanel.folderLink(tab);
+  pockets.innerHTML=`${main.querySelector('#relacionados')?`<a href="#relacionados" data-folio-related>${icon('file')}<span>Documentos vinculados</span></a>`:''}${[['anotacoes','clipboard','Anotações'],['pessoas','users','Pessoas de interesse'],['localidades','globe','Localidades']].map(([tab,symbol,label])=>`<a href="${destination(tab)}">${icon(symbol)}<span>${label}</span></a>`).join('')}`;
+  pockets.querySelector('[data-folio-related]')?.addEventListener('click',event=>{event.preventDefault();main.querySelector('#relacionados').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});});
+  dossier.querySelector('.dossier-aside')?.prepend(pockets);
+ }
  workspace.insertAdjacentHTML('beforeend',serverDock());
  workspace.querySelector('[data-open-codex]').addEventListener('click',()=>codexChat?.open());
  const sidebar=document.querySelector('.sidebar');sidebar.inert=true;sidebar.setAttribute('aria-hidden','true');
@@ -258,7 +281,7 @@ function shell(content) {
   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}
   else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}
  });
- const selected=folder.querySelector('[aria-current="page"]');if(selected){const tabs=folder.querySelector('nav');tabs.scrollLeft=Math.max(0,selected.offsetLeft-tabs.clientWidth/2+selected.clientWidth/2);}
+ revealFolderTab();
  adminPanel?.updateBar();
  const record=current.page==='arquivo'?records.find(item=>item.id===current.id):null;
  terminal.attach({route:location.hash,page:current.page,record,locked:(current.page==='arquivo'&&!record)||(current.page==='reservado'&&!activeCredentials.has('arquivo-reservado'))});
@@ -514,6 +537,7 @@ const agentProfile=createAgentProfile({storage:personalStorage,getData:getPerson
 const personalBackup=createPersonalBackup({storage:personalStorage,getData:getPersonalData,onRestore:reloadPersonalData});
 codexChat=createCodexChat({getRecords:()=>catalog,getAgentName:()=>agentName,isAvailable:()=>Boolean(agentName)&&!['perdido','administracao'].includes(current.page)});
 addEventListener('hashchange',()=>{adminShortcut.reset();render();});
+addEventListener('resize',revealFolderTab);
 addEventListener('blur',adminShortcut.reset);
 addEventListener('keydown',adminShortcut.handleKeydown);
 addEventListener('error',event=>{if(event.error)lostPage();});

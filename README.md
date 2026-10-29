@@ -68,6 +68,14 @@ Edite perguntas, regras de reconhecimento e orientações em `src/codex-chat-mod
 
 ## Recursos e limites
 
+### Navegação por pastas
+
+A interface usa pastas com abas no topo para Arquivo central, Conhecimento, Agentes, Missões, Relatórios e Pasta de trabalho. A pasta ativa acompanha também os links de documentos individuais; páginas pessoais e utilitários abrem uma aba contextual. No celular, as abas deslizam horizontalmente e a aba atual fica visível ao abrir a página.
+
+A barra inferior reúne Arquivo, Missões, Minha ficha, Pasta, Credenciais e C.O.D.E.X. A ficha abre na visualização de campo; a pasta mantém a missão selecionada. O botão C.O.D.E.X abre o mesmo assistente, com suas falas, identificação e histórico da sessão. O botão de menu no cabeçalho oferece a navegação completa, os arquivos salvos, backup, perfil e o campo de credenciais. O menu pode ser fechado pelo botão, fora dele ou com Escape; o foco permanece dentro dele enquanto aberto. Formulários e diálogos no celular recolhem a barra para reservar espaço para a leitura e o teclado.
+
+O visual fica em `src/server-workspace.css`, com as mesmas paletas do terminal. A mudança mantém URLs, arquivos, dados pessoais, mecanismos da ficha e permissões existentes. Não adiciona sistema de janelas flutuantes nem altera a história da campanha.
+
 - Busca integrada no título, código, descrição e capacidades; ignora maiúsculas e acentos.
 - Filtros combináveis de situação, categoria e acesso, com estado vazio e opção de limpar.
 - Dossiês com referências clicáveis, cronologia, evidências, capacidades, fatos e hipóteses.

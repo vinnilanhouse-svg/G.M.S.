@@ -45,6 +45,7 @@ import './mission-progress.css';
 import './terminal-interface.css';
 import './agent-sheet.css';
 import './theme-palettes.css';
+import './server-workspace.css';
 import { records as originalRecords, categories } from './data.js';
 let allRecords=originalRecords;
 const terminalTheme=createTerminalTheme();
@@ -143,16 +144,14 @@ function redeemCredential(form) {
  }
  if(credential.effect==='rename-agent'){
   input.value='';
-  mobileOpen=false;
-  document.querySelector('.sidebar')?.classList.remove('is-open');
+  setNavigationOpen(false);
   document.querySelectorAll('.overlay').forEach(overlay=>overlay.remove());
   changeAgentName();
   return;
  }
  if(credential.effect==='access-denied'){
   clearAccessEffect?.();
-  mobileOpen=false;
-  document.querySelector('.sidebar')?.classList.remove('is-open');
+  setNavigationOpen(false);
   document.querySelectorAll('.overlay').forEach(overlay=>overlay.remove());
   clearAccessEffect=showAccessDeniedEffect({onComplete:()=>{
    clearAccessEffect=null;
@@ -206,15 +205,60 @@ function nav() {
  const name=agentName||'Meu agente';const initials=name.split(/\s+/).slice(0,2).map(part=>[...part][0]).join('').toUpperCase();
  return `<aside class="sidebar ${mobileOpen?'is-open':''}" aria-label="Navegação principal"><a href="#/inicio" class="brand" aria-label="Arquivo GMS, painel inicial"><img src="${gmsLogo}" class="gms-mark brand-logo" alt="" width="138" height="138"><div>ARQUIVO <b>GMS</b><small>SISTEMA DE DOCUMENTAÇÃO</small></div></a><nav class="nav-home">${link('inicio','grid','Painel inicial')}</nav><section class="navigation-group" aria-labelledby="nav-consultation"><h2 id="nav-consultation" class="nav-caption">CONSULTAR</h2><nav>${regular.map(([path,ic,label])=>link(path,ic,label)+(path==='missoes'&&selected(path)?`<a href="#/missoes/relatorios" class="nav-sublink ${activePath==='missoes/relatorios'?'selected':''}">${icon('clipboard')}Relatórios do acervo</a>`:'')).join('')}${activeCredentials.has('arquivo-reservado')?link('reservado','key','Arquivo reservado'):''}${empty.length?`<details class="navigation-extra" ${empty.some(([path])=>selected(path))?'open':''}><summary>Outros arquivos</summary>${empty.map(([path,ic,label])=>link(path,ic,label)).join('')}</details>`:''}</nav></section><section class="navigation-group" aria-labelledby="nav-agent"><h2 id="nav-agent" class="nav-caption">MEU AGENTE</h2><nav>${link('meu-agente','users','Perfil de agente',['meu-agente','minha-credencial'].includes(current.page)||(current.page==='minha-ficha'&&!location.hash.includes('aba=campo')))}${link('minha-ficha','target','Ficha em campo',current.page==='minha-ficha'&&location.hash.includes('aba=campo'),'#/minha-ficha?aba=campo')}</nav></section><section class="navigation-group" aria-labelledby="nav-work"><h2 id="nav-work" class="nav-caption">MEU TRABALHO</h2><nav>${link('minha-missao','flag','Continuar missão')}${link('pasta-de-trabalho','folder','Pasta de trabalho',current.page==='pasta-de-trabalho',operationalPanel.folderLink())}${link('favoritos','bookmark','Arquivos salvos')}${link('salvar-meus-dados','external','Salvar meus dados')}</nav></section><div class="sidebar-bottom">${credentialForm('sidebar')}<a href="#/meu-agente" class="profile"><div class="avatar">${esc(initials)}</div><div>${esc(name)}<small>PERFIL DE AGENTE</small></div>${icon('chevron')}</a><div class="sidebar-version"><span>GMS / ARQUIVO CENTRAL</span><span>v.01</span></div></div></aside>`;
 }
-function mobileShortcuts() {
- const links=[[operationalPanel.currentMissionUrl(),'flag','Missão',current.page==='minha-missao'],['#/minha-ficha?aba=campo','users','Ficha',current.page==='minha-ficha'],[operationalPanel.folderLink(),'clipboard','Anotações',current.page==='pasta-de-trabalho']];
- return `<nav class="mobile-field-shortcuts" aria-label="Atalhos de campo">${links.map(([url,ic,label,active])=>`<a href="${url}" ${active?'aria-current="page" class="selected"':''}>${icon(ic)}<span>${label}</span></a>`).join('')}</nav>`;
+
+function folderSection() {
+ return current.page==='arquivo'?sectionForRecord(records.find(record=>record.id===current.id)):pageKey();
+}
+function folderNavigation() {
+ const section=folderSection();
+ const tabs=[['inicio','grid','Arquivo central'],['conhecimento','book','Conhecimento'],['agentes','users','Agentes'],['missoes','flag','Missões'],['missoes/relatorios','clipboard','Relatórios'],['pasta-de-trabalho','folder','Pasta de trabalho']];
+ const personal=['meu-agente','minha-ficha','minha-credencial'].includes(section);
+ if(personal)tabs.push([section,'users','Meu agente']);
+ else if(section&&!tabs.some(([id])=>id===section)&&section!=='minha-missao')tabs.push([section,section==='credenciais'?'key':'file',paths[section]||'Consulta']);
+ const active=section==='minha-missao'?'missoes':section;
+ return `<nav class="archive-folder-tabs" aria-label="Pastas do arquivo">${tabs.map(([id,symbol,label])=>`<a href="#/${id}" class="archive-folder-tab ${id===active?'selected':''}" ${id===active?'aria-current="page"':''}>${icon(symbol)}<span>${esc(label)}</span></a>`).join('')}</nav>`;
+}
+function serverDock() {
+ const section=folderSection();
+ const links=[['#/inicio','folder','Arquivo',['inicio','conhecimento','agentes','documentos','alvos','busca','favoritos','reservado'].includes(section)],['#/missoes','flag','Missões',['missoes','missoes/relatorios','minha-missao'].includes(section)],['#/minha-ficha?aba=campo','users','Minha ficha',['meu-agente','minha-ficha','minha-credencial'].includes(section)],[operationalPanel.folderLink(),'clipboard','Pasta',section==='pasta-de-trabalho'],['#/credenciais','key','Credenciais',section==='credenciais']];
+ return `<nav class="server-dock" aria-label="Barra de aplicativos"><a class="dock-home" href="#/inicio" aria-label="Arquivo GMS, início"><img src="${gmsLogo}" class="gms-mark" alt="" width="32" height="32"><span>GMS<small>ARQUIVO CENTRAL</small></span></a><div class="server-dock-apps">${links.map(([url,symbol,label,active])=>`<a href="${url}" ${active?'aria-current="page" class="selected"':''}>${icon(symbol)}<span>${label}</span></a>`).join('')}<button type="button" data-open-codex aria-label="Conversar com C.O.D.E.X" aria-haspopup="dialog" aria-controls="codex-chat-dialog">${icon('book')}<span>C.O.D.E.X</span></button></div><span class="dock-session"><i></i>SESSÃO LOCAL</span></nav>`;
+}
+function setNavigationOpen(open) {
+ mobileOpen=open;
+ const sidebar=document.querySelector('.sidebar');if(!sidebar)return;
+ sidebar.classList.toggle('is-open',open);sidebar.inert=!open;sidebar.setAttribute('aria-hidden',String(!open));
+ const workspace=document.querySelector('.workspace');if(workspace)workspace.inert=open;
+ document.body.classList.toggle('navigation-open',open);
+ document.querySelector('[data-menu]')?.setAttribute('aria-expanded',String(open));
+ document.querySelectorAll('.overlay').forEach(element=>element.remove());
+ if(open){const overlay=document.createElement('div');overlay.className='overlay';overlay.addEventListener('click',()=>setNavigationOpen(false));document.body.append(overlay);sidebar.querySelector('[data-close-menu]')?.focus();}
+ else document.querySelector('[data-menu]')?.focus({preventScroll:true});
 }
 
 function shell(content) {
- document.body.classList.remove('image-viewer-open');
- document.querySelector('#app').innerHTML=`${mobileOpen?'<div class="overlay" data-close-menu></div>':''}${nav()}<div class="workspace"><header class="topbar"><div class="breadcrumb"><button class="icon-button mobile-menu" aria-label="Abrir navegação" data-menu>${icon('menu')}</button><span>GMS</span><span class="slash">/</span><span>${esc(paths[pageKey()]||'Consulta de arquivo')}</span></div><div class="topbar-right"><span class="system-online"><i></i>SISTEMA OPERACIONAL</span><span class="topbar-divider"></span><span class="mono topbar-code">TERMINAL 001</span></div></header>${terminal.markup()}${operationalPanel.contextBar(current.page)}<main id="main-content">${content}</main><footer class="footer"><span>GMS <span class="footer-slash">/</span> DEPARTAMENTO DE DOCUMENTAÇÃO E MEMÓRIA</span><span><a href="#/credenciais" class="footer-credentials">${icon('key')}Credenciais de acesso</a><i></i> EDIÇÃO 1.7 <i></i> ACESSOS DEMONSTRATIVOS</span></footer>${mobileShortcuts()}</div><div id="toast" role="status"></div><dialog id="record-image-viewer" class="image-viewer" aria-labelledby="image-viewer-title"><div class="image-viewer-bar"><h2 id="image-viewer-title"></h2><button type="button" class="icon-button" data-close-image-viewer aria-label="Fechar imagem">${icon('close')}</button></div><div class="image-viewer-body"></div><p class="image-viewer-caption">REGISTRO VISUAL · DOCUMENTO DE REFERÊNCIA GMS · EDIÇÃO 1.7</p></dialog>`;
+ document.body.classList.remove('image-viewer-open','navigation-open');
+ document.querySelector('#app').innerHTML=`${mobileOpen?'<div class="overlay" data-close-menu></div>':''}${nav()}<div class="workspace"><header class="topbar"><div class="breadcrumb"><button class="icon-button mobile-menu" aria-label="Abrir navegação" data-menu>${icon('menu')}</button><span>GMS</span><span class="slash">/</span><span>${esc(paths[pageKey()]||'Consulta de arquivo')}</span></div><div class="topbar-right"><span class="system-online"><i></i>SISTEMA OPERACIONAL</span><span class="topbar-divider"></span><span class="mono topbar-code">TERMINAL 001</span></div></header>${terminal.markup()}${operationalPanel.contextBar(current.page)}<main id="main-content">${content}</main><footer class="footer"><span>GMS <span class="footer-slash">/</span> DEPARTAMENTO DE DOCUMENTAÇÃO E MEMÓRIA</span><span><a href="#/credenciais" class="footer-credentials">${icon('key')}Credenciais de acesso</a><i></i> EDIÇÃO 1.7 <i></i> ACESSOS DEMONSTRATIVOS</span></footer></div><div id="toast" role="status"></div><dialog id="record-image-viewer" class="image-viewer" aria-labelledby="image-viewer-title"><div class="image-viewer-bar"><h2 id="image-viewer-title"></h2><button type="button" class="icon-button" data-close-image-viewer aria-label="Fechar imagem">${icon('close')}</button></div><div class="image-viewer-body"></div><p class="image-viewer-caption">REGISTRO VISUAL · DOCUMENTO DE REFERÊNCIA GMS · EDIÇÃO 1.7</p></dialog>`;
  bind();
+ const workspace=document.querySelector('.workspace');
+ const topbar=workspace.querySelector('.topbar');
+ topbar.querySelector('.breadcrumb').insertAdjacentHTML('afterbegin',`<a class="server-brand" href="#/inicio"><img src="${gmsLogo}" class="gms-mark" alt="GMS" width="42" height="42"><span>ARQUIVO GMS<small>SERVIDOR DE DOCUMENTOS</small></span></a>`);
+ topbar.querySelector('[data-menu]').setAttribute('aria-expanded','false');
+ topbar.querySelector('.topbar-right').insertAdjacentHTML('afterbegin',`<a class="server-agent" href="#/meu-agente" title="${esc(agentName)}">${icon('users')}<span>${esc(agentName||'Meu agente')}</span></a>`);
+ const main=workspace.querySelector('main');const folder=document.createElement('section');folder.className='archive-folder';folder.setAttribute('aria-label','Pasta em consulta');
+ main.before(folder);folder.innerHTML=folderNavigation();folder.append(main);
+ workspace.insertAdjacentHTML('beforeend',serverDock());
+ workspace.querySelector('[data-open-codex]').addEventListener('click',()=>codexChat?.open());
+ const sidebar=document.querySelector('.sidebar');sidebar.inert=true;sidebar.setAttribute('aria-hidden','true');
+ sidebar.insertAdjacentHTML('afterbegin',`<button type="button" class="drawer-close" data-close-menu aria-label="Fechar navegação">${icon('close')}<span>Fechar menu</span></button>`);
+ sidebar.querySelector('.drawer-close').addEventListener('click',()=>setNavigationOpen(false));
+ sidebar.addEventListener('keydown',event=>{
+  if(event.key!=='Tab')return;
+  const controls=[...sidebar.querySelectorAll('a[href],button,input,summary')].filter(element=>element.getClientRects().length&&!element.disabled);
+  const first=controls[0],last=controls.at(-1);
+  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}
+  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}
+ });
+ const selected=folder.querySelector('[aria-current="page"]');if(selected){const tabs=folder.querySelector('nav');tabs.scrollLeft=Math.max(0,selected.offsetLeft-tabs.clientWidth/2+selected.clientWidth/2);}
  adminPanel?.updateBar();
  const record=current.page==='arquivo'?records.find(item=>item.id===current.id):null;
  terminal.attach({route:location.hash,page:current.page,record,locked:(current.page==='arquivo'&&!record)||(current.page==='reservado'&&!activeCredentials.has('arquivo-reservado'))});
@@ -353,7 +397,7 @@ function bind() {
   render();
   showToast(persisted?'Autorização removida deste terminal.':'Autorização removida nesta sessão. Não foi possível atualizar o registro deste terminal.');
  }));
- document.querySelector('[data-menu]')?.addEventListener('click',()=>{mobileOpen=!mobileOpen;document.querySelector('.sidebar').classList.toggle('is-open',mobileOpen);if(mobileOpen){const o=document.createElement('div');o.className='overlay';o.onclick=()=>{mobileOpen=false;render();};document.body.append(o);}else document.querySelector('.overlay')?.remove();});
+ document.querySelector('[data-menu]')?.addEventListener('click',()=>setNavigationOpen(!mobileOpen));
  document.querySelector('[data-close-menu]')?.addEventListener('click',()=>{mobileOpen=false;render();});
  document.querySelectorAll('[data-search]').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();const q=new FormData(f).get('q').trim();const next=`#/busca?q=${encodeURIComponent(q)}`;if(location.hash===next){filters.q=q;listPage();}else location.hash=next;}));
  document.querySelector('#local-query')?.addEventListener('input',e=>{filters.q=e.target.value;updateResults();});
@@ -369,6 +413,7 @@ function returnHome() {
  if(title){title.tabIndex=-1;title.focus({preventScroll:true});}
 }
 function lostPage() {
+ document.body.classList.remove('navigation-open');
  codexChat?.close(false);
  terminal.cancel();
  clearAccessEffect?.();
@@ -420,8 +465,7 @@ function changeAgentName() {
  },{initialName:agentName,canCancel:true});
 }
 function openAdministration() {
- mobileOpen=false;
- document.querySelector('.sidebar')?.classList.remove('is-open');
+ setNavigationOpen(false);
  document.querySelectorAll('body > .overlay').forEach(overlay=>overlay.remove());
  adminPanel.open();
 }
@@ -474,7 +518,7 @@ addEventListener('blur',adminShortcut.reset);
 addEventListener('keydown',adminShortcut.handleKeydown);
 addEventListener('error',event=>{if(event.error)lostPage();});
 addEventListener('unhandledrejection',()=>lostPage());
-addEventListener('keydown',e=>{if(e.key==='Escape'){mobileOpen=false;document.querySelector('.sidebar')?.classList.remove('is-open');document.querySelectorAll('.overlay').forEach(x=>x.remove());}if(e.key==='/'&&!document.querySelector('dialog[open]')&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.querySelector('#global-search, #local-query')?.focus();}});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&mobileOpen)setNavigationOpen(false);if(e.key==='/'&&!document.querySelector('dialog[open]')&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();document.querySelector('#global-search, #local-query')?.focus();}});
 if(shouldShowEntryDetour())history.replaceState(null,'','#/perdido');
 render();
 if(agentName)showEntryScreen(gmsLogo);

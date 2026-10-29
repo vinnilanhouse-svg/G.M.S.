@@ -30,6 +30,7 @@ export function createCodexChat({ getRecords, getAgentName = () => '', isAvailab
   const pickResponse = createCodexResponsePicker();
   let pending = null;
   let replyTimer;
+  let restoreFocusOnClose = true;
 
   function message(author, text, reply) {
     const article = document.createElement('article'); article.className = `codex-chat-message ${author === 'AGENTE' ? 'codex-chat-question' : 'codex-chat-answer'}`;
@@ -107,19 +108,26 @@ export function createCodexChat({ getRecords, getAgentName = () => '', isAvailab
   }
   function close(restoreFocus = true) {
     if (!dialog.open) return;
+    restoreFocusOnClose = restoreFocus;
     dialog.close();
-    if (restoreFocus && !launcher.hidden) launcher.focus({ preventScroll: true });
   }
   function refresh() {
     launcher.hidden = !isAvailable();
     if (launcher.hidden) close(false);
   }
-  launcher.addEventListener('click', () => {
+  function open() {
     if (!isAvailable() || document.querySelector('dialog[open]')) return;
+    restoreFocusOnClose = true;
     renderConversation(); dialog.showModal(); document.body.classList.add('codex-chat-open');
     launcher.setAttribute('aria-expanded', 'true'); input.focus({ preventScroll: true });
+  }
+  launcher.addEventListener('click', open);
+  dialog.addEventListener('close', () => {
+    document.body.classList.remove('codex-chat-open'); launcher.setAttribute('aria-expanded', 'false');
+    if(dialog.contains(document.activeElement))document.activeElement.blur();
+    const target=document.querySelector('[data-open-codex]')||launcher;
+    if(restoreFocusOnClose&&target.getClientRects().length)target.focus({preventScroll:true});
   });
-  dialog.addEventListener('close', () => { document.body.classList.remove('codex-chat-open'); launcher.setAttribute('aria-expanded', 'false'); });
   dialog.addEventListener('keydown', event => {
     if (event.key !== 'Tab') return;
     const controls = [...dialog.querySelectorAll('button:not(:disabled),a[href],input:not(:disabled),[tabindex="0"]')].filter(element => element.getClientRects().length);
@@ -140,5 +148,5 @@ export function createCodexChat({ getRecords, getAgentName = () => '', isAvailab
   }
   addEventListener('hashchange', () => close(false));
   renderConversation(); refresh();
-  return { refresh, close };
+  return { refresh, close, open };
 }

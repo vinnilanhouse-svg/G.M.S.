@@ -24,6 +24,11 @@
 .codex-chat-message:last-child { margin-bottom: 0; }
 .codex-chat-question { margin-left: 38px; border-left: 2px solid var(--accent); background: var(--panel-light); }
 .codex-chat-author { display: block; font: 10px/1.7 var(--mono); letter-spacing: .8px; color: var(--accent); }
+.codex-chat-dots { display: flex; align-items: center; gap: 7px; height: 32px; padding-top: 8px; color: var(--accent); }
+.codex-chat-dots i { display: block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: codex-chat-dot 1s ease-in-out infinite; }
+.codex-chat-dots i:nth-child(2) { animation-delay: .15s; }
+.codex-chat-dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes codex-chat-dot { 0%,60%,100% { transform: translateY(0); opacity: .4; } 30% { transform: translateY(-4px); opacity: 1; } }
 .codex-chat-message > p { margin: 8px 0 0; font: 15px/1.85 var(--sans); color: var(--text); white-space: pre-wrap; }
 .codex-chat-results { list-style: none; padding: 0; margin: 18px 0 0; }
 .codex-chat-results li + li { margin-top: 13px; }
@@ -42,6 +47,7 @@
 .codex-chat-form input { width: 100%; min-width: 0; border: 0; border-radius: 0; padding: 12px; font: 16px/1.6 var(--sans); color: var(--text); background: transparent; }
 .codex-chat-form input::placeholder { color: var(--muted); opacity: 1; }
 .codex-chat-form button { flex-shrink: 0; width: 48px; min-height: 48px; border: 0; border-left: 1px solid var(--line); background: var(--panel-light); color: var(--accent); cursor: pointer; }
+.codex-chat-form button:disabled { opacity: .55; cursor: wait; }
 .codex-chat-form svg { width: 23px; height: 23px; vertical-align: middle; }
 .codex-chat-footnote { margin: 9px 18px 12px; flex-shrink: 0; font: 10px/1.7 var(--sans); color: var(--muted); }
 .codex-chat :is(button,a):hover { border-color: var(--accent); }
@@ -71,4 +77,5 @@ body:has([data-highlight-selection]:not(:disabled)) .codex-chat-launcher { displ
   .codex-chat-footnote { display: none; }
   .codex-chat-form { padding-bottom: 10px; }
 }
+@media (prefers-reduced-motion: reduce) { .codex-chat-dots i { animation: none; } }
 @media print { .codex-chat { display: none!important; } }

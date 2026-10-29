@@ -23,7 +23,11 @@ export function createCodexChat({ getRecords, isAvailable = () => true }) {
   const log = root.querySelector('[role=log]');
   const input = root.querySelector('input');
   const suggestions = root.querySelector('.codex-chat-suggestions');
+  const form = root.querySelector('form');
+  const submit = form.querySelector('button[type=submit]');
   const turns = [];
+  let pending = null;
+  let replyTimer;
 
   function message(author, text, reply) {
     const article = document.createElement('article'); article.className = `codex-chat-message ${author === 'AGENTE' ? 'codex-chat-question' : 'codex-chat-answer'}`;
@@ -52,6 +56,17 @@ export function createCodexChat({ getRecords, isAvailable = () => true }) {
     }
     return article;
   }
+  function typingMessage() {
+    const article = document.createElement('article'); article.className = 'codex-chat-message codex-chat-answer codex-chat-typing';
+    article.innerHTML = '<span class="codex-chat-author">C.O.D.E.X</span><span class="sr-only">Preparando resposta…</span><span class="codex-chat-dots" aria-hidden="true"><i></i><i></i><i></i></span>';
+    return article;
+  }
+  function updateControls() {
+    suggestions.hidden = turns.length > 0 || Boolean(pending);
+    root.querySelector('[data-codex-clear]').disabled = turns.length === 0 && !pending;
+    submit.disabled = Boolean(pending);
+    form.setAttribute('aria-busy', String(Boolean(pending)));
+  }
   function renderConversation() {
     const fragment = document.createDocumentFragment();
     fragment.append(message('C.O.D.E.X', codexGreeting));
@@ -60,20 +75,28 @@ export function createCodexChat({ getRecords, isAvailable = () => true }) {
       const reply = answerCodex(query, getRecords());
       fragment.append(message('C.O.D.E.X', reply.text, reply));
     }
+    if (pending) fragment.append(message('AGENTE', pending.query), typingMessage());
     log.replaceChildren(fragment);
-    suggestions.hidden = turns.length > 0;
-    root.querySelector('[data-codex-clear]').disabled = turns.length === 0;
+    updateControls();
     log.scrollTop = log.scrollHeight;
   }
   function send(value) {
+    if (pending) return;
     const query = String(value ?? '').trim(); if (!query) { input.focus(); return; }
-    const reply = answerCodex(query, getRecords());
-    // Mantém apenas as doze consultas mais recentes em memória, sem armazenamento.
-    turns.push(query); if (turns.length > 12) { turns.shift(); renderConversation(); }
-    else log.append(message('AGENTE', query), message('C.O.D.E.X', reply.text, reply));
-    suggestions.hidden = true;
-    root.querySelector('[data-codex-clear]').disabled = false;
+    const turn = { query }; pending = turn;
+    log.append(message('AGENTE', query), typingMessage());
+    updateControls();
     input.value = ''; input.focus({ preventScroll: true }); log.scrollTop = log.scrollHeight;
+    replyTimer = setTimeout(() => {
+      if (pending !== turn) return;
+      const reply = answerCodex(query, getRecords());
+      pending = null; replyTimer = undefined;
+      // Mantém apenas as doze consultas mais recentes em memória, sem armazenamento.
+      turns.push(query);
+      if (turns.length > 12) { turns.shift(); renderConversation(); }
+      else log.querySelector('.codex-chat-typing')?.replaceWith(message('C.O.D.E.X', reply.text, reply));
+      updateControls(); log.scrollTop = log.scrollHeight;
+    }, 1500);
   }
   function close(restoreFocus = true) {
     if (!dialog.open) return;
@@ -102,8 +125,8 @@ export function createCodexChat({ getRecords, isAvailable = () => true }) {
     if (event.target.closest('a[href]')) close(false);
   });
   root.querySelector('.codex-chat-close').addEventListener('click', () => close());
-  root.querySelector('[data-codex-clear]').addEventListener('click', () => { turns.length = 0; renderConversation(); input.focus(); });
-  root.querySelector('form').addEventListener('submit', event => { event.preventDefault(); send(input.value); });
+  root.querySelector('[data-codex-clear]').addEventListener('click', () => { clearTimeout(replyTimer); replyTimer = undefined; pending = null; turns.length = 0; renderConversation(); input.focus(); });
+  form.addEventListener('submit', event => { event.preventDefault(); send(input.value); });
   for (const prompt of codexSuggestions) {
     const button = document.createElement('button'); button.type = 'button'; button.textContent = prompt;
     button.addEventListener('click', () => send(prompt)); suggestions.append(button);

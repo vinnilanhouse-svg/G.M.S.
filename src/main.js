@@ -1,3 +1,4 @@
+import { bindAlternatePortraits } from './alternate-portrait.js';
 import { recordSearchText, searchPreview, normalizeSearch } from './search-preview.js';
 import { attachReadingTools, resetReadingMode } from './reading-tools.js';
 import { createAdminShortcut } from './admin-shortcut.js';
@@ -197,7 +198,7 @@ function credentialRequired() {
 function recordFigure(record) {
  if(!record.image)return '';
  const image=record.image;
- return `<figure class="species-figure"><button type="button" class="species-image-button" data-view-image="${esc(record.id)}" aria-label="Ampliar imagem de ${esc(record.title)}"><img src="${esc(image.src)}" alt="${esc(image.alt)}" width="${image.width}" height="${image.height}" decoding="async"><span class="species-image-action">${icon('expand')}Ampliar imagem</span></button><figcaption><span>REGISTRO VISUAL / ${esc(record.code)}</span><span>${esc(image.caption||'Manual de referência · edição 1.7')}</span></figcaption></figure>`;
+ return `<figure class="species-figure"${record.alternateImage?` data-alternate-portrait="${esc(record.id)}"`:''}><button type="button" class="species-image-button" data-view-image="${esc(record.id)}" aria-label="Ampliar imagem de ${esc(record.title)}"><img src="${esc(image.src)}" alt="${esc(image.alt)}" width="${image.width}" height="${image.height}" decoding="async"><span class="species-image-action">${icon('expand')}Ampliar imagem</span></button><figcaption><span>REGISTRO VISUAL / ${esc(record.code)}</span><span>${esc(image.caption||'Manual de referência · edição 1.7')}</span></figcaption>${record.alternateImage?'<button type="button" class="op-button portrait-toggle" data-toggle-portrait aria-pressed="false">Ver versão carbonizada</button><small class="portrait-hint">Passe o mouse sobre a foto ou use o botão para alternar.</small>':''}</figure>`;
 }
 function nav() {
  const activePath=current.page==='arquivo'?sectionForRecord(records.find(r=>r.id===current.id)):pageKey();
@@ -403,13 +404,14 @@ function bind() {
  operationalPanel.bind();
  documentHighlights.bind(current.page==='arquivo'?records.find(record=>record.id===current.id):null);
  document.querySelector('[data-open-admin]')?.addEventListener('click',openAdministration);
+ bindAlternatePortraits(records);
  const imageViewer=document.querySelector('#record-image-viewer');
  document.querySelectorAll('[data-view-image]').forEach(button=>button.addEventListener('click',()=>{
   const record=records.find(r=>r.id===button.dataset.viewImage);
   if(!record?.image)return;
   imageViewer.querySelector('#image-viewer-title').textContent=record.title;
   imageViewer.querySelector('.image-viewer-caption').textContent=record.kind==='agente'?'REGISTRO VISUAL · ARQUIVO DE PESSOAL · G.M.S.':'REGISTRO VISUAL · DOCUMENTO DE REFERÊNCIA GMS · EDIÇÃO 1.7';
-  const image=record.image;
+  const image=button.dataset.portraitVariant==='alternate'&&record.alternateImage?record.alternateImage:record.image;
   imageViewer.querySelector('.image-viewer-body').innerHTML=`<img src="${esc(image.src)}" alt="${esc(image.alt)}" width="${image.width}" height="${image.height}">`;
   imageViewer.showModal();document.body.classList.add('image-viewer-open');
  }));

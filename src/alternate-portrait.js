@@ -14,7 +14,8 @@ export function bindAlternatePortraits(records) {
       image.src = current.src; image.alt = current.alt;
       photo.dataset.portraitVariant = value ? 'alternate' : 'normal';
       toggle.setAttribute('aria-pressed', String(value));
-      toggle.textContent = value ? 'Ver foto normal' : 'Ver versão carbonizada';
+      toggle.textContent = value ? 'Face demoníaca' : 'Forma humana';
+      toggle.setAttribute('aria-label', value ? 'Alternar para Forma humana' : 'Alternar para Face demoníaca');
     }
     photo.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse' && matchMedia('(hover: hover) and (pointer: fine)').matches) show(true); });
     photo.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse' && matchMedia('(hover: hover) and (pointer: fine)').matches) show(false); });

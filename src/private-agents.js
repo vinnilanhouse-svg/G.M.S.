@@ -34,7 +34,7 @@ export const privateAgentRecords = [
     related: ['especie-constructo', 'org-gms'],
   },
   {
-    id: 'agente-wanderley',
+    id: 'dante-walker',
     image: { src: '/agents/dante-walker-registro.webp', alt: 'Foto de registro de Dante Walker, com tapa-olho e placa de identificação D.W.', width: 900, height: 1200, caption: 'Arquivo de Custódia · G.M.S.' },
     alternateImage: { src: '/agents/dante-walker-carbonizado.webp', alt: 'Dante Walker carbonizado, com chifres, brasas e chamas, segurando a placa D.W.', width: 900, height: 1200 },
     kind: 'prisioneiro',

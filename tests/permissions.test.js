@@ -93,10 +93,10 @@ test('GAMREBELLO abre somente Dante Walker e mantém as duas fichas reservadas f
  const credential=findCredential('GAMREBELLO');
  assert.equal(credential.id,'wanderley');
  assert.equal(credential.entryOnly,true);
- assert.equal(credential.route,'#/arquivo/agente-wanderley');
+ assert.equal(credential.route,'#/arquivo/dante-walker');
  assert.equal(findCredential(' GAMREBELLO ')?.id,credential.id);
  for(const code of ['gamrebello','Gamrebello','GAMREBELO','GAMREBELLO-extra'])assert.equal(findCredential(code),undefined);
- const target=records.find(r=>r.id==='agente-wanderley');
+ const target=records.find(r=>r.id==='dante-walker');
  assert.equal(target.title,'Dante Walker');
  assert.equal(target.kind,'prisioneiro');
  assert.equal(target.status,'Prisioneiro');

@@ -79,7 +79,7 @@ test('a API administrativa oferece apenas conteúdo e não registra nem lista vi
 
 test('publicações são compartilhadas, não alteram permissões e uma revisão antiga não sobrescreve outra edição',async()=>{
   const {request,login,store}=fixture();const cookie=await login();
-  const record=records.find(record=>record.id==='agente-wanderley');
+  const record=records.find(record=>record.id==='dante-walker');
   assert.equal((await request({method:'PUT',cookie,body:{recordId:record.id,revision:0,patch:{unlisted:false}}})).status,400);
   let result=await request({method:'PUT',cookie,body:{recordId:record.id,revision:0,patch:{summary:'Novo texto <literal>.'}}});
   assert.equal(result.status,200);assert.equal(result.body.revision,1);

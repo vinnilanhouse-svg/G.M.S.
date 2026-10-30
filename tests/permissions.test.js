@@ -100,7 +100,7 @@ test('GAMREBELLO abre somente Dante Walker e mantém as duas fichas reservadas f
  assert.equal(target.title,'Dante Walker');
  assert.equal(target.kind,'prisioneiro');
  assert.equal(target.status,'Prisioneiro');
- assert.ok(target.profile.some(field=>field.value==='D.W.')); 
+ assert.ok(target.profile.some(field=>field.value==='D.W.'));
  assert.equal(target.unlisted,true);
  const original=visibleRecords(records,new Set());
  assert.ok(!original.some(r=>r.id===target.id));

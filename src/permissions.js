@@ -30,6 +30,12 @@ export const credentials = [
     route: '#/arquivo/dante-walker', entryOnly: true,
   },
   {
+    id: 'nawan-otaku', code: 'NAWAN_OTAKU', caseSensitive: true,
+    label: 'Ficha reservada de agente',
+    description: 'Consulta individual a um cadastro fora do diretório institucional.',
+    route: '#/arquivo/agente-nawan-otaku', entryOnly: true,
+  },
+  {
     id: 'nome-erro', code: 'NOME_ERRO', caseSensitive: true,
     label: 'Atualização de identificação',
     description: 'Permite informar novamente o nome de acesso do agente.',

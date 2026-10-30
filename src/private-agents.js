@@ -63,4 +63,21 @@ export const privateAgentRecords = [
     ],
     related: ['org-gms'],
   },
+  {
+    id: 'agente-nawan-otaku', kind: 'agente', code: 'AGT-RES-638',
+    title: 'Agente não identificado', category: 'Registro reservado',
+    access: 'Restrito', status: 'Cadastro incompleto',
+    requiredGrant: 'nawan-otaku', unlisted: true, demo: false, source: false,
+    sourceNote: 'Ficha reservada · dados complementares pendentes.',
+    date: '2026-10-30', department: 'Arquivo de Pessoal',
+    author: 'Secretaria de Registro · G.M.S.',
+    summary: 'Ficha de agente disponibilizada mediante credencial específica. Identificação pendente.',
+    report: ['O nome, o histórico e os demais dados funcionais deste agente ainda não foram incorporados a esta ficha.'],
+    profile: [
+      { label: 'Identificação', value: 'Não informada' },
+      { label: 'Espécie', value: 'Não informada' },
+      { label: 'Cargo', value: 'Não informado' },
+    ],
+    related: ['org-gms'],
+  },
 ];

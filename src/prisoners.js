@@ -1,7 +1,7 @@
 import { speciesIcons, constructIcons } from './species-icons.js';
 // Personagens e retratos criados e aprovados para o arquivo de custódia.
 const common = { kind: 'prisioneiro', category: 'Prisioneiros', access: 'Restrito', demo: false, source: false, date: '2026-10-30', department: 'Arquivo de Custódia', author: 'Secretaria de Registro · G.M.S.', sourceNote: 'Ficha de custódia · G.M.S.' };
-const portrait = (id, name) => ({src:`/agents/${id}.webp`,alt:`Retrato de ${name}`,width:1024,height:1536,caption:'Arquivo de Custódia · G.M.S.'});
+const portrait = (id, name) => ({src:`/agents/${id}-registro.webp`,alt:`Foto de registro de ${name}, segurando placa de identificação`,width:900,height:1200,caption:'Arquivo de Custódia · G.M.S.'});
 export const prisonerRecords = [
   {
     ...common, id:'prisioneiro-silas-vilar', code:'PRI-286', title:'Silas Vilar — “O Fiador”', status:'Sob custódia',

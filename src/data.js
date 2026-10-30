@@ -7,7 +7,7 @@ import { reservedRecords } from './permissions.js';
 import { operationalRecords } from './operations.js';
 // Lore adaptada do manual fornecido. Capacidades são narrativas; não há regras de jogo.
 export const sourceInfo = {"title": "Manual de referência · edição 1.7", "url": "https://docs.google.com/document/d/1TE0Lkf15QSkwPb__VTUvIX-rXlIBIaQSQPhWGbyStgQ/edit"};
-export const categories = ["Espécies", "Pessoas", "Organizações", "Fenômenos"];
+export const categories = ["Espécies", "Alvos de interesse", "Prisioneiros", "Organizações", "Fenômenos"];
 export const records = [
   {
     "id": "especie-abissais",

@@ -1,0 +1,20 @@
+.privacy-banner { position: fixed; bottom: 88px; left: 20px; max-width: min(520px,calc(100vw - 40px)); z-index: 80; padding: 22px; border: 1px solid var(--accent); background: var(--panel); color: var(--text); box-shadow: 0 10px 40px rgb(0 0 0 / .4); }
+.privacy-banner p,.privacy-dialog > p { font-size: 14px; line-height: 1.8; }
+.privacy-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
+.privacy-actions > .op-button { flex: 1 1 150px; justify-content: center; }
+.privacy-dialog { width: min(760px,calc(100vw - 24px)); max-height: 85dvh; overflow: auto; background: var(--panel); color: var(--text); border: 1px solid var(--line); padding: 24px; }
+.privacy-dialog::backdrop { background: rgb(0 0 0 / .75); }
+.privacy-dialog > header { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+.privacy-dialog h2 { font-size: 22px; }
+.privacy-dialog details > summary { cursor: pointer; padding: 14px 0; text-decoration: underline; }
+.privacy-policy { max-width: 850px; margin: auto; overflow-wrap: anywhere; }
+.privacy-policy h1 { font-size: clamp(26px,4vw,40px); }
+.privacy-policy h2 { font-size: 21px; margin-top: 32px; }
+.privacy-policy p { font-size: 16px; line-height: 1.9; }
+.privacy-policy a { text-decoration: underline; text-underline-offset: 3px; }
+.privacy-footer { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.privacy-footer button { font: inherit; background: none; color: inherit; border: 0; text-decoration: underline; padding: 5px 0; }
+.agent-identification .identity-privacy { font-size: 12px; line-height: 1.7; }
+.agent-identification .identity-privacy button { width: auto; font: inherit; color: var(--text); background: none; border: 0; text-decoration: underline; padding: 0; }
+@media(max-width:600px) { .privacy-banner { bottom: 79px; left: 10px; max-width: calc(100vw - 20px); padding: 16px; max-height: 65dvh; overflow: auto; } .privacy-banner .privacy-actions { gap: 8px; } .privacy-banner .privacy-actions > .op-button { flex-basis: 100px; } .privacy-dialog { padding: 18px; } }
+@media print { #gms-privacy,.privacy-dialog { display: none!important; } }

@@ -35,9 +35,10 @@ export function requestAgentIdentification(logo, onConfirm, {initialName = '', c
     <div class="agent-identification-brand"><img class="gms-mark" alt="" width="76" height="76"><span>GMS / ARQUIVO CENTRAL</span></div>
     <h2 id="agent-identification-title">Acesso de agente solicitado</h2>
     <p class="agent-identification-prompt">Identifique-se</p>
+    <p class="identity-privacy">Use um nome de personagem ou pseudônimo. Seu acesso fica salvo neste navegador. <button type="button" data-open-privacy>Privacidade e armazenamento</button></p>
     <form novalidate>
       <label for="agent-identification-name">Nome do agente</label>
-      <input id="agent-identification-name" name="agentName" type="text" maxlength="60" placeholder="Digite seu nome" autocomplete="name" aria-describedby="agent-identification-feedback" required autofocus>
+      <input id="agent-identification-name" name="agentName" type="text" maxlength="60" placeholder="Nome do personagem ou pseudônimo" autocomplete="off" aria-describedby="agent-identification-feedback" required autofocus>
       <p id="agent-identification-feedback" class="agent-identification-feedback" role="status"></p>
       <button type="submit">Confirmar identificação</button>
       ${canCancel?'<button type="button" class="agent-identification-cancel">Cancelar</button>':''}

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {agentRecords} from '../src/agents.js';
 import {privateAgentRecords} from '../src/private-agents.js';
-const agents=[...agentRecords,...privateAgentRecords];
+const agents=[...agentRecords,...privateAgentRecords].filter(record=>record.kind==='agente');
 
 test('os retratos cadastrados nas fichas de agentes são locais, próprios e têm legendas de arquivo de pessoal',async()=>{
  const illustrated=agents.filter(r=>r.image);

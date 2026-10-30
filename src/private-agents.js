@@ -35,6 +35,7 @@ export const privateAgentRecords = [
   },
   {
     id: 'agente-wanderley',
+    image: { src: '/agents/dante-walker-registro.webp', alt: 'Foto de registro de Dante Walker, com tapa-olho e placa de identificação D.W.', width: 900, height: 1200, caption: 'Arquivo de Custódia · G.M.S.' },
     kind: 'prisioneiro',
     code: 'PRI-RES-472',
     title: 'Dante Walker',

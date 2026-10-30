@@ -16,8 +16,8 @@ export function bindAlternatePortraits(records) {
       toggle.setAttribute('aria-pressed', String(value));
       toggle.textContent = value ? 'Ver foto normal' : 'Ver versão carbonizada';
     }
-    photo.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') show(true); });
-    photo.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse') show(false); });
+    photo.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse' && matchMedia('(hover: hover) and (pointer: fine)').matches) show(true); });
+    photo.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse' && matchMedia('(hover: hover) and (pointer: fine)').matches) show(false); });
     toggle.addEventListener('click', () => show(!alternate));
   });
 }

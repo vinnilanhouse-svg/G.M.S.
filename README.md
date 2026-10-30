@@ -349,3 +349,11 @@ O backup completo é um JSON com `format: arquivo-gms-dados-pessoais`, `version:
 A importação valida a cópia inteira antes de gravar. Notas e registros são mesclados; versões conflitantes viram cópias, com remapeamento de ligações. Por padrão, preserva identificação, ficha e credencial já preenchidas; **Restaurar os dados da cópia** também restaura esses dados e as preferências de aparência e som. A gravação é revertida se alguma parte falhar. **Desfazer última importação desta sessão** retorna aos dados anteriores, incluindo rascunhos que estavam em memória, desde que os registros não tenham mudado depois. Exportações e importações individuais anteriores continuam disponíveis em cada seção. Os dados permanecem locais ao navegador; transferir entre dispositivos é feito pelo arquivo de backup.
 
 Implementação: `src/agent-profile-model.js` e `src/agent-profile.js` (identificação), `src/mission-workspace.js` (missão), `src/personal-backup-model.js` e `src/personal-backup.js` (backup), `src/personal-storage.js` (escrita com recuperação) e `src/workspace-experience.css` (navegação e apresentação). A visão de campo compartilha os componentes de `src/agent-sheet.js`.
+
+## Consulta e leitura
+
+A busca e os filtros por texto exibem prévias com tipo, código, situação e o trecho encontrado destacado (sem distinguir acentos ou maiúsculas). O índice usa apenas os registros do catálogo autorizado; perfis ocultos continuam fora da busca. `src/search-preview.js` concentra a extração dos textos e os recortes.
+
+Nos arquivos, **Modo de leitura** amplia o documento e recolhe a navegação e as ações auxiliares; use **Sair da leitura** ou **Esc** para voltar. No celular, **Nesta pasta · informações e vínculos** recolhe as divisórias e os dados laterais, sem remover retratos ou referências. A abertura usa o controle nativo de detalhes, acessível por toque e teclado. Implementação em `src/reading-tools.js` e `src/reading-tools.css`.
+
+Ficha e anotações mostram **Salvo neste dispositivo**, com horário, após a gravação local. Uma falha de armazenamento exibe aviso de que os dados estão apenas na sessão. As gravações continuam síncronas, a cada alteração válida, sem atrasar o salvamento para criar uma animação. `src/save-feedback.js` padroniza o retorno; não há sincronização desses dados com um servidor.

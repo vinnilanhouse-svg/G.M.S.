@@ -1,3 +1,5 @@
+import { recordSearchText, searchPreview, normalizeSearch } from './search-preview.js';
+import { attachReadingTools, resetReadingMode } from './reading-tools.js';
 import { createAdminShortcut } from './admin-shortcut.js';
 import { localEditsKey } from './local-edits.js';
 import { createAdminPanel } from './admin-panel.js';
@@ -47,6 +49,7 @@ import './agent-sheet.css';
 import './theme-palettes.css';
 import './server-workspace.css';
 import './physical-folders.css';
+import './reading-tools.css';
 import { records as originalRecords, categories } from './data.js';
 let allRecords=originalRecords;
 const terminalTheme=createTerminalTheme();
@@ -241,6 +244,7 @@ function setNavigationOpen(open) {
 }
 
 function shell(content) {
+ resetReadingMode();
  document.body.classList.remove('image-viewer-open','navigation-open');
  document.querySelector('#app').innerHTML=`${mobileOpen?'<div class="overlay" data-close-menu></div>':''}${nav()}<div class="workspace"><header class="topbar"><div class="breadcrumb"><button class="icon-button mobile-menu" aria-label="Abrir navegação" data-menu>${icon('menu')}</button><span>GMS</span><span class="slash">/</span><span>${esc(paths[pageKey()]||'Consulta de arquivo')}</span></div><div class="topbar-right"><span class="system-online"><i></i>SISTEMA OPERACIONAL</span><span class="topbar-divider"></span><span class="mono topbar-code">TERMINAL 001</span></div></header>${terminal.markup()}${operationalPanel.contextBar(current.page)}<main id="main-content">${content}</main><footer class="footer"><span>GMS <span class="footer-slash">/</span> DEPARTAMENTO DE DOCUMENTAÇÃO E MEMÓRIA</span><span><a href="#/credenciais" class="footer-credentials">${icon('key')}Credenciais de acesso</a><i></i> EDIÇÃO 1.7 <i></i> ACESSOS DEMONSTRATIVOS</span></footer></div><div id="toast" role="status"></div><dialog id="record-image-viewer" class="image-viewer" aria-labelledby="image-viewer-title"><div class="image-viewer-bar"><h2 id="image-viewer-title"></h2><button type="button" class="icon-button" data-close-image-viewer aria-label="Fechar imagem">${icon('close')}</button></div><div class="image-viewer-body"></div><p class="image-viewer-caption">REGISTRO VISUAL · DOCUMENTO DE REFERÊNCIA GMS · EDIÇÃO 1.7</p></dialog>`;
  bind();
@@ -268,6 +272,7 @@ function shell(content) {
   pockets.innerHTML=`${main.querySelector('#relacionados')?`<a href="#relacionados" data-folio-related>${icon('file')}<span>Documentos vinculados</span></a>`:''}${[['anotacoes','clipboard','Anotações'],['pessoas','users','Pessoas de interesse'],['localidades','globe','Localidades']].map(([tab,symbol,label])=>`<a href="${destination(tab)}">${icon(symbol)}<span>${label}</span></a>`).join('')}`;
   pockets.querySelector('[data-folio-related]')?.addEventListener('click',event=>{event.preventDefault();main.querySelector('#relacionados').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});});
   dossier.querySelector('.dossier-aside')?.prepend(pockets);
+  attachReadingTools(main,icon);
  }
  workspace.insertAdjacentHTML('beforeend',serverDock());
  workspace.querySelector('[data-open-codex]').addEventListener('click',()=>codexChat?.open());
@@ -339,9 +344,15 @@ function listPage() {
 }
 function updateResults() {
  const emptyMessages={documentos:'Ainda não há documentos internos neste acervo.',missoes:'Ainda não há missões cadastradas neste acervo.','missoes/relatorios':'Ainda não há relatórios de missão neste acervo.',alvos:'Ainda não há alvos de interesse cadastrados neste acervo.'};
- const list=current.all.filter(r=>(!filters.status||r.status===filters.status)&&(!filters.category||r.category===filters.category)&&(!filters.access||r.access===filters.access)&&(!filters.missionId||r.missionId===filters.missionId)&&(!filters.q||norm([r.code,r.title,r.summary,r.category,...r.report,...(r.abilities||[]).map(a=>[a.title,a.text,a.variant,...(a.details||[]).map(d=>d.title+' '+d.text)].join(' '))].join(' ')).includes(norm(filters.q))));
- document.querySelector('#list-results').innerHTML=`<div class="results-meta"><span>${list.length} ${list.length===1?'registro encontrado':'registros encontrados'}</span><button class="text-button" data-reset>Limpar filtros ${icon('close')}</button></div>${list.length?(current.page==='conhecimento'?`<div class="wiki-grid">${list.map(r=>`<a class="wiki-card" href="#/arquivo/${r.id}">${r.icon?`<div class="wiki-card-visual wiki-card-symbol"><img src="${esc(r.icon.src)}" alt="Símbolo da espécie: ${esc(r.title)}" width="${r.icon.width}" height="${r.icon.height}" loading="lazy" decoding="async"></div>`:''}<div class="wiki-card-top"><span>${r.code} / ${r.category}</span>${icon('arrow')}</div><h2${r.category==='Espécies'?` class="species-title" data-species="${esc(r.id)}"`:""}>${esc(r.title)}</h2><p>${esc(r.summary)}</p><div class="wiki-card-bottom">${accessBadge(r.access)}</div></a>`).join('')}</div>`:recentTable(list,['agentes','missoes','alvos'].includes(current.page))):`<div class="empty-state">${icon('search')}<h2>Nenhum registro encontrado</h2><p>${!current.all.length&&emptyMessages[pageKey()]?emptyMessages[pageKey()]:current.page==='favoritos'&&!saved.size?'Abra um arquivo e selecione “Salvar arquivo” para adicioná-lo aqui.':'Tente outro termo ou remova os filtros para ampliar a consulta.'}</p></div>`}<div class="table-foot"><i></i>FIM DOS RESULTADOS<span>GMS / CONSULTA INTEGRADA</span></div>`;
+ const list=current.all.filter(r=>(!filters.status||r.status===filters.status)&&(!filters.category||r.category===filters.category)&&(!filters.access||r.access===filters.access)&&(!filters.missionId||r.missionId===filters.missionId)&&(!filters.q||normalizeSearch(recordSearchText(r)).includes(normalizeSearch(filters.q).trim())));
+ document.querySelector('#list-results').innerHTML=`<div class="results-meta"><span>${list.length} ${list.length===1?'registro encontrado':'registros encontrados'}</span><button class="text-button" data-reset>Limpar filtros ${icon('close')}</button></div>${list.length?(filters.q.trim()?searchResults(list,filters.q):current.page==='conhecimento'?`<div class="wiki-grid">${list.map(r=>`<a class="wiki-card" href="#/arquivo/${r.id}">${r.icon?`<div class="wiki-card-visual wiki-card-symbol"><img src="${esc(r.icon.src)}" alt="Símbolo da espécie: ${esc(r.title)}" width="${r.icon.width}" height="${r.icon.height}" loading="lazy" decoding="async"></div>`:''}<div class="wiki-card-top"><span>${r.code} / ${r.category}</span>${icon('arrow')}</div><h2${r.category==='Espécies'?` class="species-title" data-species="${esc(r.id)}"`:""}>${esc(r.title)}</h2><p>${esc(r.summary)}</p><div class="wiki-card-bottom">${accessBadge(r.access)}</div></a>`).join('')}</div>`:recentTable(list,['agentes','missoes','alvos'].includes(current.page))):`<div class="empty-state">${icon('search')}<h2>Nenhum registro encontrado</h2><p>${!current.all.length&&emptyMessages[pageKey()]?emptyMessages[pageKey()]:current.page==='favoritos'&&!saved.size?'Abra um arquivo e selecione “Salvar arquivo” para adicioná-lo aqui.':'Tente outro termo ou remova os filtros para ampliar a consulta.'}</p></div>`}<div class="table-foot"><i></i>FIM DOS RESULTADOS<span>GMS / CONSULTA INTEGRADA</span></div>`;
  document.querySelector('[data-reset]').onclick=()=>{filters={q:'',status:'',category:'',access:'',missionId:''};listPage();};
+}
+function searchResults(list,query) {
+ return `<div class="search-preview-list">${list.map(record=>{
+  const snippet=searchPreview(record,query);
+  return `<a class="search-preview-result" href="#/arquivo/${esc(record.id)}"><div class="search-preview-meta"><span>${icon(recordIcons[record.kind])}${esc(kinds[record.kind])} · ${esc(record.category)}</span><span>${esc(record.code)}</span></div><h2${record.category==='Espécies'?` class="species-title" data-species="${esc(record.id)}"`:''}>${esc(record.title)}</h2><p>${snippet.leading?'…':''}${esc(snippet.before)}${snippet.match?`<mark>${esc(snippet.match)}</mark>`:''}${esc(snippet.after)}${snippet.trailing?'…':''}</p><div class="search-preview-foot">${accessBadge(record.access)}<span>${esc(record.status)} · ${date(record.date)}</span>${icon('arrow')}</div></a>`;
+ }).join('')}</div>`;
 }
 function speciesAbilityGroups(abilities) {
  const groups=[
@@ -436,6 +447,7 @@ function returnHome() {
  if(title){title.tabIndex=-1;title.focus({preventScroll:true});}
 }
 function lostPage() {
+ resetReadingMode();
  document.body.classList.remove('navigation-open');
  codexChat?.close(false);
  terminal.cancel();

@@ -1,3 +1,4 @@
+import { beginSave, finishSave } from './save-feedback.js';
 import { createWorkFolder, operationalMissions } from './work-folder.js';
 import { bindFolderNavigation, createWorkFolderSections, workFolderTabs, workFolderUrl as folderUrl } from './work-folder-sections.js';
 import { createWorkFolderTrash } from './work-folder-trash.js';
@@ -130,11 +131,13 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
     if (focusNewNote) { form.elements.namedItem('title').focus({ preventScroll: true }); focusNewNote = false; }
     form.addEventListener('submit', event => event.preventDefault());
     function saveField(event) {
+      const saveStatus = form.querySelector('[data-note-status]');
+      beginSave(saveStatus);
       try {
         if (event.target.name === 'illustrations') folder.setNoteIllustrations(id, event.target.value);
         else if (event.target.name === 'tags') folder.setEntryTags('notes', id, parseFolderTags(event.target.value));
         else folder.updateNote(id, event.target.name, event.target.value);
-        form.querySelector('[data-note-status]').textContent = memoryNotice();
+        finishSave(saveStatus, folder.persisted);
         form.querySelector('[data-note-status]').classList.toggle('note-save-warning', !folder.persisted);
         form.querySelector('[data-note-save-mode]').textContent = folder.persisted ? 'Alterações salvas automaticamente' : 'Rascunho somente nesta sessão';
         const note = folder.state.notes.find(item => item.id === id);
@@ -155,7 +158,7 @@ export function createOperationalPanel({ getRecords, icon, onNotice, onChange, s
         if (event.target.name === 'missionId' && filter && (filter === 'avulsas' ? Boolean(note.missionId) : note.missionId !== filter)) {
           location.hash = folderUrl(note.missionId || 'avulsas', id);
         }
-      } catch (error) { form.querySelector('[data-note-status]').textContent = error.message; form.querySelector('[data-note-status]').classList.add('note-save-warning'); return false; }
+      } catch (error) { finishSave(saveStatus, false, error.message); form.querySelector('[data-note-status]').classList.add('note-save-warning'); return false; }
     }
     bindNoteIllustrationControls(form, { onChange: ({ values }) => saveField({ target: { name: 'illustrations', value: values } }) });
     form.querySelectorAll('input,textarea').forEach(input => input.addEventListener('input', saveField));

@@ -1,3 +1,4 @@
+import { beginSave, finishSave } from './save-feedback.js';
 import { agentSheetFields, agentSheetSkills, agentSheetSource } from './agent-sheet-schema.js';
 import { agentSheetAttributes, calculateAgentSheet, createAgentSheetStore, maxAgentSheetBytes, parseAgentSheet, serializeAgentSheet } from './agent-sheet-model.js';
 import { speciesIcons, constructIcons } from './species-icons.js';
@@ -24,7 +25,7 @@ export function createAgentSheet({ icon, onNotice, onChange, storage, sound, onN
   let importRevision = 0;
   let reading = 0;
   let values = calculateAgentSheet(store.state.fields);
-  const savedMessage = () => store.persisted ? 'Ficha salva neste navegador.' : 'Ficha apenas nesta sessão. Exporte uma cópia antes de sair; o navegador não permitiu salvar.';
+  const savedMessage = () => store.persisted ? 'Salvamento automático neste dispositivo.' : 'Ficha apenas nesta sessão. Exporte uma cópia antes de sair; o navegador não permitiu salvar.';
   const importDialog = () => `<dialog class="sheet-import-dialog" aria-labelledby="sheet-import-title"><div class="folder-dialog-heading"><h2 id="sheet-import-title">Importar ficha de agente</h2><button type="button" class="op-text-button" data-close-sheet-import>Fechar</button></div><p>Selecione o PDF editável da ficha Monstrão ou um backup em JSON exportado por este site. A importação substituirá sua ficha neste navegador. Exporte a atual antes de continuar, caso queira guardá-la.</p><button type="button" class="op-button" data-select-sheet-file>Selecionar arquivo</button><input type="file" accept=".pdf,.json,application/pdf,application/json" data-sheet-import-file hidden><p data-sheet-import-preview class="sheet-import-preview"></p><p data-sheet-import-feedback role="status"></p><button type="button" class="op-button" data-confirm-sheet-import disabled>Usar ficha importada</button></dialog>`;
 
   function field(name, { label = agentSheetFields[name].label, compact = false, area = false, check = false } = {}) {
@@ -66,7 +67,7 @@ export function createAgentSheet({ icon, onNotice, onChange, storage, sound, onN
   }
   function status(message = savedMessage(), warning = !store.persisted) {
     const target = document.querySelector('[data-sheet-save]');
-    if (target) { target.textContent = message; target.classList.toggle('sheet-save-warning', warning); }
+    if (target) { target.textContent = message; target.dataset.saveState = warning ? 'error' : 'info'; target.classList.toggle('sheet-save-warning', warning); }
   }
   function refresh({ inputs = false } = {}) {
     const root = document.querySelector('.agent-sheet');
@@ -113,7 +114,8 @@ export function createAgentSheet({ icon, onNotice, onChange, storage, sound, onN
       const error = root.querySelector(`#error-sheet-${name}`);
       function save() {
         try {
-          store.updateField(name, input.value); invalid.delete(name); input.removeAttribute('aria-invalid'); error.hidden = true; refresh(); status();
+          beginSave(root.querySelector('[data-sheet-save]'));
+          store.updateField(name, input.value); invalid.delete(name); input.removeAttribute('aria-invalid'); error.hidden = true; refresh(); status(); finishSave(root.querySelector('[data-sheet-save]'), store.persisted);
         } catch (failure) {
           invalid.set(name, input.value); input.setAttribute('aria-invalid', 'true'); error.textContent = failure.message; error.hidden = false; status('Revise o campo destacado. Os cálculos mantêm o último valor válido.', true);
         }

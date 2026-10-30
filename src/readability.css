@@ -162,3 +162,6 @@ input::placeholder { color: var(--muted); opacity: 1; }
   max-width: 100%;
   object-fit: contain;
 }
+/* Situações extensas também precisam caber no cabeçalho dos dossiês móveis. */
+.dossier-info > div { min-width: 0; }
+.dossier-info .status { white-space: normal; overflow-wrap: anywhere; }

@@ -1,3 +1,4 @@
+import { prisonerRecords } from './prisoners.js';
 import { privateAgentRecords } from './private-agents.js';
 import { speciesIcons } from './species-icons.js';
 import { agentRecords } from './agents.js';
@@ -875,6 +876,7 @@ export const records = [
     ],
     "sourceSection": "A G.M.S."
   },
+  ...prisonerRecords,
   ...agentRecords,
   ...privateAgentRecords,
   ...operationalRecords,

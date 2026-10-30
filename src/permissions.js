@@ -25,7 +25,7 @@ export const credentials = [
   },
   {
     id: 'wanderley', code: 'GAMREBELLO', caseSensitive: true,
-    label: 'Ficha reservada de agente',
+    label: 'Ficha reservada de prisioneiro',
     description: 'Consulta individual a um cadastro fora do diretório institucional.',
     route: '#/arquivo/agente-wanderley', entryOnly: true,
   },

@@ -10,7 +10,7 @@ test('os retratos cadastrados nas fichas de agentes são locais, próprios e tê
  assert.ok(illustrated.length>0);
  assert.ok(agentRecords.every(r=>r.image));
  assert.ok(privateAgentRecords.find(r=>r.id==='agente-morrow-noone').image);
- assert.ok(agents.filter(r=>!r.image).every(r=>r.unlisted&&r.status==='Cadastro incompleto'));
+ assert.ok(agents.filter(r=>r.kind==='agente'&&!r.image).every(r=>r.unlisted&&r.status==='Cadastro incompleto'));
  assert.equal(new Set(illustrated.map(r=>r.image.src)).size,illustrated.length);
  for(const r of illustrated){
   assert.equal(r.image.src,`/agents/${r.id}.webp`);

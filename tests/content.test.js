@@ -8,7 +8,7 @@ test('o acervo tem identificadores únicos e todos os vínculos apontam para arq
  assert.equal(new Set(records.map(r=>r.code)).size,records.length);
  for(const r of records){
   assert.ok(r.title&&r.summary&&r.report.length,`Conteúdo ausente: ${r.id}`);
-  assert.ok(['verbete','documento','agente','missao','relatorio','alvo'].includes(r.kind));
+  assert.ok(['verbete','documento','agente','missao','relatorio','alvo','prisioneiro'].includes(r.kind));
   assert.ok(['Público','Restrito','Censurado'].includes(r.access));
   assert.match(r.date,/^\d{4}-\d{2}-\d{2}$/);
   for(const id of [...r.related,...(r.notableMembers||[])])assert.ok(ids.has(id),`${r.id}: vínculo inválido ${id}`);

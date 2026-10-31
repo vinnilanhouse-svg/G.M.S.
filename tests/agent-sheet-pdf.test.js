@@ -83,3 +83,14 @@ test('textos Unicode são preservados e o importador recusa PDFs sem o formulár
   const incompatible = await PDFDocument.create(); for (let index = 0; index < 3; index++) incompatible.addPage();
   await assert.rejects(importAgentSheetPdf(await incompatible.save()), /campos editáveis/);
 });
+
+test('habilidades do catálogo mantêm descrição integral, ação e custo no PDF original', async()=>{
+  const {abilityCatalog}=await import('../src/ability-picker.js');
+  const fields=createAgentSheetStore().state.fields;
+  const ability=abilityCatalog.find(item=>item.species==='Múmia'&&item.name==='As Pragas');
+  Object.assign(fields,{habilidade_1_nome:ability.name,habilidade_1_descricao:ability.description,habilidade_1_acao:ability.action,habilidade_1_custo:ability.cost});
+  const pdf=await fillAgentSheetPdf(originalBytes,fields);
+  const imported=await importAgentSheetPdf(pdf);
+  for(const part of ['nome','descricao','acao','custo'])assert.equal(imported[`habilidade_1_${part}`],fields[`habilidade_1_${part}`]);
+  assert.equal((await PDFDocument.load(pdf)).getPageCount(),3);
+});

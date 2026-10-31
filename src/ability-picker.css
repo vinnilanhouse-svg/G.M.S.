@@ -1,0 +1,8 @@
+.ability-select { grid-column: 1 / -1; display: grid; gap: 8px; padding: 15px; border: 1px solid var(--line); background: var(--panel); }
+.ability-select select { width: 100%; min-width: 0; max-width: 100%; padding: 12px; color: var(--text); background: var(--bg); border: 1px solid var(--line); }
+.ability-select small,.ability-damage small { line-height: 1.8; color: var(--muted); }
+[data-ability-actions] { grid-column: 1 / -1; min-width: 0; overflow-wrap: anywhere; }
+.ability-roll-actions { display: flex; flex-wrap: wrap; gap: 10px; padding-bottom: 12px; }
+.ability-roll-actions button { white-space: normal; }
+.ability-damage { font-size: 14px; line-height: 1.8; }
+@media print { .ability-select,.ability-roll-actions { display:none!important; } }

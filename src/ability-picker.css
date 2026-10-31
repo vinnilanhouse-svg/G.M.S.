@@ -39,3 +39,31 @@
 
 .ability-wizard-chrome { position: sticky; top: 0; z-index: 2; background: var(--panel); padding-top: 6px; }
 .ability-wizard [data-wizard-close] { flex-shrink: 0; white-space: nowrap; }
+.ability-library-toolbar { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px; margin-bottom:24px; }
+.ability-library-toolbar > p { color:var(--muted); font-size:14px; margin:0; }.ability-library-toolbar > div { display:flex; flex-wrap:wrap; gap:16px; align-items:center; }
+.ability-library { display:grid; gap:18px; }
+.ability-card { padding:26px; background:var(--bg); border:1px solid var(--line); border-left:3px solid var(--accent); min-width:0; }
+.ability-card > header { display:flex; align-items:start; justify-content:space-between; gap:18px; }.ability-card > header > div { min-width:0; }
+.agent-sheet .ability-card h3 { font:600 clamp(22px,2.3vw,30px)/1.4 var(--sans); color:var(--text); margin:4px 0 18px; letter-spacing:-.4px; overflow-wrap:anywhere; }
+.ability-card-number { font:10px/1.7 var(--mono); color:var(--muted); }
+.ability-card header > button { flex-shrink:0; }
+.ability-card-facts { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }.ability-card-facts:empty { display:none; }
+.ability-card-facts > span { display:flex; align-items:baseline; flex-wrap:wrap; gap:8px; border:1px solid var(--line); padding:6px 10px; font-size:14px; line-height:1.7; overflow-wrap:anywhere; }.ability-card-facts small { color:var(--muted); font-size:11px; }
+.ability-card-description,.ability-card-edit { margin-top:16px; border-top:1px solid var(--line); padding-top:14px; }
+.ability-card summary,.ability-library-help summary,.ability-attacks > summary { cursor:pointer; color:var(--text); font-size:14px; line-height:1.8; }
+.ability-card-description p { white-space:pre-line; font-size:16px; line-height:1.9; margin-top:18px; }
+.ability-card-edit > div { display:grid; grid-template-columns:1fr 1fr; gap:18px; padding-top:18px; }.ability-card-edit .sheet-field:nth-child(1),.ability-card-edit .sheet-field:nth-child(2) { grid-column:1/-1; }
+.ability-library-empty { padding:32px 24px; border:1px dashed var(--line); text-align:center; margin-bottom:20px; }.ability-library-empty h3 { font-size:22px; margin-bottom:10px; }.ability-library-empty p { color:var(--muted); font-size:15px; }
+.ability-library-help { margin-top:22px; }.ability-library-help p { font-size:14px; line-height:1.9; color:var(--muted); }
+.ability-attacks { margin-top:28px; }.ability-attacks > summary { font-size:18px; }.ability-attacks > .sheet-entry-rows { margin-top:20px; }
+[data-sheet-page="habilidades"] > .sheet-paper-heading span,[data-sheet-page="habilidades"] > .sheet-paper-heading small { display:none; }
+@media(max-width:600px) { .ability-card { padding:18px 14px; }.ability-card-edit > div { grid-template-columns:1fr; }.ability-library-toolbar > div { gap:12px; }.ability-roll-actions button { width:100%; justify-content:center; } }
+@media print { .ability-library-toolbar,.ability-card header > button,.ability-library-help,.ability-card-edit > summary { display:none!important; }.ability-card-description > p,.ability-card-edit > div { display:block!important; }.ability-card { break-inside:avoid; }.ability-card[hidden] { display:none!important; } }
+.attack-card { border:1px solid var(--line); background:var(--bg); padding:18px; }
+.attack-card > summary { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+.attack-card > summary strong { font-size:18px; }.attack-card > summary span { font:12px/1.8 var(--mono); color:var(--accent); }
+.attack-card-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; padding-top:20px; }
+@media(max-width:600px) { .attack-card-fields { grid-template-columns:1fr; } }
+@media(min-width:1050px) { .ability-library { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; } }
+.ability-card { scroll-margin-top:20px; scroll-margin-bottom:110px; }
+.ability-card-facts small:empty { display:none; }

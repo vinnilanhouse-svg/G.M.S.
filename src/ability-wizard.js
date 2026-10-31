@@ -46,5 +46,5 @@ export function bindAbilityWizard(root,{icon,onChoose}){
    catch(error){dialog.querySelector('.ability-wizard-feedback').textContent=error.message||'Não foi possível preencher a habilidade.';}
   }
  });
- dialog.addEventListener('close',()=>{if(opener?.isConnected)opener.focus({preventScroll:true});});
+ dialog.addEventListener('close',()=>{if(opener?.isConnected&&opener.getClientRects().length){opener.focus({preventScroll:true});opener.closest('[data-ability-card]')?.scrollIntoView({block:'nearest',behavior:'instant'});}else root.querySelector('[data-add-ability]')?.focus({preventScroll:true});});
 }

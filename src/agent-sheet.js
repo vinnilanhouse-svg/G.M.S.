@@ -1,3 +1,4 @@
+import { abilityCards, refreshAbilityCards, refreshAttackCards, bindAbilityCards } from './ability-cards.js';
 import { bindAbilityWizard } from './ability-wizard.js';
 import { specialties } from './specialties.js';
 import { abilityPicker, abilityActions } from './ability-picker.js';
@@ -51,6 +52,7 @@ export function createAgentSheet({ icon, onNotice, onChange, storage, sound, onN
     return `<table class="sheet-skills"><caption class="sr-only">Perícias: base, bônus e total</caption><thead><tr><th>Perícias</th><th>Base</th><th>Bônus</th><th>Total</th></tr></thead><tbody>${skills.map(skill => `<tr><th scope="row">${rolls.trigger(skill.id, skill.label)}</th>${['base', 'bonus', 'total'].map(part => `<td>${field(`${skill.id}_${part}`, { label: `${skill.label} — ${part === 'base' ? 'Base' : part === 'bonus' ? 'Bônus' : 'Total'}`, compact: true })}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
   }
   function repeatedRows(kind, count, columns) {
+    if(kind==='ataque') return `<div class="sheet-entry-rows">${Array.from({length:count},(_,i)=>`<details class="attack-card" data-attack-card="${i+1}"><summary><strong data-attack-name></strong><span data-attack-damage></span></summary><div class="attack-card-fields">${columns.map(([key,label,area])=>field(`ataque_${i+1}_${key}`,{label,area})).join('')}</div></details>`).join('')}</div>`;
     return `<div class="sheet-entry-rows" data-sheet-rows="${kind}">${Array.from({ length: count }, (_, index) => `<fieldset class="sheet-entry-row sheet-entry-${kind}"><legend>${kind === 'habilidade' ? 'Habilidade' : kind === 'ataque' ? 'Ataque' : 'Item'} ${String(index + 1).padStart(2, '0')}</legend>${kind === 'habilidade' ? abilityPicker(index + 1) : ''}${columns.map(([key, label, area]) => field(`${kind}_${index + 1}_${key}`, { label, area })).join('')}</fieldset>`).join('')}</div>`;
   }
   function fieldPage() {
@@ -65,7 +67,7 @@ export function createAgentSheet({ icon, onNotice, onChange, storage, sound, onN
     const selected = tabs.some(([id]) => id === requested) ? requested : 'ficha';
     return `<section class="agent-sheet" aria-labelledby="agent-sheet-title"><header class="sheet-heading"><div><span class="op-kicker">REGISTRO PESSOAL · SISTEMA MONSTRÃO</span><h1 id="agent-sheet-title">Minha ficha de agente</h1><p>Identificação, capacidades e registros de campo do seu agente.</p></div><span class="sheet-form-code">GMS-FC / 01—03</span></header><div class="sheet-actions"><a class="op-button" href="#/minha-credencial">${icon('key')}Minha credencial</a><button type="button" class="op-button" data-export-agent-pdf>${icon('external')}Exportar PDF</button><button type="button" class="op-text-button" data-open-sheet-import>Importar ficha</button><button type="button" class="op-text-button" data-export-agent-sheet>Exportar JSON</button></div><div class="sheet-save-line"><span role="status" class="sheet-save-status ${store.persisted ? '' : 'sheet-save-warning'}" data-sheet-save>${savedMessage()}</span><span class="sheet-field-legend"><i></i>EDITÁVEL <b></b>AUTOMÁTICO</span></div><nav class="sheet-tabs" aria-label="Páginas da ficha">${tabs.map(([id, number, title]) => `<a href="#/minha-ficha${id === 'ficha' ? '' : `?aba=${id}`}" ${selected === id ? 'aria-current="page" class="selected"' : ''}><span>${number}</span>${title}</a>`).join('')}</nav><form class="agent-sheet-form" novalidate>
       <section class="sheet-paper" data-sheet-page="ficha" ${selected !== 'ficha' ? 'hidden' : ''}><div class="sheet-paper-heading"><div><span>01 / IDENTIFICAÇÃO E CAPACIDADES</span><h2 data-sheet-character-name>${esc(values.nome || 'Ficha de registo de agente')}</h2></div><small>GMS-FC / 01</small></div><div class="sheet-identification-grid"><div class="sheet-name-fields">${field('nome')}${field('jogador')}</div><div class="sheet-species-fields">${field('especie')}${field('especialidade')}${field('nivel')}</div><div class="sheet-appearance-fields">${['genero', 'idade', 'altura', 'olhos', 'cabelos'].map(name => field(name)).join('')}</div><div class="sheet-affiliation-fields">${['grupo', 'cargo', 'pe_atual', 'pe_proximo'].map(name => field(name)).join('')}</div></div><div class="sheet-resources">${resource('Pontos de Vida', 'vida_atual', 'vida_max', 'grafico_vida', 15, 'vida')}${resource(values.recurso_nome, 'essencia_atual', 'essencia_max', 'grafico_essencia', 16, 'essencia')}</div><p class="sheet-test-hint">Clique no nome de um atributo ou de uma perícia para fazer um teste com d20. <span>Perícias com * exigem treinamento, registrado na coluna Bônus.</span></p><div class="sheet-attribute-layout"><section class="sheet-attributes" aria-labelledby="sheet-attributes-title"><h3 id="sheet-attributes-title">Atributos <small>RÉGUA DE 1 A 20</small></h3>${agentSheetAttributes.map(name => `<div class="sheet-attribute sheet-attribute-${name}">${field(`attr_${name}`, { label: name === 'coracao' ? 'Coração' : name[0].toUpperCase() + name.slice(1), check: true })}<div><div class="sheet-ruler-labels" aria-hidden="true">${Array.from({ length: 20 }, (_, index) => `<span>${String(index + 1).padStart(2, '0')}</span>`).join('')}</div>${segments(20, `grafico_${name}`)}</div></div>`).join('')}</section><aside class="sheet-species-visual"><h3>Imagem do Personagem</h3><div data-sheet-species-image></div><p data-sheet-species-label>${values.especie === '-' ? 'Selecione a Espécie no campo acima' : esc(values.especie)}</p></aside></div><div class="sheet-skill-columns">${skillTable(agentSheetSkills.slice(0, 14))}${skillTable(agentSheetSkills.slice(14))}</div></section>
-      <section class="sheet-paper" data-sheet-page="habilidades" ${selected !== 'habilidades' ? 'hidden' : ''}><div class="sheet-paper-heading"><div><span>02 / REGISTRO DE CAPACIDADES</span><h2>Habilidades e capacidade de combate</h2></div><small>GMS-FC / 02</small></div><section class="sheet-form-section"><h3>Habilidades</h3>${repeatedRows('habilidade', agentSheetSource.abilityRows, [['nome', 'Nome'], ['descricao', 'Descrição', true], ['acao', 'Ação'], ['custo', 'Custo']])}</section><section class="sheet-form-section"><h3>Ataques</h3>${repeatedRows('ataque', agentSheetSource.attackRows, [['nome', 'Ataque'], ['dano', 'Dano'], ['atributo', 'Atributo'], ['tipo', 'Tipo']])}</section></section>
+      <section class="sheet-paper" data-sheet-page="habilidades" ${selected !== 'habilidades' ? 'hidden' : ''}><div class="sheet-paper-heading"><div><span>02 / REGISTRO DE CAPACIDADES</span><h2>Suas habilidades</h2></div><small>GMS-FC / 02</small></div><section class="sheet-form-section">${abilityCards(agentSheetSource.abilityRows,values,field)}</section><details class="sheet-form-section ability-attacks"><summary>Ataques e armas</summary>${repeatedRows('ataque', agentSheetSource.attackRows, [['nome', 'Ataque'], ['dano', 'Dano'], ['atributo', 'Atributo'], ['tipo', 'Tipo']])}</details></section>
       <section class="sheet-paper" data-sheet-page="inventario" ${selected !== 'inventario' ? 'hidden' : ''}><div class="sheet-paper-heading"><div><span>03 / EQUIPAMENTOS E MEMÓRIA</span><h2>Inventário e histórico</h2></div><small>GMS-FC / 03</small></div><section class="sheet-form-section"><div class="sheet-inventory-heading"><h3>Inventário</h3>${field('peso_max', { label: 'Peso Máx.' })}${field('peso_total', { label: 'Peso Total' })}</div>${repeatedRows('item', agentSheetSource.inventoryRows, [['nome', 'Item'], ['descricao', 'Descrição'], ['peso', 'Peso']])}</section><section class="sheet-form-section"><h3>História do Personagem</h3>${field('historia', { label: 'História do Personagem', area: true })}</section></section></form>${rolls.page(selected !== 'rolagens')}<p class="sheet-reference">Ficha Monstrão · Campos e automatizações conforme o documento fornecido · Registro pessoal deste navegador.</p>
       ${rolls.dialog()}${importDialog()}</section>`;
   }
@@ -95,13 +97,14 @@ export function createAgentSheet({ icon, onNotice, onChange, storage, sound, onN
     if (imageBox && visual && image?.getAttribute('src') !== visual.src) imageBox.innerHTML = `<img src="${esc(visual.src)}" alt="Símbolo da espécie ${esc(values.especie)}" width="${visual.width}" height="${visual.height}">`;
     if (!visual) imageBox?.replaceChildren();
     const speciesLabel = root.querySelector('[data-sheet-species-label]'); if (speciesLabel) speciesLabel.textContent = values.especie === '-' ? 'Selecione a Espécie no campo acima' : values.especie;
+    refreshAbilityCards(root,store.state.fields); refreshAttackCards(root,store.state.fields);
+    root.querySelectorAll('[data-ability-actions]').forEach(target=>{target.innerHTML=abilityActions(Number(target.dataset.abilityActions),store.state.fields);});
   }
   function bind() {
     const root = document.querySelector('.agent-sheet');
     if (!root) return;
     refresh();
-    const refreshAbilityActions = () => root.querySelectorAll('[data-ability-actions]').forEach(target => { target.innerHTML = abilityActions(Number(target.dataset.abilityActions), store.state.fields); });
-    refreshAbilityActions();
+    bindAbilityCards(root,()=>store.state.fields);
     bindAbilityWizard(root, { icon, onChoose: (index, ability) => {
       store.reload();
       const names = ['nome','descricao','acao','custo'].map(key => `habilidade_${index}_${key}`);
@@ -109,8 +112,8 @@ export function createAgentSheet({ icon, onNotice, onChange, storage, sound, onN
       try {
         const fields = {...store.state.fields, [names[0]]:ability.name,[names[1]]:ability.description,[names[2]]:ability.action,[names[3]]:ability.cost};
         store.replace(fields, store.state.revision, {preserveSpecialtyTracking:true}); names.forEach(name=>invalid.delete(name));
-        refresh({inputs:true}); refreshAbilityActions(); finishSave(root.querySelector('[data-sheet-save]'),store.persisted);
-        onNotice(store.persisted?'Habilidade preenchida com os dados do manual.':'Habilidade preenchida apenas nesta sessão. Exporte uma cópia.');
+        refresh({inputs:true}); finishSave(root.querySelector('[data-sheet-save]'),store.persisted);
+        onNotice(store.persisted?'Habilidade adicionada à ficha.':'Habilidade preenchida apenas nesta sessão. Exporte uma cópia.');
       } catch(error) { status(error.message,true); throw error; }
         return true;
     }});
@@ -139,7 +142,7 @@ export function createAgentSheet({ icon, onNotice, onChange, storage, sound, onN
       function save() {
         try {
           beginSave(root.querySelector('[data-sheet-save]'));
-          store.updateField(name, input.value); invalid.delete(name); input.removeAttribute('aria-invalid'); error.hidden = true; refresh({inputs:true}); refreshAbilityActions(); status(); finishSave(root.querySelector('[data-sheet-save]'), store.persisted);
+          store.updateField(name, input.value); invalid.delete(name); input.removeAttribute('aria-invalid'); error.hidden = true; refresh({inputs:true}); status(); finishSave(root.querySelector('[data-sheet-save]'), store.persisted);
         } catch (failure) {
           invalid.set(name, input.value); input.setAttribute('aria-invalid', 'true'); error.textContent = failure.message; error.hidden = false; status('Revise o campo destacado. Os cálculos mantêm o último valor válido.', true);
         }

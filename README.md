@@ -390,3 +390,7 @@ O seletor também oferece **Especialidade · …**, com as 40 habilidades das 10
 ### Escolha guiada de habilidades
 
 O botão **Escolher habilidade** de cada espaço abre um seletor em três etapas: **Espécie ou Especialidade → nome do grupo → habilidade**. As espécies usam seus símbolos, incluindo os três ícones de composição dos Constructos. A última etapa mostra nível/etapa, ação e custo, com descrição expansível e o botão **Usar habilidade**. **Voltar**, **Fechar** e **Esc** permitem sair sem alterar a ficha; a substituição de campos preenchidos continua exigindo confirmação. O cabeçalho permanece acessível durante a rolagem do pop-up. Implementação em `src/ability-wizard.js`, sem alterar o catálogo, bônus ou esquema do PDF.
+
+### Consulta simples das habilidades
+
+A aba apresenta somente habilidades preenchidas, em cartões com **nome em destaque**, ação/custo e botões de rolagem. **O que faz** abre a descrição, e **Editar habilidade** abre os campos originais. O botão **Adicionar habilidade** mantém o seletor guiado; **Escrever uma habilidade** permite registrar uma opção personalizada. Os 11 espaços originais continuam disponíveis sem exibir formulários vazios. Ataques e armas ficam em uma seção recolhida, com nomes visíveis e um novo espaço de cada vez. Dados, regras, importação/exportação e PDF permanecem nos mesmos campos.

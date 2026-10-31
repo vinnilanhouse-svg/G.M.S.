@@ -386,3 +386,7 @@ Ao escolher a especialidade na ficha, suas três perícias recebem +1 conforme a
 Importações conservam os valores preenchidos e os tratam como manuais, pois o PDF e os backups anteriores não indicam a origem de cada ponto. O preenchimento de uma habilidade pelo seletor preserva os metadados de bônus existentes. Os demais efeitos das especialidades (Vantagem, dano condicional, posturas, equipamentos etc.) continuam sujeitos à descrição do manual e não são aplicados silenciosamente.
 
 O seletor também oferece **Especialidade · …**, com as 40 habilidades das 10 especialidades, separadas das opções de espécies e identificadas por nível (1 passiva, 3, 12 e 17). São preenchidos descrição, ação e custo; as rolagens seguem o mesmo fluxo das demais habilidades. Dados em `src/specialties.json`, associação e concessão em `src/specialties.js`.
+
+### Escolha guiada de habilidades
+
+O botão **Escolher habilidade** de cada espaço abre um seletor em três etapas: **Espécie ou Especialidade → nome do grupo → habilidade**. As espécies usam seus símbolos, incluindo os três ícones de composição dos Constructos. A última etapa mostra nível/etapa, ação e custo, com descrição expansível e o botão **Usar habilidade**. **Voltar**, **Fechar** e **Esc** permitem sair sem alterar a ficha; a substituição de campos preenchidos continua exigindo confirmação. O cabeçalho permanece acessível durante a rolagem do pop-up. Implementação em `src/ability-wizard.js`, sem alterar o catálogo, bônus ou esquema do PDF.

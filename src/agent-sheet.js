@@ -1,5 +1,6 @@
+import { bindAbilityWizard } from './ability-wizard.js';
 import { specialties } from './specialties.js';
-import { abilityCatalog, abilityPicker, abilityActions } from './ability-picker.js';
+import { abilityPicker, abilityActions } from './ability-picker.js';
 import './ability-picker.css';
 import { beginSave, finishSave } from './save-feedback.js';
 import { agentSheetFields, agentSheetSkills, agentSheetSource } from './agent-sheet-schema.js';
@@ -101,19 +102,18 @@ export function createAgentSheet({ icon, onNotice, onChange, storage, sound, onN
     refresh();
     const refreshAbilityActions = () => root.querySelectorAll('[data-ability-actions]').forEach(target => { target.innerHTML = abilityActions(Number(target.dataset.abilityActions), store.state.fields); });
     refreshAbilityActions();
-    root.querySelectorAll('[data-ability-select]').forEach(select => select.addEventListener('change', () => {
-      const ability = abilityCatalog.find(item => item.id === select.value); if (!ability) return;
-      const index = Number(select.dataset.abilitySelect);
+    bindAbilityWizard(root, { icon, onChoose: (index, ability) => {
       store.reload();
       const names = ['nome','descricao','acao','custo'].map(key => `habilidade_${index}_${key}`);
-      if (names.some(name => store.state.fields[name]) && !globalThis.confirm('Substituir os campos desta habilidade pelo texto do manual? As outras habilidades serão mantidas.')) { select.value = ''; return; }
+      if (names.some(name => store.state.fields[name]) && !globalThis.confirm('Substituir os campos desta habilidade pelo texto do manual? As outras habilidades serão mantidas.')) return false;
       try {
         const fields = {...store.state.fields, [names[0]]:ability.name,[names[1]]:ability.description,[names[2]]:ability.action,[names[3]]:ability.cost};
         store.replace(fields, store.state.revision, {preserveSpecialtyTracking:true}); names.forEach(name=>invalid.delete(name));
         refresh({inputs:true}); refreshAbilityActions(); finishSave(root.querySelector('[data-sheet-save]'),store.persisted);
-        select.value = ''; onNotice(store.persisted?'Habilidade preenchida com os dados do manual.':'Habilidade preenchida apenas nesta sessão. Exporte uma cópia.');
-      } catch(error) { status(error.message,true); }
-    }));
+        onNotice(store.persisted?'Habilidade preenchida com os dados do manual.':'Habilidade preenchida apenas nesta sessão. Exporte uma cópia.');
+      } catch(error) { status(error.message,true); throw error; }
+        return true;
+    }});
     root.querySelector('[data-apply-specialty]')?.addEventListener('click',()=>{
       try{store.updateField('especialidade',store.state.fields.especialidade);refresh({inputs:true});finishSave(root.querySelector('[data-sheet-save]'),store.persisted);}
       catch(error){status(error.message,true);}

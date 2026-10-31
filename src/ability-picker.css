@@ -9,3 +9,33 @@
 .specialty-summary { font-size: 12px; line-height: 1.8; }
 .specialty-summary p { margin: 8px 0; }
 .specialty-summary button { white-space: normal; }
+.ability-wizard { width: min(860px,calc(100vw - 24px)); max-height: 86dvh; padding: 26px; color: var(--text); background: var(--panel); border: 1px solid var(--accent); }
+.ability-wizard::backdrop { background: rgb(0 0 0 / .78); }
+.ability-wizard header { display: flex; align-items: start; justify-content: space-between; gap: 14px; }
+.ability-wizard header h2 { margin: 9px 0 20px; font-size: clamp(22px,3vw,29px); }
+.ability-wizard [data-wizard-step],.ability-wizard-stage { font: 10px/1.8 var(--mono); color: var(--accent); }
+.ability-wizard nav { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-bottom: 20px; font-size: 12px; color: var(--muted); }
+.ability-wizard-origins,.ability-wizard-groups { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.ability-wizard-groups { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.ability-wizard-origins button,.ability-wizard-groups button { display: flex; align-items: center; flex-direction: column; gap: 12px; min-width: 0; min-height: 130px; padding: 20px 12px; color: var(--text); background: var(--bg); border: 1px solid var(--line); text-align: center; }
+.ability-wizard-origins button:hover,.ability-wizard-groups button:hover { border-color: var(--accent); background: var(--panel-light); }
+.ability-wizard button:focus-visible,.ability-wizard summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.ability-wizard-origins button > .icon { width: 36px; height: 36px; color: var(--accent); }
+.ability-wizard-origins button span { font-size: 13px; line-height: 1.7; color: var(--muted); }
+.ability-wizard-symbols { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+.ability-wizard-symbols img { object-fit: contain; width: 48px; height: 48px; }
+.ability-wizard-symbols > .icon { width: 36px; height: 36px; color: var(--accent); }
+.ability-wizard-abilities { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+.ability-wizard-abilities article { min-width: 0; padding: 20px; border: 1px solid var(--line); background: var(--bg); overflow-wrap: anywhere; }
+.ability-wizard-abilities h3 { font-size: 19px; line-height: 1.5; margin: 8px 0 15px; }
+.ability-wizard-abilities dl { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12px; line-height: 1.7; }
+.ability-wizard-abilities dt { color: var(--muted); }.ability-wizard-abilities dd { margin: 3px 0 0; }
+.ability-wizard-abilities details { margin: 18px 0; }.ability-wizard-abilities summary { cursor: pointer; text-decoration: underline; font-size: 13px; }
+.ability-wizard-abilities details p { white-space: pre-line; font-size: 14px; line-height: 1.9; }
+.ability-wizard-help { font-size: 13px; line-height: 1.8; color: var(--muted); }
+.ability-wizard-feedback { font-size: 14px; line-height: 1.8; }
+@media(max-width:600px) { .ability-wizard { padding: 18px 14px; max-height: 90dvh; }.ability-wizard-groups { grid-template-columns: repeat(2,minmax(0,1fr)); }.ability-wizard-abilities { grid-template-columns: 1fr; }.ability-wizard-origins { grid-template-columns: 1fr; }.ability-wizard-groups button { font-size: 13px; padding: 16px 8px; }.ability-wizard-symbols img { width: 36px; height: 36px; } }
+@media print { .ability-wizard { display: none!important; } }
+
+.ability-wizard-chrome { position: sticky; top: 0; z-index: 2; background: var(--panel); padding-top: 6px; }
+.ability-wizard [data-wizard-close] { flex-shrink: 0; white-space: nowrap; }

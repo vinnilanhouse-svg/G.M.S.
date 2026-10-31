@@ -14,7 +14,7 @@ export function parseAbilityDice(expression) {
  return {count:+match[1],sides:+match[2],modifier:Number(match[3]||0)};
 }
 export function abilityPicker(index) {
- return `<div class="ability-select"><label for="ability-select-${index}">Escolher habilidade do manual</label><select id="ability-select-${index}" data-ability-select="${index}"><option value="">Selecione para preencher esta habilidade</option>${[...new Set(catalog.map(a=>a.species))].map(species=>`<optgroup label="${esc(catalog.find(a=>a.species===species)?.specialty?'Especialidade · '+species:'Espécie · '+species)}">${catalog.filter(a=>a.species===species).map(a=>`<option value="${a.id}">${esc(a.name)} · ${a.specialty?`Nível ${a.level}${a.level===1?' · Passiva':''}`:stages[a.stage]}${a.variant?' · '+a.variant:''}</option>`).join('')}</optgroup>`).join('')}</select><small>Selecione uma por vez. Os campos continuam editáveis. Adicionais: níveis 5, 10 e 15; ápice: nível 20. Especialidades: níveis 1 (passiva), 3, 12 e 17. Confira as condições no texto.</small></div><div data-ability-actions="${index}"></div>`;
+ return `<div class="ability-select"><button type="button" class="op-button" data-open-ability-picker="${index}" aria-label="Escolher habilidade ${index}" aria-haspopup="dialog">Escolher habilidade</button><small>Escolha por espécie ou especialidade. Seus campos continuam editáveis.</small></div><div data-ability-actions="${index}"></div>`;
 }
 export function abilityActions(index,fields) {
  const text=fields[`habilidade_${index}_descricao`]||'';

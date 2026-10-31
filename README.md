@@ -394,3 +394,5 @@ O botão **Escolher habilidade** de cada espaço abre um seletor em três etapas
 ### Consulta simples das habilidades
 
 A aba apresenta somente habilidades preenchidas, em cartões com **nome em destaque**, ação/custo e botões de rolagem. **O que faz** abre a descrição, e **Editar habilidade** abre os campos originais. O botão **Adicionar habilidade** mantém o seletor guiado; **Escrever uma habilidade** permite registrar uma opção personalizada. Os 11 espaços originais continuam disponíveis sem exibir formulários vazios. Ataques e armas ficam em uma seção recolhida, com nomes visíveis e um novo espaço de cada vez. Dados, regras, importação/exportação e PDF permanecem nos mesmos campos.
+
+As dez especialidades têm ícones vetoriais próprios de contorno em `src/specialty-icons.js`, usados nos cartões do seletor. Os desenhos usam `currentColor`, acompanham a paleta ativa e não dependem de imagens externas nem fontes de ícones.

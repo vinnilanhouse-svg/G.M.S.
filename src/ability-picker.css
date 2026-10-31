@@ -67,3 +67,5 @@
 @media(min-width:1050px) { .ability-library { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; } }
 .ability-card { scroll-margin-top:20px; scroll-margin-bottom:110px; }
 .ability-card-facts small:empty { display:none; }
+.ability-wizard-symbols > .specialty-icon { width:48px; height:48px; color:var(--accent); }
+@media(max-width:600px) { .ability-wizard-symbols > .specialty-icon { width:36px; height:36px; } }

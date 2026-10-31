@@ -1,3 +1,4 @@
+import {specialtyIcon} from './specialty-icons.js';
 import {abilityGroups,abilitiesForGroup,constructGroups} from './ability-groups.js';
 import {speciesIcons,constructIcons} from './species-icons.js';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -22,7 +23,7 @@ export function bindAbilityWizard(root,{icon,onChoose}){
    const groups=abilityGroups(type);
    content.innerHTML=`<div class="ability-wizard-groups">${groups.map(name=>{
     const images=type==='species'?(constructGroups[name]?[constructIcons[constructGroups[name].toLowerCase()]]:[speciesIcons['especie-'+keys[name]]]):[];
-    return `<button type="button" data-wizard-group="${esc(name)}"><span class="ability-wizard-symbols">${images.length?images.map(image=>`<img src="${esc(image.src)}" alt="" width="48" height="48">`).join(''):icon('clipboard')}</span><strong>${esc(name)}</strong></button>`;
+    return `<button type="button" data-wizard-group="${esc(name)}"><span class="ability-wizard-symbols">${images.length?images.map(image=>`<img src="${esc(image.src)}" alt="" width="48" height="48">`).join(''):(specialtyIcon(name)||icon('clipboard'))}</span><strong>${esc(name)}</strong></button>`;
    }).join('')}</div>`;
   }else{
    const abilities=abilitiesForGroup(type,group);

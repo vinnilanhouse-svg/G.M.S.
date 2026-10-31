@@ -1,4 +1,4 @@
-import {abilityCatalog} from './ability-picker.js';
+import {abilityGroups,abilitiesForGroup,constructGroups} from './ability-groups.js';
 import {speciesIcons,constructIcons} from './species-icons.js';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const keys={'Abissais':'abissais','Anjo':'anjo','Caipora':'caipora','Capelobo':'capelobo','Centauro':'centauro','Constructos':'constructo','Corpo Seco e Bradador':'corpo-seco','Curupira':'curupira','Demônio':'demonio','Fada':'fada','Górgona':'gorgona','Humano':'humano','Leprechaun':'leprechaun','Lobisomem':'lobisomem','Múmia':'mumia','Ogro':'ogro','Poltergeist':'poltergeist','Saci':'saci','Salamandra':'salamandra','Vampiro':'vampiro'};
@@ -19,13 +19,13 @@ export function bindAbilityWizard(root,{icon,onChoose}){
   if(step===0){
    content.innerHTML=`<div class="ability-wizard-origins"><button type="button" data-wizard-type="species">${icon('book')}<strong>Espécie</strong><span>Capacidades da natureza do personagem.</span></button><button type="button" data-wizard-type="specialty">${icon('clipboard')}<strong>Especialidade</strong><span>Técnicas aprendidas com sua formação.</span></button></div>`;
   }else if(step===1){
-   const groups=[...new Set(abilityCatalog.filter(a=>Boolean(a.specialty)===(type==='specialty')).map(a=>a.species))];
+   const groups=abilityGroups(type);
    content.innerHTML=`<div class="ability-wizard-groups">${groups.map(name=>{
-    const images=type==='species'?(name==='Constructos'?Object.values(constructIcons):[speciesIcons['especie-'+keys[name]]]):[];
+    const images=type==='species'?(constructGroups[name]?[constructIcons[constructGroups[name].toLowerCase()]]:[speciesIcons['especie-'+keys[name]]]):[];
     return `<button type="button" data-wizard-group="${esc(name)}"><span class="ability-wizard-symbols">${images.length?images.map(image=>`<img src="${esc(image.src)}" alt="" width="48" height="48">`).join(''):icon('clipboard')}</span><strong>${esc(name)}</strong></button>`;
    }).join('')}</div>`;
   }else{
-   const abilities=abilityCatalog.filter(a=>a.species===group&&Boolean(a.specialty)===(type==='specialty'));
+   const abilities=abilitiesForGroup(type,group);
    content.innerHTML=`<p class="ability-wizard-help">Escolha uma habilidade para preencher este espaço da ficha. Confira o nível e as condições na descrição.</p><div class="ability-wizard-abilities">${abilities.map(ability=>`<article><span class="ability-wizard-stage">${esc(stageLabel(ability))}${ability.variant?' · '+esc(ability.variant):''}</span><h3>${esc(ability.name)}</h3><dl><div><dt>Ação</dt><dd>${esc(ability.action)}</dd></div><div><dt>Custo</dt><dd>${esc(ability.cost)}</dd></div></dl><details><summary>Ver descrição</summary><p>${esc(ability.description)}</p></details><button type="button" class="op-button" data-wizard-choose="${ability.id}" aria-label="Usar ${esc(ability.name)}${ability.variant?' · '+esc(ability.variant):''}">Usar habilidade</button></article>`).join('')}</div>`;
   }
   dialog.scrollTop=0;title.focus({preventScroll:true});
@@ -40,7 +40,7 @@ export function bindAbilityWizard(root,{icon,onChoose}){
   if(button.dataset.wizardType){type=button.dataset.wizardType;step=1;render();return;}
   if(button.dataset.wizardGroup){group=button.dataset.wizardGroup;step=2;render();return;}
   if(button.dataset.wizardChoose){
-   const ability=abilityCatalog.find(a=>a.id===button.dataset.wizardChoose&&a.species===group);
+   const ability=abilitiesForGroup(type,group).find(a=>a.id===button.dataset.wizardChoose);
    if(!ability)return;
    try{if(onChoose(row,ability)!==false)dialog.close();}
    catch(error){dialog.querySelector('.ability-wizard-feedback').textContent=error.message||'Não foi possível preencher a habilidade.';}

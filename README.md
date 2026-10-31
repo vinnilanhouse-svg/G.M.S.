@@ -389,7 +389,7 @@ O seletor também oferece **Especialidade · …**, com as 40 habilidades das 10
 
 ### Escolha guiada de habilidades
 
-O botão **Escolher habilidade** de cada espaço abre um seletor em três etapas: **Espécie ou Especialidade → nome do grupo → habilidade**. As espécies usam seus símbolos, incluindo os três ícones de composição dos Constructos. A última etapa mostra nível/etapa, ação e custo, com descrição expansível e o botão **Usar habilidade**. **Voltar**, **Fechar** e **Esc** permitem sair sem alterar a ficha; a substituição de campos preenchidos continua exigindo confirmação. O cabeçalho permanece acessível durante a rolagem do pop-up. Implementação em `src/ability-wizard.js`, sem alterar o catálogo, bônus ou esquema do PDF.
+O botão **Escolher habilidade** de cada espaço abre um seletor em três etapas: **Espécie ou Especialidade → nome do grupo → habilidade**. As espécies usam seus símbolos. Constructos aparecem como três opções separadas — Carne, Barro e Metal — cada uma com seu ícone e somente as habilidades específicas da composição mais as compartilhadas. A última etapa mostra nível/etapa, ação e custo, com descrição expansível e o botão **Usar habilidade**. **Voltar**, **Fechar** e **Esc** permitem sair sem alterar a ficha; a substituição de campos preenchidos continua exigindo confirmação. O cabeçalho permanece acessível durante a rolagem do pop-up. Implementação em `src/ability-wizard.js`, sem alterar o catálogo, bônus ou esquema do PDF.
 
 ### Consulta simples das habilidades
 

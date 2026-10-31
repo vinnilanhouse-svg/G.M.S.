@@ -1,3 +1,4 @@
+import { applySpecialtyBonuses } from './specialties.js';
 import { agentSheetFields, agentSheetSkills } from './agent-sheet-schema.js';
 
 export const agentSheetKey = 'gms-agent-sheet-v1';
@@ -61,7 +62,7 @@ function validateFields(fields) {
 export function readAgentSheet(storage) {
   try {
     const value = JSON.parse(storage.getItem(agentSheetKey));
-    if (value?.version === 1 && Number.isSafeInteger(value.revision) && value.revision >= 0) return { version: 1, revision: value.revision, fields: validateFields(value.fields), updatedAt: typeof value.updatedAt === 'string' && Number.isFinite(Date.parse(value.updatedAt)) ? value.updatedAt : '' };
+    if (value?.version === 1 && Number.isSafeInteger(value.revision) && value.revision >= 0) return { version: 1, revision: value.revision, fields: validateFields(value.fields), specialtyAuto: Array.isArray(value.specialtyAuto)?value.specialtyAuto.filter(name=>typeof name==='string'&&/^per_[bg]\d+_bonus$/.test(name)&&Object.hasOwn(agentSheetFields,name)):[], updatedAt: typeof value.updatedAt === 'string' && Number.isFinite(Date.parse(value.updatedAt)) ? value.updatedAt : '' };
   } catch {}
   return { version: 1, revision: 0, fields: defaults(), updatedAt: '' };
 }
@@ -69,8 +70,8 @@ export function readAgentSheet(storage) {
 export function createAgentSheetStore(storage) {
   let state = readAgentSheet(storage);
   let persisted = true;
-  function save(fields, current) {
-    state = { version: 1, revision: current.revision + 1, fields, updatedAt: new Date().toISOString() };
+  function save(fields, current, specialtyAuto = current.specialtyAuto || []) {
+    state = { version: 1, revision: current.revision + 1, fields, specialtyAuto, updatedAt: new Date().toISOString() };
     try { storage.setItem(agentSheetKey, JSON.stringify(state)); persisted = true; } catch { persisted = false; }
     return { state, persisted };
   }
@@ -81,13 +82,19 @@ export function createAgentSheetStore(storage) {
     updateField(name, value) {
       const valid = validateAgentSheetValue(name, value);
       const current = persisted ? readAgentSheet(storage) : state;
-      return save({ ...current.fields, [name]: valid }, current);
+      const fields={...current.fields,[name]:valid};
+      const tracked=(current.specialtyAuto||[]).filter(field=>field!==name);
+      if(name==='especialidade'||/^per_[bg]\d+_bonus$/.test(name)){
+        const applied=applySpecialtyBonuses(fields,tracked);
+        return save(applied.fields,current,applied.automatic);
+      }
+      return save(fields,current);
     },
-    replace(fields, revision) {
+    replace(fields, revision, {preserveSpecialtyTracking=false}={}) {
       const validated = validateFields(fields);
       const current = persisted ? readAgentSheet(storage) : state;
       if (current.revision !== revision) throw new Error('Sua ficha foi alterada em outra aba. Abra a importação novamente para conferir a versão atual.');
-      return save(validated, current);
+      return save(validated, current, preserveSpecialtyTracking?current.specialtyAuto||[]:[]);
     },
   };
 }

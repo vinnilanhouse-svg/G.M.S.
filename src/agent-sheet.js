@@ -1,3 +1,4 @@
+import { specialties } from './specialties.js';
 import { abilityCatalog, abilityPicker, abilityActions } from './ability-picker.js';
 import './ability-picker.css';
 import { beginSave, finishSave } from './save-feedback.js';
@@ -36,7 +37,7 @@ export function createAgentSheet({ icon, onNotice, onChange, storage, sound, onN
     const shared = `id="${id}" data-sheet-field="${name}" aria-describedby="error-${id}"`;
     const control = spec.readOnly ? `<output id="${id}" data-sheet-output="${name}" aria-label="${esc(label)}">${esc(values[name])}</output>` : spec.options ? `<select ${shared}>${spec.options.map(option => `<option value="${esc(option)}" ${values[name] === option ? 'selected' : ''}>${esc(option)}</option>`).join('')}</select>` : area || spec.multiline ? `<textarea ${shared} rows="${name === 'historia' ? 12 : 3}">${esc(values[name])}</textarea>` : `<input ${shared} type="text" ${spec.numeric ? 'inputmode="decimal"' : ''} value="${esc(values[name])}" autocomplete="off">`;
     const heading = check ? `<div class="sheet-roll-field-label"><label class="sr-only" for="${id}">${esc(label)}</label>${rolls.trigger(name, label)}</div>` : `<label class="${compact ? 'sr-only' : ''}" for="${id}">${esc(label)}</label>`;
-    return `<div class="sheet-field ${spec.readOnly ? 'sheet-field-auto' : ''} ${compact ? 'sheet-field-compact' : ''}">${heading}${control}<span class="sheet-print-value" data-sheet-print="${name}">${esc(values[name])}</span>${!spec.readOnly ? `<span class="sheet-field-error" id="error-${id}" hidden></span>` : ''}</div>`;
+    return `<div class="sheet-field ${spec.readOnly ? 'sheet-field-auto' : ''} ${compact ? 'sheet-field-compact' : ''}">${heading}${control}${name==='especialidade'?'<div class="specialty-summary"><p data-specialty-summary></p><button type="button" class="op-text-button" data-apply-specialty>Aplicar bônus desta especialidade</button></div>':''}<span class="sheet-print-value" data-sheet-print="${name}">${esc(values[name])}</span>${!spec.readOnly ? `<span class="sheet-field-error" id="error-${id}" hidden></span>` : ''}</div>`;
   }
   function segments(count, graphic) {
     const filled = Number(values[graphic].replace(/^[vep]/, ''));
@@ -85,6 +86,8 @@ export function createAgentSheet({ icon, onNotice, onChange, storage, sound, onN
       [...graphic.children].forEach((segment, index) => segment.classList.toggle('filled', index < filled));
       graphic.setAttribute('aria-label', `${filled} de ${graphic.children.length} segmentos preenchidos`);
     });
+    const specialty=specialties.find(item=>item.name===values.especialidade);
+    const summary=root.querySelector('[data-specialty-summary]');if(summary)summary.textContent=specialty?`+1 em ${specialty.skills.join(', ')}. Habilidades disponíveis no catálogo: níveis 1, 3, 12 e 17.`:'Escolha uma especialidade para aplicar +1 nas perícias correspondentes.';
     const imageBox = root.querySelector('[data-sheet-species-image]');
     const visual = speciesVisual(values.especie);
     const image = imageBox?.querySelector('img');
@@ -106,11 +109,15 @@ export function createAgentSheet({ icon, onNotice, onChange, storage, sound, onN
       if (names.some(name => store.state.fields[name]) && !globalThis.confirm('Substituir os campos desta habilidade pelo texto do manual? As outras habilidades serão mantidas.')) { select.value = ''; return; }
       try {
         const fields = {...store.state.fields, [names[0]]:ability.name,[names[1]]:ability.description,[names[2]]:ability.action,[names[3]]:ability.cost};
-        store.replace(fields, store.state.revision); names.forEach(name=>invalid.delete(name));
+        store.replace(fields, store.state.revision, {preserveSpecialtyTracking:true}); names.forEach(name=>invalid.delete(name));
         refresh({inputs:true}); refreshAbilityActions(); finishSave(root.querySelector('[data-sheet-save]'),store.persisted);
         select.value = ''; onNotice(store.persisted?'Habilidade preenchida com os dados do manual.':'Habilidade preenchida apenas nesta sessão. Exporte uma cópia.');
       } catch(error) { status(error.message,true); }
     }));
+    root.querySelector('[data-apply-specialty]')?.addEventListener('click',()=>{
+      try{store.updateField('especialidade',store.state.fields.especialidade);refresh({inputs:true});finishSave(root.querySelector('[data-sheet-save]'),store.persisted);}
+      catch(error){status(error.message,true);}
+    });
     rolls.bind(root);
     root.querySelector('form').addEventListener('submit', event => event.preventDefault());
     root.querySelector('[data-export-agent-pdf]').addEventListener('click', async event => {
@@ -132,7 +139,7 @@ export function createAgentSheet({ icon, onNotice, onChange, storage, sound, onN
       function save() {
         try {
           beginSave(root.querySelector('[data-sheet-save]'));
-          store.updateField(name, input.value); invalid.delete(name); input.removeAttribute('aria-invalid'); error.hidden = true; refresh(); refreshAbilityActions(); status(); finishSave(root.querySelector('[data-sheet-save]'), store.persisted);
+          store.updateField(name, input.value); invalid.delete(name); input.removeAttribute('aria-invalid'); error.hidden = true; refresh({inputs:true}); refreshAbilityActions(); status(); finishSave(root.querySelector('[data-sheet-save]'), store.persisted);
         } catch (failure) {
           invalid.set(name, input.value); input.setAttribute('aria-invalid', 'true'); error.textContent = failure.message; error.hidden = false; status('Revise o campo destacado. Os cálculos mantêm o último valor válido.', true);
         }

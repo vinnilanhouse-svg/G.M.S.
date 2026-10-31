@@ -1,0 +1,632 @@
+[
+  {
+    "name": "Alquimista",
+    "category": "Técnica",
+    "skills": [
+      "Alquimia",
+      "Magia",
+      "Sobrevivência"
+    ],
+    "abilities": [
+      {
+        "id": "specialty-1-1-1",
+        "species": "Alquimista",
+        "specialty": "Alquimista",
+        "level": 1,
+        "stage": "specialty",
+        "name": "Dá um gole, é suco!",
+        "description": "Você consegue fazer feitos incríveis com recursos inesperados. Você pode criar Poções de diversos efeitos e algumas bombas especiais. Se alguém perguntar não é magia, é ciência.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.1.1",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-1-3",
+        "species": "Alquimista",
+        "specialty": "Alquimista",
+        "level": 3,
+        "stage": "specialty",
+        "name": "Não é tudo capim!",
+        "description": "Você consegue identificar plantas e usá-las para suas criações. As Poções feitas dessa forma tem metade do efeito normal.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.1.1",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-1-12",
+        "species": "Alquimista",
+        "specialty": "Alquimista",
+        "level": 12,
+        "stage": "specialty",
+        "name": "Boticário",
+        "description": "Você adquire a capacidade de misturar duas Poções, sejam elas de efeitos bons ou ruins.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.1.1",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-1-17",
+        "species": "Alquimista",
+        "specialty": "Alquimista",
+        "level": 17,
+        "stage": "specialty",
+        "name": "A Pedra Filosofal",
+        "description": "Você chegou ao ápice da Alquimia, a Magnum Opus da transmutação, a Pedra das pedras. Você pode ter apenas 1 pedra filosofal que te garantem os seguintes efeitos:\n**Enquanto tiver a pedra em um colar ou pulseira, suas Poções sempre rolam 1 dado a mais, e suas bombas também.\n**Se você tomar um golpe fatal pode fazer 3 Testes, se tiver Sucesso em 2 você volta com 1 de Vida, caso contrário você apenas morre. Se você for bem sucedido, a pedra entra em seu corpo para regenerá-lo. A pedra é perdida e você precisa esperar 6 meses para fazer outra.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.1.1",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "name": "Artista",
+    "category": "Técnica",
+    "skills": [
+      "Diplomacia",
+      "Enganação",
+      "Performance"
+    ],
+    "abilities": [
+      {
+        "id": "specialty-1-2-1",
+        "species": "Artista",
+        "specialty": "Artista",
+        "level": 1,
+        "stage": "specialty",
+        "name": "Música é essencial",
+        "description": "Escolha um instrumento, qualquer Teste de Performance e Sedução, que envolva esse instrumento recebe Vantagem.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.1.2",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-2-3",
+        "species": "Artista",
+        "specialty": "Artista",
+        "level": 3,
+        "stage": "specialty",
+        "name": "Inspirar pela arte",
+        "description": "Você é capaz de inspirar seus aliados com suas palavras, ações, músicas ou o que quer que seja. Quando usar essa característica você concede Vantagem a qualquer rolagem de aliados que possam ver e ouvir você. [Ação Bônus // 10E]",
+        "action": "Ação Bônus",
+        "cost": "10E",
+        "sourceSection": "4.1.2",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-2-12",
+        "species": "Artista",
+        "specialty": "Artista",
+        "level": 12,
+        "stage": "specialty",
+        "name": "Canção de guerra",
+        "description": "Ao tocar sua música antes do inicio de uma Batalha, você faz com que todos os seus aliados tenham um Turno a mais de surpresa contra os inimigos. [Ação // 15E]",
+        "action": "Ação",
+        "cost": "15E",
+        "sourceSection": "4.1.2",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-2-17",
+        "species": "Artista",
+        "specialty": "Artista",
+        "level": 17,
+        "stage": "specialty",
+        "name": "Versado na arte",
+        "description": "Todos os Testes que você fizer que envolvam arte tem Vantagem. Além disso, você pode usar da sua fama para conseguir informações, dinheiro ou até mesmo um(a) parceiro(a) romântico(a). Você também pode usar seus dons artísticos para se maquiar e se vestir de forma que ninguém o reconheça. Qualquer pessoa que tente descobrir sua identidade deve realizar um Teste de Mente com Desvantagem na rolagem para identificar.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.1.2",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "name": "Criminoso",
+    "category": "Técnica",
+    "skills": [
+      "Furtar",
+      "Furtividade",
+      "Persuasão"
+    ],
+    "abilities": [
+      {
+        "id": "specialty-1-3-1",
+        "species": "Criminoso",
+        "specialty": "Criminoso",
+        "level": 1,
+        "stage": "specialty",
+        "name": "Mão leve, cérebro pesado",
+        "description": "você pode usar seu Atributo Agilidade ou Mente para a Perícia Furtar, o que for maior e aplica Desvantagem para o alvo perceber o roubo.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.1.3",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-3-3",
+        "species": "Criminoso",
+        "specialty": "Criminoso",
+        "level": 3,
+        "stage": "specialty",
+        "name": "A Lâmina que não se vê",
+        "description": "Você consegue esconder Armas pequenas com você e qualquer Teste para detectá-las tem Desvantagem. Além disso, o Dano delas sempre causa +1.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.1.3",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-3-12",
+        "species": "Criminoso",
+        "specialty": "Criminoso",
+        "level": 12,
+        "stage": "specialty",
+        "name": "Eu sou a sombra",
+        "description": "Você tem Vantagem em Testes para se esconder e uma vez por Turno, após ser bem sucedido ao se esconder, você pode reaparecer em uma sombra qualquer no seu alcance de visão. [Ação de Movimento // 10E]",
+        "action": "Ação de Movimento",
+        "cost": "10E",
+        "sourceSection": "4.1.3",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-3-17",
+        "species": "Criminoso",
+        "specialty": "Criminoso",
+        "level": 17,
+        "stage": "specialty",
+        "name": "Xerox",
+        "description": "Você consegue copiar e falsificar quase qualquer coisa, quase impossível de notar a diferença do original.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.1.3",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "name": "Cozinheiro",
+    "category": "Técnica",
+    "skills": [
+      "Diplomacia",
+      "Intuição",
+      "Percepção"
+    ],
+    "abilities": [
+      {
+        "id": "specialty-1-4-1",
+        "species": "Cozinheiro",
+        "specialty": "Cozinheiro",
+        "level": 1,
+        "stage": "specialty",
+        "name": "Conversa saborosa",
+        "description": "Qualquer pessoa ou criatura que comer algo feito pelas suas mãos fica mais suscetível aos seus Testes que envolvam Coração. Você tem Vantagem nesses Testes e o alvo sofre Desvantagem para resistir a qualquer Teste contra você.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.1.4",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-4-3",
+        "species": "Cozinheiro",
+        "specialty": "Cozinheiro",
+        "level": 3,
+        "stage": "specialty",
+        "name": "Receitinha",
+        "description": "Qualquer um que coma sua comida sai automaticamente da Condição de Fome.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.1.4",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-4-12",
+        "species": "Cozinheiro",
+        "specialty": "Cozinheiro",
+        "level": 12,
+        "stage": "specialty",
+        "name": "Especial da casa",
+        "description": "Sua comida é excelente, uma obra prima, é quase magia!!! Você pode preparar uma refeição em um momento de Descanso, todos os seus aliados, incluindo você, escolhem um Atributo. Vocês terão Vantagem nas próximas 5 rolagens. Essas Vantagens somem no dia seguinte. [30 MINUTOS // 15E]",
+        "action": "30 MINUTOS",
+        "cost": "15E",
+        "sourceSection": "4.1.4",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-4-17",
+        "species": "Cozinheiro",
+        "specialty": "Cozinheiro",
+        "level": 17,
+        "stage": "specialty",
+        "name": "Intoxicação alimentar",
+        "description": "Você descobriu uma fórmula secreta proibida, o prato supremo. Você precisa de componentes específicos para fazê-lo, quando um aliado ou você ingerir isso você escolhe um dos Atributos da lista e aumenta 2 pontos, podendo ultrapassar 19, porém apenas 1 feito pode ser realizado e a pessoa entra em coma por 2 horas depois. Os feitos são: [80 MINUTOS // 35E]\n   — Corpo: Se subir para 20 o personagem entra em Fúria por 3 Turnos causando +6 em todo ataque Corpo-a-Corpo.\n   — Agilidade: Se chegar em 20 você consegue automaticamente se mover para qualquer lugar que possa ver e possui 3 Ações por Turno, porém você terá apenas 10 segundos reais para dizer toda sua Ação, e após isso você não poderá mover seu corpo.\n   — Mente: Caso chegue a 20 seu corpo cai quase que sem vida no chão, para todos os Testes de Medicina você está morto. Você tem 1 pergunta para fazer ao mestre e ele tem que te responder. Seja cauteloso, uma pergunta errada e todo o efeito foi em vão. Após ser respondido você volta ao normal, porém durante 1 hora você é incapaz de falar.\n   —Coração: Você consegue manipular as emoções de qualquer um que consiga te ouvir, mudando completamente como essa pessoa age naquele momento, porém você temporariamente cai em uma lastimação profundo sem parar de chorar, se tornando incapaz de agir\n   —Alma: se chegar à 20 você tem um feito extraordinário em suas mãos, Magia quase que ilimitada. Você pode alterar a realidade ao seu bel prazer, seguindo algumas regras claro: \n* Só pode ressuscitar uma pessoa 1 única vez, se ela morrer novamente não há volta.\n* Alterar eventos significa alterar o futuro, seja cauteloso.\n* Não pode fazer ninguém se apaixonar.\nTirando isso, você é livre para escolher o efeito. Após isso você volta ao normal, mas fica incapaz de usar Magias por 3 dias.",
+        "action": "80 MINUTOS",
+        "cost": "35E",
+        "sourceSection": "4.1.4",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "name": "Investigador",
+    "category": "Técnica",
+    "skills": [
+      "Atualidades",
+      "Investigação",
+      "Percepção"
+    ],
+    "abilities": [
+      {
+        "id": "specialty-1-5-1",
+        "species": "Investigador",
+        "specialty": "Investigador",
+        "level": 1,
+        "stage": "specialty",
+        "name": "Faro aguçado",
+        "description": "Os anos de prática te tornaram um excelente Investigador. Você tem Vantagem em todos os Testes de Investigação.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.1.5",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-5-3",
+        "species": "Investigador",
+        "specialty": "Investigador",
+        "level": 3,
+        "stage": "specialty",
+        "name": "Eu vejo você!",
+        "description": "Suas deduções são afiadas e precisa, gastando 2 Pontos de Essência você pode rolar um Investigação com Vantagem, caso passe no Teste você descobre um ponto fraco do alvo.",
+        "action": "Consulte a descrição",
+        "cost": "2 Pontos de Essência",
+        "sourceSection": "4.1.5",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-5-12",
+        "species": "Investigador",
+        "specialty": "Investigador",
+        "level": 12,
+        "stage": "specialty",
+        "name": "Pista quente",
+        "description": "Quando achar uma pista em uma investigação você pode gastar 10 Pontos de Essência e a sua intuição perfeita (o mestre) te dá uma leve dica de qual caminho seguir. Você pode usar essa Habilidade 2 vezes por investigação.",
+        "action": "Consulte a descrição",
+        "cost": "10 Pontos de Essência",
+        "sourceSection": "4.1.5",
+        "variant": ""
+      },
+      {
+        "id": "specialty-1-5-17",
+        "species": "Investigador",
+        "specialty": "Investigador",
+        "level": 17,
+        "stage": "specialty",
+        "name": "Copias Casas",
+        "description": "Você sabe dizer exatamente quando alguém está mentindo para você e possui Vantagem para intimidar aqueles que tentaram mentir para você.\n\n4.2. Especialidades de Batalha;",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.1.5",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "name": "Artes Marciais",
+    "category": "Batalha",
+    "skills": [
+      "Acrobacia",
+      "Atletismo",
+      "Luta"
+    ],
+    "abilities": [
+      {
+        "id": "specialty-2-1-1",
+        "species": "Artes Marciais",
+        "specialty": "Artes Marciais",
+        "level": 1,
+        "stage": "specialty",
+        "name": "Golpes Fundamentais",
+        "description": "Você aprende a usar seu corpo como arma. Seus ataques desarmados causam 1d6 de Dano e podem ser usados para derrubar ou desequilibrar inimigos. Você ganha Vantagem em Testes de Agilidade para esquiva ou contra-ataques.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.1",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-1-3",
+        "species": "Artes Marciais",
+        "specialty": "Artes Marciais",
+        "level": 3,
+        "stage": "specialty",
+        "name": "Combinação Letal",
+        "description": "Você pode realizar uma sequência de golpes rápidos. Você pode fazer dois ataques desarmados como uma única Ação. Além disso, seus ataques desarmados causam 1d8 de Dano. [Ação Bônus // 10E // 10 MINUTOS]",
+        "action": "Ação Bônus / 10 MINUTOS",
+        "cost": "10E",
+        "sourceSection": "4.2.1",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-1-12",
+        "species": "Artes Marciais",
+        "specialty": "Artes Marciais",
+        "level": 12,
+        "stage": "specialty",
+        "name": "Controle do Campo",
+        "description": "Você se torna um mestre em manipular o espaço ao seu redor. Quando ataca desarmado, pode mover o inimigo 1,5m em qualquer direção. Além disso, você ganha Resistência a Dano de ataques Corpo a Corpo. [+5 Resistencia ]",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.1",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-1-17",
+        "species": "Artes Marciais",
+        "specialty": "Artes Marciais",
+        "level": 17,
+        "stage": "specialty",
+        "name": "Mestre das Artes Marciais",
+        "description": "Seus golpes desarmados causam 2d8 de Dano e ignoram Resistência a Dano físico. Você pode realizar um ataque especial que causa Dano máximo e derruba o inimigo automaticamente. [Ação // 20E]",
+        "action": "Ação",
+        "cost": "20E",
+        "sourceSection": "4.2.1",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "name": "Atirador de Elite",
+    "category": "Batalha",
+    "skills": [
+      "Conhecimento",
+      "Percepção",
+      "Pontaria"
+    ],
+    "abilities": [
+      {
+        "id": "specialty-2-2-1",
+        "species": "Atirador de Elite",
+        "specialty": "Atirador de Elite",
+        "level": 1,
+        "stage": "specialty",
+        "name": "Mira Afiada",
+        "description": "Você ganha Vantagem em Testes de Pontaria com Armas de Fogo. Além disso, seus ataques com Armas de Fogo causam +1 de Dano.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.2",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-2-3",
+        "species": "Atirador de Elite",
+        "specialty": "Atirador de Elite",
+        "level": 3,
+        "stage": "specialty",
+        "name": "Tiro Rápido",
+        "description": "Você pode disparar duas vezes em uma única Ação, desde que esteja usando uma Arma de Fogo leve. Além disso, você ignora cobertura parcial ao atirar.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.2",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-2-12",
+        "species": "Atirador de Elite",
+        "specialty": "Atirador de Elite",
+        "level": 12,
+        "stage": "specialty",
+        "name": "Olho de Falcão",
+        "description": "Seu alcance com Armas de Fogo dobra, e seus ataques com Armas de Fogo causam +2 de Dano.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.2",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-2-17",
+        "species": "Atirador de Elite",
+        "specialty": "Atirador de Elite",
+        "level": 17,
+        "stage": "specialty",
+        "name": "Mestre Atirador",
+        "description": "Seus ataques com Armas de Fogo causam 2d10 de Dano e ignoram Resistência a Dano perfurante. E você pode realizar um ataque Crítico automaticamente. [Ação // 30E]",
+        "action": "Ação",
+        "cost": "30E",
+        "sourceSection": "4.2.2",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "name": "Esgrimista",
+    "category": "Batalha",
+    "skills": [
+      "Acrobacia",
+      "Atletismo",
+      "Luta"
+    ],
+    "abilities": [
+      {
+        "id": "specialty-2-3-1",
+        "species": "Esgrimista",
+        "specialty": "Esgrimista",
+        "level": 1,
+        "stage": "specialty",
+        "name": "Postura de Combate",
+        "description": "Você ganha Vantagem em Testes de Luta ao usar Armas Brancas. Além disso, seus ataques com Armas Brancas causam +1 de Dano.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.3",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-3-3",
+        "species": "Esgrimista",
+        "specialty": "Esgrimista",
+        "level": 3,
+        "stage": "specialty",
+        "name": "Golpe Preciso",
+        "description": "Seus ataques com Armas Brancas causam 1d8 a mais de Dano.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.3",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-3-12",
+        "species": "Esgrimista",
+        "specialty": "Esgrimista",
+        "level": 12,
+        "stage": "specialty",
+        "name": "Defesa Impecável",
+        "description": "Você ganha +2 de Defesa ao usar uma Arma Branca. Além disso, pode contra-atacar automaticamente quando esquivar de um golpe Corpo a Corpo. A Esquiva e esse contra-ataque utilizam a mesma Ação de Movimento. [Ação de Movimento // 10E]",
+        "action": "Ação de Movimento",
+        "cost": "10E",
+        "sourceSection": "4.2.3",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-3-17",
+        "species": "Esgrimista",
+        "specialty": "Esgrimista",
+        "level": 17,
+        "stage": "specialty",
+        "name": "Mestre da Lâmina",
+        "description": "Seus ataques com Armas Brancas causam 2d8 a mais de Dano e ignoram Resistência a Dano cortante.  E você pode realizar um ataque Crítico automaticamente. [Ação // 30E]",
+        "action": "Ação",
+        "cost": "30E",
+        "sourceSection": "4.2.3",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "name": "Cavaleiro",
+    "category": "Batalha",
+    "skills": [
+      "Acrobacia",
+      "Atletismo",
+      "Luta"
+    ],
+    "abilities": [
+      {
+        "id": "specialty-2-4-1",
+        "species": "Cavaleiro",
+        "specialty": "Cavaleiro",
+        "level": 1,
+        "stage": "specialty",
+        "name": "Armadura Imponente",
+        "description": "Você aprende a usar Armaduras pesadas com eficiência. Enquanto estiver usando Armadura pesada, você ganha +2 de Resistencia..",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.4",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-4-3",
+        "species": "Cavaleiro",
+        "specialty": "Cavaleiro",
+        "level": 3,
+        "stage": "specialty",
+        "name": "Golpes Poderosos",
+        "description": "Seus ataques com Armas de duas mãos causam +2 de Dano.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.4",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-4-12",
+        "species": "Cavaleiro",
+        "specialty": "Cavaleiro",
+        "level": 12,
+        "stage": "specialty",
+        "name": "Muro de Aço",
+        "description": "Você ganha +4 de Resistencia enquanto estiver usando Armadura pesada.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.4",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-4-17",
+        "species": "Cavaleiro",
+        "specialty": "Cavaleiro",
+        "level": 17,
+        "stage": "specialty",
+        "name": "Titã de Aço",
+        "description": "Seus ataques com Armas de duas mãos causam 2d10 a mais de Dano. Você pode realizar um ataque especial que causa Dano máximo e derruba todos os inimigos em um raio de 3m. [Ação // 30E]",
+        "action": "Ação",
+        "cost": "30E",
+        "sourceSection": "4.2.4",
+        "variant": ""
+      }
+    ]
+  },
+  {
+    "name": "Mestre das Sombras",
+    "category": "Batalha",
+    "skills": [
+      "Acrobacia",
+      "Furtividade",
+      "Luta"
+    ],
+    "abilities": [
+      {
+        "id": "specialty-2-5-1",
+        "species": "Mestre das Sombras",
+        "specialty": "Mestre das Sombras",
+        "level": 1,
+        "stage": "specialty",
+        "name": "Movimento Silencioso",
+        "description": "Você ganha Vantagem em Testes de Furtividade e pode se mover sem fazer barulho. Além disso, seus Ataques Furtivos causam +1d6 de Dano.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.5",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-5-3",
+        "species": "Mestre das Sombras",
+        "specialty": "Mestre das Sombras",
+        "level": 3,
+        "stage": "specialty",
+        "name": "Golpe das Sombras",
+        "description": "Você pode realizar um Ataque Furtivo que causa +2d6 de Dano se o inimigo não estiver te vendo. Além disso, pode se esconder como uma Ação Bônus.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.5",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-5-12",
+        "species": "Mestre das Sombras",
+        "specialty": "Mestre das Sombras",
+        "level": 12,
+        "stage": "specialty",
+        "name": "Mestre da Emboscada",
+        "description": "Seus Ataques Furtivos causam +3d6 de Dano e você pode realizar dois Ataques Furtivos em uma única Ação a inimigos diferentes adjacentes. Além disso, ganha Vantagem em Testes de Percepção para detectar armadilhas ou inimigos ocultos.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.5",
+        "variant": ""
+      },
+      {
+        "id": "specialty-2-5-17",
+        "species": "Mestre das Sombras",
+        "specialty": "Mestre das Sombras",
+        "level": 17,
+        "stage": "specialty",
+        "name": "Lenda das Sombras",
+        "description": "Seus Ataques Furtivos causam +4d6 de Dano e ignoram Resistência.",
+        "action": "Consulte a descrição",
+        "cost": "Consulte a descrição",
+        "sourceSection": "4.2.5",
+        "variant": ""
+      }
+    ]
+  }
+]

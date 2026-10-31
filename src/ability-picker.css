@@ -6,3 +6,6 @@
 .ability-roll-actions button { white-space: normal; }
 .ability-damage { font-size: 14px; line-height: 1.8; }
 @media print { .ability-select,.ability-roll-actions { display:none!important; } }
+.specialty-summary { font-size: 12px; line-height: 1.8; }
+.specialty-summary p { margin: 8px 0; }
+.specialty-summary button { white-space: normal; }

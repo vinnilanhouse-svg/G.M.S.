@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {abilityCatalog,diceExpressions,parseAbilityDice,abilityActions} from '../src/ability-picker.js';
 test('manual catalog covers 20 species and retains costs, actions and original conditional mechanics',()=>{
- assert.equal(new Set(abilityCatalog.map(a=>a.species)).size,20);
+ assert.equal(new Set(abilityCatalog.filter(a=>!a.specialty).map(a=>a.species)).size,20);
  assert.equal(new Set(abilityCatalog.map(a=>a.id)).size,abilityCatalog.length);
  const water=abilityCatalog.find(a=>a.name==='Toma uma Aguinha aí');
  assert.equal(water.cost,'5E');assert.equal(water.action,'Ação Bônus');assert.match(water.description,/1D8/);
